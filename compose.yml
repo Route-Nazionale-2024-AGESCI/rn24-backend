@@ -1,0 +1,25 @@
+version: '3'
+
+volumes:
+  rn24-db: {}
+
+services:
+  db:
+    image: postgres:16
+    volumes:
+      - rn24-db:/var/lib/postgresql/data
+    env_file: .env
+    restart: unless-stopped
+  web:
+    build:
+      context: .
+    image: rn24/web
+    command: gunicorn -c gunicorn.conf.py
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./:/app
+    depends_on:
+      - db
+    env_file: .env
+    restart: unless-stopped

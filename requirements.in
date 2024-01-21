@@ -1,0 +1,13 @@
+# we are using pip-tools to manage our dependencies
+# https://pypi.org/project/pip-tools/
+django
+whitenoise
+ipdb
+psycopg[binary]
+django-extensions
+gunicorn
+sentry-sdk
+django-anymail[mailgun]
+black
+pre-commit
+pip-tools
