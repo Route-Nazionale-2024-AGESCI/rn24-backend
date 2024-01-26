@@ -38,7 +38,8 @@
 				"tonybaloney.vscode-pets",
 				"mikestead.dotenv",
 				"ms-python.black-formatter",
-				"ms-python.vscode-pylance"
+				"ms-python.vscode-pylance",
+				"github.vscode-github-actions"
 			]
 		}
 	}
