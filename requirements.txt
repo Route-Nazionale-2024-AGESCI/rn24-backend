@@ -104,7 +104,7 @@ pyyaml==6.0.1
     # via pre-commit
 requests==2.31.0
     # via django-anymail
-sentry-sdk==1.39.2
+sentry-sdk==1.40.1
     # via -r requirements.in
 six==1.16.0
     # via asttokens
