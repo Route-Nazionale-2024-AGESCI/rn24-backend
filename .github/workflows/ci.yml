@@ -29,4 +29,4 @@ jobs:
           python-version: '3.12'
       # Consider using pre-commit.ci for open source project
       - name: Run pre-commit
-        uses: pre-commit/action@v3.0.0
+        uses: pre-commit/action@v3.0.1
