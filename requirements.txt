@@ -82,7 +82,7 @@ platformdirs==4.1.0
     # via
     #   black
     #   virtualenv
-pre-commit==3.6.0
+pre-commit==3.6.1
     # via -r requirements.in
 prompt-toolkit==3.0.43
     # via ipython
