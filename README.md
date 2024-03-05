@@ -11,6 +11,10 @@ Just click on "Reopen in Container" and you will have a fully working environmen
 
 We use [ruff](https://github.com/astral-sh/ruff), [black](https://github.com/psf/black) and [pre-commit](https://pre-commit.com/).
 
+To handle python dependecies, we use pip-tools, do not change requirements.txt manually, but add the new dependency in requirements.in and then run
+
+`pip-compile`
+
 Both development and deploy is done with Docker and a compose file.
 
 Install Docker on your machine and check that it's working running
