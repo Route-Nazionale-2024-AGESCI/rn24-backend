@@ -8,7 +8,7 @@ asgiref==3.7.2
     # via django
 asttokens==2.4.1
     # via stack-data
-black==24.1.0
+black==24.2.0
     # via -r requirements.in
 build==1.0.3
     # via pip-tools
