@@ -76,7 +76,7 @@ pathspec==0.12.1
     # via black
 pexpect==4.9.0
     # via ipython
-pip-tools==7.3.0
+pip-tools==7.4.1
     # via -r requirements.in
 platformdirs==4.1.0
     # via
@@ -99,7 +99,9 @@ pycparser==2.21
 pygments==2.17.2
     # via ipython
 pyproject-hooks==1.0.0
-    # via build
+    # via
+    #   build
+    #   pip-tools
 pyyaml==6.0.1
     # via pre-commit
 requests==2.31.0
