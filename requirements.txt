@@ -16,8 +16,6 @@ certifi==2023.11.17
     # via
     #   requests
     #   sentry-sdk
-cffi==1.16.0
-    # via cryptography
 cfgv==3.4.0
     # via pre-commit
 charset-normalizer==3.3.2
@@ -26,8 +24,6 @@ click==8.1.7
     # via
     #   black
     #   pip-tools
-cryptography==41.0.7
-    # via django-anymail
 decorator==5.1.1
     # via
     #   ipdb
@@ -39,7 +35,7 @@ django==5.0.3
     #   -r requirements.in
     #   django-anymail
     #   django-extensions
-django-anymail[mailgun]==10.2
+django-anymail[mailgun]==10.3
     # via -r requirements.in
 django-extensions==3.2.3
     # via -r requirements.in
@@ -94,8 +90,6 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.2
     # via stack-data
-pycparser==2.21
-    # via cffi
 pygments==2.17.2
     # via ipython
 pyproject-hooks==1.0.0
