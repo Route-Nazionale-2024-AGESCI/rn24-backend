@@ -23,22 +23,21 @@
 					"analysis.autoImportCompletions": true,
 					"analysis.typeCheckingMode": "basic",
 					"defaultInterpreterPath": "/usr/local/bin/python",
-					"editor.defaultFormatter": "ms-python.black-formatter",
 					"editor.formatOnSave": true,
 					"editor.codeActionsOnSave": {
-						"source.fixAll": true,
-						"source.organizeImports": true
-					}
+						"source.fixAll": "explicit"
+					},
+					"editor.defaultFormatter": "ms-python.black-formatter"
 				}
 			},
 			"extensions": [
 				"ms-azuretools.vscode-docker",
-				"charliermarsh.ruff",
 				"ms-python.python",
 				"tonybaloney.vscode-pets",
 				"mikestead.dotenv",
-				"ms-python.black-formatter",
 				"ms-python.vscode-pylance",
+				"charliermarsh.ruff",
+				"ms-python.black-formatter",
 				"github.vscode-github-actions"
 			]
 		}
