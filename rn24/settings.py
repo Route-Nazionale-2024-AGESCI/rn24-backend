@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
+    "authentication.apps.AuthenticationConfig",
     "people.apps.PeopleConfig",
 ]
 
@@ -149,3 +150,5 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+AUTH_USER_MODEL = "authentication.User"
