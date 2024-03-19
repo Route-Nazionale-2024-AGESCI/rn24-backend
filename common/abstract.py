@@ -8,12 +8,20 @@ from common.managers import SoftDeletableManager
 
 class CommonAbstractModel(models.Model):
 
-    created_at = models.DateTimeField(auto_now_add=True, editable=False, db_index=True)
-    updated_at = models.DateTimeField(auto_now=True, editable=False, db_index=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True, editable=False, db_index=True, verbose_name="data di creazione"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True, editable=False, db_index=True, verbose_name="data ultima modifica"
+    )
 
-    uuid = models.UUIDField(unique=True, editable=False, db_index=True, default=uuid.uuid4)
+    uuid = models.UUIDField(
+        unique=True, editable=False, db_index=True, default=uuid.uuid4, verbose_name="UUID"
+    )
 
-    deleted_at = models.DateTimeField(null=True, blank=True)
+    deleted_at = models.DateTimeField(
+        null=True, blank=True, editable=False, db_index=True, verbose_name="data di cancellazione"
+    )
 
     objects_with_deleted = models.Manager()
     objects = SoftDeletableManager()
