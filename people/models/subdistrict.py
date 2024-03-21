@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.db import models
 
 from common.abstract import CommonAbstractModel
@@ -8,6 +9,10 @@ class Subdistrict(CommonAbstractModel):
     district = models.ForeignKey(
         "people.District", on_delete=models.CASCADE, verbose_name="sottocampo"
     )
+
+    @admin.display(description="n. gruppi scout")
+    def scout_groups_count(self):
+        return self.scoutgroup_set.count()
 
     class Meta:
         verbose_name = "contrada"

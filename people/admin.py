@@ -15,17 +15,20 @@ class PersonAdmin(BaseAdmin):
 
 @admin.register(ScoutGroup)
 class ScoutGroupAdmin(BaseAdmin):
-    pass
+    list_display = ("name", "subdistrict")
 
 
 @admin.register(Subdistrict)
 class SubdistrictAdmin(BaseAdmin):
-    pass
+    list_display = ("name", "district", "scout_groups_count")
+    search_fields = ("name",)
+    list_filter = ("district",)
 
 
 @admin.register(District)
 class DistrictAdmin(BaseAdmin):
-    pass
+    list_display = ("name", "subdistricts_count", "scout_groups_count")
+    search_fields = ("name",)
 
 
 @admin.register(Squad)
