@@ -1,0 +1,144 @@
+- model: people.subdistrict
+  pk: 1
+  fields:
+    created_at: 2024-03-21 17:32:13.401197+00:00
+    updated_at: 2024-03-21 17:32:13.401207+00:00
+    uuid: 6e285c6f-96f5-4d30-a43d-24c8190c02d3
+    deleted_at: null
+    name: '1'
+    district: 1
+- model: people.subdistrict
+  pk: 2
+  fields:
+    created_at: 2024-03-21 17:32:20.747045+00:00
+    updated_at: 2024-03-21 17:32:20.747054+00:00
+    uuid: ed0c09b8-f9a4-4a9b-8517-1aec1d0d07db
+    deleted_at: null
+    name: '2'
+    district: 1
+- model: people.subdistrict
+  pk: 3
+  fields:
+    created_at: 2024-03-21 17:32:24.404313+00:00
+    updated_at: 2024-03-21 17:32:24.404322+00:00
+    uuid: 229bbead-c650-498e-928d-3965a70807db
+    deleted_at: null
+    name: '3'
+    district: 1
+- model: people.subdistrict
+  pk: 4
+  fields:
+    created_at: 2024-03-21 17:32:27.578016+00:00
+    updated_at: 2024-03-21 17:32:27.578024+00:00
+    uuid: 9bd5f0df-332d-4ebf-a8b1-3c807592e969
+    deleted_at: null
+    name: '4'
+    district: 1
+- model: people.subdistrict
+  pk: 5
+  fields:
+    created_at: 2024-03-21 18:24:23.832658+00:00
+    updated_at: 2024-03-21 18:24:23.832668+00:00
+    uuid: 9aa52a95-c4a2-4563-a236-aa45709b483f
+    deleted_at: null
+    name: '5'
+    district: 2
+- model: people.subdistrict
+  pk: 6
+  fields:
+    created_at: 2024-03-21 18:24:26.875266+00:00
+    updated_at: 2024-03-21 18:24:26.875277+00:00
+    uuid: 11206bf2-ac79-4258-84dc-131ee7b4c28d
+    deleted_at: null
+    name: '6'
+    district: 2
+- model: people.subdistrict
+  pk: 7
+  fields:
+    created_at: 2024-03-21 18:24:30.384204+00:00
+    updated_at: 2024-03-21 18:24:30.384214+00:00
+    uuid: c73faec8-8bc8-4315-af45-3d91421c5b78
+    deleted_at: null
+    name: '7'
+    district: 2
+- model: people.subdistrict
+  pk: 8
+  fields:
+    created_at: 2024-03-21 18:24:34.219291+00:00
+    updated_at: 2024-03-21 18:24:34.219301+00:00
+    uuid: 93f7967b-a9c9-46dc-9cf6-5621c713b23d
+    deleted_at: null
+    name: '8'
+    district: 2
+- model: people.subdistrict
+  pk: 9
+  fields:
+    created_at: 2024-03-21 18:24:39.595255+00:00
+    updated_at: 2024-03-21 18:24:39.595266+00:00
+    uuid: e0ceabcc-629e-48b1-8d33-dbbc29c9f6b4
+    deleted_at: null
+    name: '9'
+    district: 3
+- model: people.subdistrict
+  pk: 10
+  fields:
+    created_at: 2024-03-21 18:24:43.628514+00:00
+    updated_at: 2024-03-21 18:24:43.628524+00:00
+    uuid: ecef6aec-91de-449f-ad11-2ec33a795105
+    deleted_at: null
+    name: '10'
+    district: 3
+- model: people.subdistrict
+  pk: 11
+  fields:
+    created_at: 2024-03-21 18:24:46.251839+00:00
+    updated_at: 2024-03-21 18:24:46.251850+00:00
+    uuid: 829eaf61-fe32-47b6-b0c9-b1b19927c5c1
+    deleted_at: null
+    name: '11'
+    district: 3
+- model: people.subdistrict
+  pk: 12
+  fields:
+    created_at: 2024-03-21 18:24:49.244826+00:00
+    updated_at: 2024-03-21 18:24:49.244838+00:00
+    uuid: 32babc35-1892-44f9-92c1-03d333bc15e9
+    deleted_at: null
+    name: '12'
+    district: 3
+- model: people.subdistrict
+  pk: 13
+  fields:
+    created_at: 2024-03-21 18:24:52.530846+00:00
+    updated_at: 2024-03-21 18:24:52.530857+00:00
+    uuid: 41854485-50ac-4e93-80bc-91720c0920cf
+    deleted_at: null
+    name: '13'
+    district: 4
+- model: people.subdistrict
+  pk: 14
+  fields:
+    created_at: 2024-03-21 18:24:56.255202+00:00
+    updated_at: 2024-03-21 18:24:56.255213+00:00
+    uuid: 294fbb69-b8b2-4a64-9b13-89365e80d4b6
+    deleted_at: null
+    name: '14'
+    district: 4
+- model: people.subdistrict
+  pk: 15
+  fields:
+    created_at: 2024-03-21 18:25:01.651541+00:00
+    updated_at: 2024-03-21 18:25:01.651549+00:00
+    uuid: c5c5d233-b09b-4b2b-8408-e07fe1024f92
+    deleted_at: null
+    name: '15'
+    district: 4
+- model: people.subdistrict
+  pk: 16
+  fields:
+    created_at: 2024-03-21 18:25:05.170292+00:00
+    updated_at: 2024-03-21 18:25:05.170300+00:00
+    uuid: a232db66-6167-4a28-9877-f59983e0e962
+    deleted_at: null
+    name: '16'
+    district: 4
