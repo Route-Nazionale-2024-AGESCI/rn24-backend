@@ -30,9 +30,12 @@ decorator==5.1.1
     #   ipython
 distlib==0.3.8
     # via virtualenv
+dj-database-url==2.1.0
+    # via -r requirements.in
 django==5.0.3
     # via
     #   -r requirements.in
+    #   dj-database-url
     #   django-anymail
     #   django-extensions
     #   django-linear-migrations
@@ -116,7 +119,9 @@ traitlets==5.14.1
     #   ipython
     #   matplotlib-inline
 typing-extensions==4.9.0
-    # via psycopg
+    # via
+    #   dj-database-url
+    #   psycopg
 urllib3==2.1.0
     # via
     #   django-anymail
