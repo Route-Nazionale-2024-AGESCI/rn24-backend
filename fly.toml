@@ -1,0 +1,28 @@
+# fly.toml app configuration file generated for rn24-dev on 2024-03-22T15:46:48+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'rn24-dev'
+primary_region = 'ams'
+console_command = '/bin/bash'
+
+[build]
+
+[deploy]
+  release_command = './deploy.sh'
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+[experimental]
+  cmd = ["gunicorn", "-c", "gunicorn.conf.py"]
