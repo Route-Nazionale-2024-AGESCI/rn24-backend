@@ -1,6 +1,8 @@
+from django.contrib import admin
 from django.db import models
 
 from common.abstract import CommonAbstractModel
+from people.models.person import Person
 
 HAPPINESS_PATH_CHOICES = (
     ("FELICI_DI_ACCOGLIERE", "Felici di accogliere"),
@@ -13,11 +15,36 @@ HAPPINESS_PATH_CHOICES = (
     ("FELICI_DI_ESSERE_PROFETI_IN_UN_MONDO_NUOVO", "Felici di essere profeti in un mondo nuovo"),
 )
 
+ITALIAN_REGION_CHOICES = (
+    ("ABRUZZO", "Abruzzo"),
+    ("BASILICATA", "Basilicata"),
+    ("CALABRIA", "Calabria"),
+    ("CAMPANIA", "Campania"),
+    ("EMILIA-ROMAGNA", "Emilia-Romagna"),
+    ("FRIULI-VENEZIA GIULIA", "Friuli-Venezia Giulia"),
+    ("LAZIO", "Lazio"),
+    ("LIGURIA", "Liguria"),
+    ("LOMBARDIA", "Lombardia"),
+    ("MARCHE", "Marche"),
+    ("MOLISE", "Molise"),
+    ("PIEMONTE", "Piemonte"),
+    ("PUGLIA", "Puglia"),
+    ("SARDEGNA", "Sardegna"),
+    ("SICILIA", "Sicilia"),
+    ("TOSCANA", "Toscana"),
+    ("TRENTINO-ALTO ADIGE", "Trentino-Alto Adige"),
+    ("UMBRIA", "Umbria"),
+    ("VALLE D'AOSTA", "Valle d'Aosta"),
+    ("VENETO", "Veneto"),
+)
+
 
 class ScoutGroup(CommonAbstractModel):
     name = models.CharField(max_length=255, unique=True, verbose_name="nome")
     zone = models.CharField(max_length=255, verbose_name="zona")
-    region = models.CharField(max_length=255, verbose_name="regione")
+    region = models.CharField(
+        max_length=255, choices=ITALIAN_REGION_CHOICES, verbose_name="regione"
+    )
     subdistrict = models.ForeignKey(
         "people.Subdistrict", on_delete=models.CASCADE, verbose_name="contrada"
     )
@@ -25,6 +52,14 @@ class ScoutGroup(CommonAbstractModel):
         max_length=255, choices=HAPPINESS_PATH_CHOICES, verbose_name="sentiero della felicità"
     )
     arrived_at = models.DateTimeField(verbose_name="data di arrivo", null=True, blank=True)
+
+    @admin.display(description="arrivati?", boolean=True)
+    def is_arrived(self):
+        return self.arrived_at is not None
+
+    @admin.display(description="n. persone")
+    def people_count(self):
+        return Person.objects.filter(scout_group=self).count()
 
     class Meta:
         verbose_name = "gruppo scout"

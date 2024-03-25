@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -12,7 +13,9 @@ class Person(CommonAbstractModel):
         max_length=255, db_index=True, verbose_name="codice AGESCI", unique=True
     )
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="utente")
+    user = models.OneToOneField(
+        User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="utente"
+    )
 
     first_name = models.CharField(db_index=True, max_length=255, verbose_name="nome")
     last_name = models.CharField(db_index=True, max_length=255, verbose_name="cognome")
@@ -41,6 +44,10 @@ class Person(CommonAbstractModel):
     squads = models.ManyToManyField(
         "people.Squad", related_name="members", blank=True, verbose_name="pattuglie"
     )
+
+    @admin.display(description="pattuglie")
+    def squads_list(self):
+        return ", ".join([s.name for s in self.squads.all()])
 
     class Meta:
         verbose_name = "persona"

@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.db import models
 
 from common.abstract import CommonAbstractModel
+from people.models.person import Person
 from people.models.scout_group import ScoutGroup
 
 
@@ -10,7 +11,7 @@ class District(CommonAbstractModel):
 
     @admin.display(description="n. persone")
     def people_count(self):
-        return self.subdistrict_set.count()
+        return Person.objects.filter(scout_group__subdistrict__district=self).count()
 
     @admin.display(description="n. contrade")
     def subdistricts_count(self):

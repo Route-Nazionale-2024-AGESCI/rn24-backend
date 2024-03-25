@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.db import models
 
 from common.abstract import CommonAbstractModel
+from people.models.person import Person
 
 
 class Subdistrict(CommonAbstractModel):
@@ -13,6 +14,10 @@ class Subdistrict(CommonAbstractModel):
     @admin.display(description="n. gruppi scout")
     def scout_groups_count(self):
         return self.scoutgroup_set.count()
+
+    @admin.display(description="n. persone")
+    def people_count(self):
+        return Person.objects.filter(scout_group__subdistrict=self).count()
 
     class Meta:
         verbose_name = "contrada"
