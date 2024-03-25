@@ -13,3 +13,4 @@ pre-commit
 pip-tools
 django-linear-migrations
 dj-database-url
+Faker
