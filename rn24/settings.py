@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
+
 import dj_database_url
 
 
@@ -37,7 +38,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 DEBUG = bool_from_env("DJANGO_DEBUG")
 
 ALLOWED_HOSTS = [
-    os.getenv("HOST"),
+    os.getenv("ALLOWED_HOST"),
 ]
 
 USE_X_FORWARDED_HOST = True
