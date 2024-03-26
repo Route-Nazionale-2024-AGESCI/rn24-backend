@@ -14,6 +14,15 @@ from people.models.subdistrict import Subdistrict
 class Command(BaseCommand):
     help = "generate some test data to use for development and testing"
 
+    """
+    to cleanup:
+    User.objects.filter(is_superuser=False).delete()
+    Person.objects.all().delete()
+    ScoutGroup.objects.all().delete()
+    Squad.objects.all().delete()
+
+    """
+
     def add_arguments(self, parser):
         # parser.add_argument("sample", nargs="+")
         pass
