@@ -150,6 +150,7 @@ STATIC_URL = "static/"
 MEDIA_URL = "/files/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "MEDIA")
 STATIC_ROOT = os.path.join(BASE_DIR, "STATIC")
+WHITENOISE_ROOT = os.path.join(BASE_DIR, "react")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

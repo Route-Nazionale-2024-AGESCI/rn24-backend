@@ -10,6 +10,8 @@ asttokens==2.4.1
     # via stack-data
 black==24.3.0
     # via -r requirements.in
+brotli==1.1.0
+    # via whitenoise
 build==1.0.3
     # via pip-tools
 certifi==2023.11.17
@@ -139,7 +141,7 @@ wcwidth==0.2.13
     # via prompt-toolkit
 wheel==0.42.0
     # via pip-tools
-whitenoise==6.6.0
+whitenoise[brotli]==6.6.0
     # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:

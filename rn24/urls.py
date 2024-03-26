@@ -15,8 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path
+from django.views.static import serve
 
 admin.sites.AdminSite.site_header = "RN24 backoffice"
 admin.sites.AdminSite.site_title = "RN24 backoffice"
@@ -24,4 +26,5 @@ admin.sites.AdminSite.index_title = "RN24 backoffice"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", serve, {"document_root": settings.WHITENOISE_ROOT, "path": "index.html"}),
 ]

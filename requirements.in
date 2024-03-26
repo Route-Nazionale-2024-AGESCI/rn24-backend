@@ -1,7 +1,7 @@
 # we are using pip-tools to manage our dependencies
 # https://pypi.org/project/pip-tools/
 django
-whitenoise
+whitenoise[brotli]
 ipdb
 psycopg[binary]
 django-extensions
