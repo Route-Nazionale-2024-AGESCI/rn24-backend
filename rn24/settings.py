@@ -54,10 +54,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.gis",
     "django_extensions",
     "django_linear_migrations",
     "authentication.apps.AuthenticationConfig",
     "people.apps.PeopleConfig",
+    "events.apps.EventsConfig",
+    "maps.apps.MapsConfig",
 ]
 
 MIDDLEWARE = [
@@ -95,15 +98,6 @@ WSGI_APPLICATION = "rn24.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": os.getenv("POSTGRES_NAME"),
-#         "USER": os.getenv("POSTGRES_USER"),
-#         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-#         "HOST": os.getenv("POSTGRES_HOST"),
-#     },
-# }
 DATABASES = {
     "default": dj_database_url.config(
         conn_max_age=600,

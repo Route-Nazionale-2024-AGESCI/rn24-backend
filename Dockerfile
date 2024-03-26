@@ -9,6 +9,9 @@ FROM python:3.12-slim-bullseye AS python
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 RUN apt-get update && apt-get --no-install-recommends install -y \
+    binutils \
+    libproj-dev \
+    gdal-bin \
     postgresql-client \
     git \
     vim \
