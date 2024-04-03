@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - master    # change to main if needed
+  workflow_dispatch:
+
 jobs:
   deploy:
     name: Deploy app
