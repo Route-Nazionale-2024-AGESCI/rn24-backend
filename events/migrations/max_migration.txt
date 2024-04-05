@@ -1,1 +1,1 @@
-0002_alter_event_registrations_close_at_and_more
+0004_alter_event_visibility_to_districts_and_more

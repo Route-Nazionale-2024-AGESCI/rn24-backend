@@ -78,6 +78,9 @@ class ScoutGroupAdmin(BaseAdmin):
     list_filter = ("region", "subdistrict", "happiness_path", IsArrivedListFilter)
     search_fields = ("name", "zone", "region")
     inlines = [PersonInline]
+    readonly_fields = [
+        "district",
+    ]
 
 
 class ScoutGroupInline(admin.TabularInline):
