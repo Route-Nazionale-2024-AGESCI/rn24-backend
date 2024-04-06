@@ -57,10 +57,15 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     "django_extensions",
     "django_linear_migrations",
+    "rest_framework",
+    "rest_framework_gis",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
     "authentication.apps.AuthenticationConfig",
     "people.apps.PeopleConfig",
     "events.apps.EventsConfig",
     "maps.apps.MapsConfig",
+    "api.apps.ApiConfig",
 ]
 
 MIDDLEWARE = [
@@ -158,3 +163,21 @@ STORAGES = {
 }
 
 AUTH_USER_MODEL = "authentication.User"
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "RN24 backend",
+    "DESCRIPTION": "RN24 backend API documentation",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_DIST": "SIDECAR",  # shorthand to use the sidecar instead
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAuthenticated"],
+}

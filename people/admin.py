@@ -30,6 +30,7 @@ class PersonAdmin(BaseAdmin):
         "squads",
     )
     filter_horizontal = ("squads",)
+    autocomplete_fields = ("user", "scout_group")
 
 
 class PersonInline(admin.TabularInline):

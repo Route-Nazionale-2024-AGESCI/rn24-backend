@@ -14,3 +14,6 @@ pip-tools
 django-linear-migrations
 dj-database-url
 Faker
+djangorestframework
+djangorestframework-gis
+drf-spectacular[sidecar]
