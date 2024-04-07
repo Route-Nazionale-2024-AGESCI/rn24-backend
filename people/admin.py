@@ -87,20 +87,10 @@ class ScoutGroupAdmin(BaseAdmin):
 class ScoutGroupInline(admin.TabularInline):
     model = ScoutGroup
     show_change_link = True
-    fields = (
+    fields = readonly_fields = (
         "name",
         "zone",
         "region",
-        "subdistrict",
-        "happiness_path",
-        "people_count",
-        "is_arrived",
-    )
-    readonly_fields = (
-        "name",
-        "zone",
-        "region",
-        "subdistrict",
         "happiness_path",
         "people_count",
         "is_arrived",
@@ -139,8 +129,16 @@ class DistrictAdmin(BaseAdmin):
     inlines = [SubdistrictInline]
 
 
+class SquadPersonInline(admin.TabularInline):
+    model = Person.squads.through
+    fields = ("person",)
+    autocomplete_fields = ("person",)
+    extra = 0
+
+
 @admin.register(Squad)
 class SquadAdmin(BaseAdmin):
-    list_display = ("name", "description")
+    list_display = ("name", "description", "people_count")
     search_fields = ("name", "description")
     readonly_fields = ("people_count",)
+    inlines = [SquadPersonInline]
