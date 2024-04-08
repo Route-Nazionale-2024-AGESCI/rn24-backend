@@ -1,3 +1,5 @@
+from rest_framework import serializers
+
 from common.serializers import UUIDRelatedModelSerializer
 from events.models.event import Event
 
@@ -19,3 +21,12 @@ class EventSerializer(UUIDRelatedModelSerializer):
             "registrations_close_at",
             "kind",
         )
+
+
+class EventRegistrationSerializer(serializers.Serializer):
+    event = serializers.UUIDField(source="uuid")
+    is_personal = serializers.BooleanField()
+
+
+class EventInvitationSerializer(serializers.Serializer):
+    uuid = serializers.UUIDField()

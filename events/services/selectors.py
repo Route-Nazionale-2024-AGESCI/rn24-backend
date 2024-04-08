@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Value
 
 from events.models.event import Event
 from people.models.person import Person
@@ -15,13 +15,17 @@ def get_events_visible_to_person(person: Person):
 
 
 def get_events_registered_to_person(person: Person):
-    return Event.objects.filter(
+    personal_events = Event.objects.filter(registered_persons=person).annotate(
+        is_personal=Value(True)
+    )
+    passive_events = Event.objects.filter(
         Q(registered_persons=person)
         | Q(registered_scout_groups=person.scout_group)
         | Q(registered_subdistricts=person.scout_group.subdistrict)
         | Q(registered_districts=person.scout_group.subdistrict.district)
         | Q(registered_squads__in=person.squads.all())
-    )
+    ).annotate(is_personal=Value(False))
+    return personal_events.union(passive_events)
 
 
 def get_persons_visible_to_event(event: Event):

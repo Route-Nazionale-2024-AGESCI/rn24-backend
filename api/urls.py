@@ -1,7 +1,12 @@
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-from api.views.events.views import EventDetailView, EventListView
+from api.views.events.views import (
+    EventDetailView,
+    EventInvitationListView,
+    EventListView,
+    EventRegistrationListView,
+)
 from api.views.locations.views import LocationDetailView, LocationListView
 from api.views.profile.views import ProfileDetailView
 
@@ -19,4 +24,8 @@ urlpatterns = [
     path("locations/<uuid:uuid>/", LocationDetailView.as_view(), name="location-detail"),
     path("events/", EventListView.as_view(), name="event-list"),
     path("events/<uuid:uuid>/", EventDetailView.as_view(), name="event-detail"),
+    path(
+        "events/registrations/", EventRegistrationListView.as_view(), name="event-registration-list"
+    ),
+    path("events/invitations/", EventInvitationListView.as_view(), name="event-registration-list"),
 ]
