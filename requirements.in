@@ -17,3 +17,4 @@ Faker
 djangorestframework
 djangorestframework-gis
 drf-spectacular[sidecar]
+wagtail
