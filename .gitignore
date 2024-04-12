@@ -5,6 +5,7 @@ __pycache__/
 *$py.class
 
 STATIC
+MEDIA
 
 # C extensions
 *.so

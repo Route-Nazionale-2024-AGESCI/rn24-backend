@@ -61,11 +61,25 @@ INSTALLED_APPS = [
     "rest_framework_gis",
     "drf_spectacular",
     "drf_spectacular_sidecar",
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    "modelcluster",
+    "taggit",
     "authentication.apps.AuthenticationConfig",
     "people.apps.PeopleConfig",
     "events.apps.EventsConfig",
     "maps.apps.MapsConfig",
     "api.apps.ApiConfig",
+    "cms.apps.CmsConfig",
 ]
 
 MIDDLEWARE = [
@@ -77,6 +91,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
 ROOT_URLCONF = "rn24.urls"
@@ -157,6 +172,9 @@ WHITENOISE_ROOT = os.path.join(BASE_DIR, "react")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
@@ -181,3 +199,5 @@ SPECTACULAR_SETTINGS = {
     "REDOC_DIST": "SIDECAR",
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAuthenticated"],
 }
+
+WAGTAIL_SITE_NAME = "RN24 backoffice CMS"

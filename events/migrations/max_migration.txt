@@ -1,1 +1,1 @@
-0004_alter_event_visibility_to_districts_and_more
+0005_alter_event_is_registration_required
