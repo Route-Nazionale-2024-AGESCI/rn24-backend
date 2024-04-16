@@ -18,3 +18,4 @@ djangorestframework
 djangorestframework-gis
 drf-spectacular[sidecar]
 wagtail
+django-cors-headers

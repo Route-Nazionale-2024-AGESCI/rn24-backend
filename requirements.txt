@@ -7,7 +7,9 @@
 anyascii==0.3.2
     # via wagtail
 asgiref==3.7.2
-    # via django
+    # via
+    #   django
+    #   django-cors-headers
 asttokens==2.4.1
     # via stack-data
 attrs==23.2.0
@@ -49,6 +51,7 @@ django==5.0.4
     #   -r requirements.in
     #   dj-database-url
     #   django-anymail
+    #   django-cors-headers
     #   django-extensions
     #   django-filter
     #   django-linear-migrations
@@ -62,6 +65,8 @@ django==5.0.4
     #   laces
     #   wagtail
 django-anymail[mailgun]==10.3
+    # via -r requirements.in
+django-cors-headers==4.3.1
     # via -r requirements.in
 django-extensions==3.2.3
     # via -r requirements.in

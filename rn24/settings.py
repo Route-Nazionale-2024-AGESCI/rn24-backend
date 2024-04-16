@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     "django_extensions",
     "django_linear_migrations",
+    "corsheaders",
     "rest_framework",
     "rest_framework_gis",
     "drf_spectacular",
@@ -84,6 +85,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -201,3 +203,6 @@ SPECTACULAR_SETTINGS = {
 }
 
 WAGTAIL_SITE_NAME = "RN24 backoffice CMS"
+
+# TODO: enable this with an env variable only for test environment
+CORS_ALLOW_ALL_ORIGINS = True
