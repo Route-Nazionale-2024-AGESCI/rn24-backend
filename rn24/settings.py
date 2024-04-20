@@ -15,6 +15,10 @@ from pathlib import Path
 
 import dj_database_url
 
+import factory
+
+factory.Faker._DEFAULT_LOCALE = "it_IT"
+
 
 def bool_from_env(key):
     var = os.getenv(key)
@@ -59,6 +63,7 @@ INSTALLED_APPS = [
     "django_linear_migrations",
     "corsheaders",
     "rest_framework",
+    "rest_framework.authtoken",
     "rest_framework_gis",
     "drf_spectacular",
     "drf_spectacular_sidecar",
@@ -187,6 +192,10 @@ AUTH_USER_MODEL = "authentication.User"
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }

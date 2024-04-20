@@ -19,3 +19,6 @@ djangorestframework-gis
 drf-spectacular[sidecar]
 wagtail
 django-cors-headers
+pytest
+pytest-django
+factory_boy

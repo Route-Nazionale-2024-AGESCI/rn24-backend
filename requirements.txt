@@ -100,8 +100,12 @@ et-xmlfile==1.1.0
     # via openpyxl
 executing==2.0.1
     # via stack-data
-faker==24.9.0
+factory-boy==3.3.0
     # via -r requirements.in
+faker==24.9.0
+    # via
+    #   -r requirements.in
+    #   factory-boy
 filelock==3.13.1
     # via virtualenv
 filetype==1.2.0
@@ -116,6 +120,8 @@ idna==3.6
     # via requests
 inflection==0.5.1
     # via drf-spectacular
+iniconfig==2.0.0
+    # via pytest
 ipdb==0.13.13
     # via -r requirements.in
 ipython==8.20.0
@@ -143,6 +149,7 @@ packaging==23.2
     #   black
     #   build
     #   gunicorn
+    #   pytest
 parso==0.8.3
     # via jedi
 pathspec==0.12.1
@@ -161,6 +168,8 @@ platformdirs==4.1.0
     # via
     #   black
     #   virtualenv
+pluggy==1.4.0
+    # via pytest
 pre-commit==3.7.0
     # via -r requirements.in
 prompt-toolkit==3.0.43
@@ -179,6 +188,12 @@ pyproject-hooks==1.0.0
     # via
     #   build
     #   pip-tools
+pytest==8.1.1
+    # via
+    #   -r requirements.in
+    #   pytest-django
+pytest-django==4.8.0
+    # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via faker
 pytz==2024.1
