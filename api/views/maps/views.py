@@ -1,6 +1,6 @@
 from rest_framework import generics
 
-from api.views.locations.serializers import LocationSerializer
+from api.views.maps.serializers import LocationSerializer
 from maps.models.location import Location
 
 

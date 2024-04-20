@@ -15,6 +15,9 @@ class CMSPage(Page, CommonAbstractModel):
         FieldPanel("body"),
     ]
 
+    def get_admin_url(self):
+        return f"/cms/pages/{self.id}/edit/"
+
     class Meta:
         verbose_name = "pagina"
         verbose_name_plural = "pagine"

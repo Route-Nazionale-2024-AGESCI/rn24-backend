@@ -18,6 +18,7 @@ djangorestframework
 djangorestframework-gis
 drf-spectacular[sidecar]
 wagtail
+wagtail-factories
 django-cors-headers
 pytest
 pytest-django

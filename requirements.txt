@@ -101,7 +101,9 @@ et-xmlfile==1.1.0
 executing==2.0.1
     # via stack-data
 factory-boy==3.3.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   wagtail-factories
 faker==24.11.0
     # via
     #   -r requirements.in
@@ -250,6 +252,10 @@ urllib3==2.1.0
 virtualenv==20.25.0
     # via pre-commit
 wagtail==6.0.2
+    # via
+    #   -r requirements.in
+    #   wagtail-factories
+wagtail-factories==4.1.0
     # via -r requirements.in
 wcwidth==0.2.13
     # via prompt-toolkit

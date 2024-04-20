@@ -6,8 +6,9 @@ from api.views.events.views import (
     EventInvitationListView,
     EventListView,
     EventRegistrationListView,
+    EventRegistrationDetailView,
 )
-from api.views.locations.views import LocationDetailView, LocationListView
+from api.views.maps.views import LocationDetailView, LocationListView
 from api.views.pages.views import PageDetailView, PageListView
 from api.views.profile.views import ProfileDetailView
 
@@ -27,6 +28,11 @@ urlpatterns = [
     path("events/<uuid:uuid>/", EventDetailView.as_view(), name="event-detail"),
     path(
         "events/registrations/", EventRegistrationListView.as_view(), name="event-registration-list"
+    ),
+    path(
+        "events/registrations/<uuid:uuid>/",
+        EventRegistrationDetailView.as_view(),
+        name="event-registration-detail",
     ),
     path("events/invitations/", EventInvitationListView.as_view(), name="event-invitation-list"),
     path("pages/", PageListView.as_view(), name="page-list"),

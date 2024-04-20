@@ -1,7 +1,9 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from common.serializers import UUIDRelatedModelSerializer
 from events.models.event import Event
+from events.services.registration import register_person_to_event
 
 
 class EventSerializer(UUIDRelatedModelSerializer):
@@ -11,6 +13,7 @@ class EventSerializer(UUIDRelatedModelSerializer):
             "uuid",
             "created_at",
             "name",
+            "page",
             "location",
             "is_registration_required",
             "registration_limit",
@@ -25,7 +28,17 @@ class EventSerializer(UUIDRelatedModelSerializer):
 
 class EventRegistrationSerializer(serializers.Serializer):
     event = serializers.UUIDField(source="uuid")
-    is_personal = serializers.BooleanField()
+    is_personal = serializers.BooleanField(read_only=True)
+
+    def validate_event(self, value):
+        event = get_object_or_404(Event, uuid=value)
+        return event
+
+    def create(self, validated_data):
+        event = validated_data["uuid"]
+        person = self.context["request"].user.person
+        register_person_to_event(person, event)
+        return event
 
 
 class EventInvitationSerializer(serializers.Serializer):

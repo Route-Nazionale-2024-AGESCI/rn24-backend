@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.db import models
+from django.utils.html import format_html
+
 
 from common.abstract import CommonAbstractModel
 
@@ -8,11 +10,20 @@ EVENT_KIND_CHOICES = (
     ("INCONTRI", "INCONTRI"),
     ("TRACCE", "TRACCE"),
     ("CONFRONTI", "CONFRONTI"),
+    ("ALTRO", "ALTRO"),
 )
 
 
 class Event(CommonAbstractModel):
     name = models.CharField(max_length=255, db_index=True, verbose_name="nome")
+    page = models.ForeignKey(
+        "cms.CMSPage",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="pagina",
+        help_text="la pagina CMS viene creata automaticamente al salvataggio dell'evento",
+    )
     location = models.ForeignKey("maps.Location", on_delete=models.CASCADE, verbose_name="luogo")
     is_registration_required = models.BooleanField(
         default=True, verbose_name="registrazione individuale abilitata?"
@@ -85,6 +96,8 @@ class Event(CommonAbstractModel):
 
     @admin.display(description="posti disponibili")
     def available_slots(self):
+        if not self.registration_limit:
+            return None
         return max(self.registration_limit - self.persons_registration_count(), 0)
 
     @admin.display(description="persone che vedono l'evento")
@@ -98,6 +111,16 @@ class Event(CommonAbstractModel):
         from events.services.selectors import get_persons_registered_to_event
 
         return get_persons_registered_to_event(self).count()
+
+    @admin.display(description="modifica la pagina CMS dell'evento")
+    def cms_page_link(self):
+        if not self.page:
+            return None
+        return format_html(
+            '<a href="{}" target="_blank">{}</a>',
+            self.page.get_admin_url(),
+            self.page.get_admin_url(),
+        )
 
     class Meta:
         verbose_name = "evento"

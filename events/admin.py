@@ -74,4 +74,9 @@ class EventAdmin(admin.ModelAdmin):
         DistrictEventRegistrationInline,
         SquadEventRegistrationInline,
     )
-    readonly_fields = ("available_slots", "persons_visibility_count", "persons_registration_count")
+    readonly_fields = (
+        "cms_page_link",
+        "available_slots",
+        "persons_visibility_count",
+        "persons_registration_count",
+    )

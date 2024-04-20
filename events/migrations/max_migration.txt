@@ -1,1 +1,1 @@
-0005_alter_event_is_registration_required
+0006_event_page

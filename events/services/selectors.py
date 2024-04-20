@@ -19,8 +19,7 @@ def get_events_registered_to_person(person: Person):
         is_personal=Value(True)
     )
     passive_events = Event.objects.filter(
-        Q(registered_persons=person)
-        | Q(registered_scout_groups=person.scout_group)
+        Q(registered_scout_groups=person.scout_group)
         | Q(registered_subdistricts=person.scout_group.subdistrict)
         | Q(registered_districts=person.scout_group.subdistrict.district)
         | Q(registered_squads__in=person.squads.all())
