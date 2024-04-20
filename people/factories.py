@@ -1,25 +1,18 @@
-from factory.django import DjangoModelFactory
 import factory
+from django.contrib.auth import get_user_model
+from factory.django import DjangoModelFactory
+
 from people.models import (
+    HAPPINESS_PATH_CHOICES,
+    ITALIAN_REGION_CHOICES,
+    District,
     Person,
     ScoutGroup,
+    Squad,
     Subdistrict,
-    District,
-    ITALIAN_REGION_CHOICES,
-    HAPPINESS_PATH_CHOICES,
 )
-from django.contrib.auth import get_user_model
 
 User = get_user_model()
-
-
-class UserFactory(DjangoModelFactory):
-    class Meta:
-        model = User
-
-    username = factory.Faker("user_name")
-    email = factory.Faker("email")
-    password = factory.Faker("password")
 
 
 class DistrictFactory(DjangoModelFactory):
@@ -49,6 +42,7 @@ class ScoutGroupFactory(DjangoModelFactory):
     def name(self):
         return self.city.upper() + " " + str(self.number)
 
+    agesci_id = factory.Faker("uuid4")
     zone = factory.Faker("administrative_unit")
     region = factory.Faker("random_element", elements=[x[0] for x in ITALIAN_REGION_CHOICES])
     subdistrict = factory.SubFactory("people.factories.SubdistrictFactory")
@@ -58,18 +52,39 @@ class ScoutGroupFactory(DjangoModelFactory):
     arrived_at = None
 
 
+class SquadFactory(DjangoModelFactory):
+    class Meta:
+        model = Squad
+
+    name = factory.Faker("word")
+    description = factory.Faker("sentence")
+
+
+class UserFactory(DjangoModelFactory):
+    class Meta:
+        model = User
+
+    username = factory.Faker("user_name")
+    email = factory.Faker("email")
+    password = factory.Faker("password")
+    first_name = factory.Faker("first_name")
+    last_name = factory.Faker("last_name")
+
+
 class PersonFactory(DjangoModelFactory):
     class Meta:
         model = Person
 
-    agesci_id = factory.Faker("pyint", min_value=100000, max_value=999999)
-    user = factory.SubFactory(UserFactory)
+    agesci_id = factory.Faker("pyint", min_value=10000000, max_value=99999999)
+    user = factory.SubFactory(
+        UserFactory,
+        username=factory.SelfAttribute("..email"),
+        email=factory.SelfAttribute("..email"),
+        first_name=factory.SelfAttribute("..first_name"),
+        last_name=factory.SelfAttribute("..last_name"),
+    )
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
     email = factory.Faker("email")
     phone = factory.Faker("phone_number")
-    codice_fiscale = factory.Faker("ssn")
-    birth_date = factory.Faker("date_of_birth")
-    address = factory.Faker("address")
-    city = factory.Faker("city")
     scout_group = factory.SubFactory(ScoutGroupFactory)

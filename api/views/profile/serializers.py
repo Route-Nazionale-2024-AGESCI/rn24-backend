@@ -64,7 +64,6 @@ class ProfileSerializer(UUIDRelatedModelSerializer):
             "last_name",
             "email",
             "phone",
-            "city",
             "scout_group",
             "squads",
         )

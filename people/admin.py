@@ -16,10 +16,6 @@ class PersonAdmin(BaseAdmin):
         "last_name",
         "email",
         "phone",
-        "codice_fiscale",
-        "birth_date",
-        "address",
-        "city",
         "scout_group__name",
     )
     list_display = ("agesci_id", "first_name", "last_name", "user", "scout_group", "squads_list")

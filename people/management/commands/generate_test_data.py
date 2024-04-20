@@ -1,93 +1,54 @@
-import random
-
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
-from faker import Faker
 
-from authentication.models.user import User
-from people.models.person import Person
-from people.models.scout_group import HAPPINESS_PATH_CHOICES, ITALIAN_REGION_CHOICES, ScoutGroup
-from people.models.squad import Squad
-from people.models.subdistrict import Subdistrict
+from people.factories import (
+    PersonFactory,
+    SquadFactory,
+    DistrictFactory,
+    SubdistrictFactory,
+    ScoutGroupFactory,
+)
 
 
 class Command(BaseCommand):
     help = "generate some test data to use for development and testing"
 
-    """
-    to cleanup:
-    User.objects.filter(is_superuser=False).delete()
-    Person.objects.all().delete()
-    ScoutGroup.objects.all().delete()
-    Squad.objects.all().delete()
-
-    """
-
-    def add_arguments(self, parser):
-        # parser.add_argument("sample", nargs="+")
-        pass
-
-    def generate_person(self, fake, scout_group):
-        return Person(
-            agesci_id=random.randint(100000, 999999),
-            first_name=fake.first_name(),
-            last_name=fake.last_name(),
-            email=fake.email(),
-            phone=fake.phone_number(),
-            codice_fiscale=fake.ssn(),
-            birth_date=fake.date_of_birth(minimum_age=20, maximum_age=100),
-            address=fake.address(),
-            city=fake.city().upper(),
-            scout_group=scout_group,
-        )
+    def generate_person(self, *args, **kwargs):
+        try:
+            person = PersonFactory(*args, **kwargs)
+            return person
+        except IntegrityError as e:
+            print(e)
+            return self.generate_person(*args, **kwargs)
 
     def handle(self, *args, **options):
-        fake = Faker("it_IT")
+
+        for i in range(1, 5):
+            district = DistrictFactory(name=str(i))
+            print(district)
+            for i in range(5):
+                subdistrict = SubdistrictFactory(district=district)
+                print(subdistrict)
+                for i in range(20):
+                    scout_group = ScoutGroupFactory(subdistrict=subdistrict)
+                    print(scout_group)
+
+                    for i in range(20):
+                        person = self.generate_person(scout_group=scout_group)
+                        print(person)
 
         squads = [
-            Squad.objects.create(name="Antincendio", description="Squadra antincendio"),
-            Squad.objects.create(name="Pulizia bagni", description="La pattuglia più importante"),
-            Squad.objects.create(name="Cucina", description="Minestron quanto è buon"),
-            Squad.objects.create(name="Controllo accessi", description="Controllano gli accessi"),
-            Squad.objects.create(name="Tangram Team", description="I volontari del tangram"),
-            Squad.objects.create(name="Staff", description="Gli organizzatori della route"),
-            Squad.objects.create(name="Ospiti", description="Forse non sono scout"),
+            SquadFactory(name="Antincendio", description="Squadra antincendio"),
+            SquadFactory(name="Pulizia bagni", description="La pattuglia più importante"),
+            SquadFactory(name="Cucina", description="Minestron quanto è buon"),
+            SquadFactory(name="Controllo accessi", description="Controllano gli accessi"),
+            SquadFactory(name="Tangram Team", description="I volontari del tangram"),
+            SquadFactory(name="Staff", description="Gli organizzatori della route"),
+            SquadFactory(name="Ospiti", description="Forse non sono scout"),
         ]
         for squad in squads:
+            print(squad)
             for i in range(10):
-                person = self.generate_person(fake, None)
-                person.save()
+                person = self.generate_person(scout_group=None)
                 person.squads.add(squad)
-
-        for i in range(100):
-
-            scout_group = ScoutGroup(
-                name=fake.city().upper() + " " + str(random.randint(1, 256)),
-                zone=fake.administrative_unit().upper(),
-                region=random.choice(ITALIAN_REGION_CHOICES)[0],
-                subdistrict=Subdistrict.objects.order_by("?").first(),
-                happiness_path=random.choice(HAPPINESS_PATH_CHOICES)[0],
-                arrived_at=None,
-            )
-            scout_group.save()
-            print(scout_group.__dict__)
-
-            for i in range(20):
-                person = self.generate_person(fake, scout_group)
-                try:
-                    person.save()
-                except IntegrityError as e:
-                    if "duplicate key value violates unique constraint" in str(e):
-                        continue
-                    raise
-                print(person.__dict__)
-
-                user = User(
-                    username=person.agesci_id,
-                    email=person.email,
-                    first_name=person.first_name,
-                    last_name=person.last_name,
-                )
-                user.save()
-                person.user = user
-                person.save()
+                print(person)

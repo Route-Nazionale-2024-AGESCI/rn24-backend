@@ -28,7 +28,7 @@ urlpatterns = [
     path(
         "events/registrations/", EventRegistrationListView.as_view(), name="event-registration-list"
     ),
-    path("events/invitations/", EventInvitationListView.as_view(), name="event-registration-list"),
+    path("events/invitations/", EventInvitationListView.as_view(), name="event-invitation-list"),
     path("pages/", PageListView.as_view(), name="page-list"),
     path("pages/<uuid:uuid>/", PageDetailView.as_view(), name="page-detail"),
 ]

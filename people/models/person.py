@@ -21,18 +21,6 @@ class Person(CommonAbstractModel):
     last_name = models.CharField(db_index=True, max_length=255, verbose_name="cognome")
     email = models.EmailField(db_index=True, unique=True, verbose_name="email")
     phone = models.CharField(max_length=255, blank=True, null=True, verbose_name="telefono")
-    codice_fiscale = models.CharField(
-        db_index=True,
-        max_length=16,
-        verbose_name="codice fiscale",
-        unique=True,
-        null=True,
-        blank=True,
-    )
-    birth_date = models.DateField(verbose_name="data di nascita", null=True, blank=True)
-    address = models.CharField(max_length=255, verbose_name="indirizzo", null=True, blank=True)
-    city = models.CharField(max_length=255, verbose_name="città", null=True, blank=True)
-
     scout_group = models.ForeignKey(
         "people.ScoutGroup",
         on_delete=models.SET_NULL,
