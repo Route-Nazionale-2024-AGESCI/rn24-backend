@@ -11,11 +11,10 @@
 	"customizations": {
 		"vscode": {
 			"settings": {
+				"python.analysis.autoImportCompletions": true,
 				"files.insertFinalNewline": true,
 				"editor.formatOnSave": true,
 				"[python]": {
-					"analysis.autoImportCompletions": true,
-					"analysis.typeCheckingMode": "basic",
 					"defaultInterpreterPath": "/usr/local/bin/python",
 					"editor.formatOnSave": true,
 					"editor.codeActionsOnSave": {
@@ -30,7 +29,6 @@
 				"ms-python.python",
 				"tonybaloney.vscode-pets",
 				"mikestead.dotenv",
-				"ms-python.vscode-pylance",
 				"charliermarsh.ruff",
 				"ms-python.black-formatter",
 				"github.vscode-github-actions"
