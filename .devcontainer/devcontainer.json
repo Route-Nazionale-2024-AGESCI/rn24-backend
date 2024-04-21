@@ -19,7 +19,8 @@
 					"defaultInterpreterPath": "/usr/local/bin/python",
 					"editor.formatOnSave": true,
 					"editor.codeActionsOnSave": {
-						"source.fixAll": "explicit"
+						"source.fixAll": "explicit",
+						"source.organizeImports": "explicit"
 					},
 					"editor.defaultFormatter": "ms-python.black-formatter"
 				}

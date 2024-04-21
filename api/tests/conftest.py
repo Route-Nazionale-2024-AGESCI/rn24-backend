@@ -1,8 +1,8 @@
 import pytest
 from rest_framework.test import APIClient
 
-from people.factories import PersonFactory
 from cms.factories import CMSPageFactory
+from people.factories import PersonFactory
 
 
 @pytest.fixture(autouse=True)
