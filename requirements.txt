@@ -213,7 +213,10 @@ referencing==0.34.0
 requests==2.31.0
     # via
     #   django-anymail
+    #   requests-mock
     #   wagtail
+requests-mock==1.12.1
+    # via -r requirements.in
 rpds-py==0.18.0
     # via
     #   jsonschema

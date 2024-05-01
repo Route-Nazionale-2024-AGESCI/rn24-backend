@@ -14,7 +14,6 @@ import os
 from pathlib import Path
 
 import dj_database_url
-
 import factory
 
 factory.Faker._DEFAULT_LOCALE = "it_IT"
@@ -215,3 +214,12 @@ WAGTAIL_SITE_NAME = "RN24 backoffice CMS"
 
 # TODO: enable this with an env variable only for test environment
 CORS_ALLOW_ALL_ORIGINS = True
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "authentication.backends.AGESCIAuthenticationBackend",
+]
+
+AGESCI_HOSTNAME = os.getenv("AGESCI_HOSTNAME")
+AGESCI_SECRET = os.getenv("AGESCI_SECRET")
+AGESCI_KEY = os.getenv("AGESCI_KEY")

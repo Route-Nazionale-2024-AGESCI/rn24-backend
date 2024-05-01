@@ -5,9 +5,10 @@ from api.views.events.views import (
     EventDetailView,
     EventInvitationListView,
     EventListView,
-    EventRegistrationListView,
     EventRegistrationDetailView,
+    EventRegistrationListView,
 )
+from api.views.login.views import LoginView
 from api.views.maps.views import LocationDetailView, LocationListView
 from api.views.pages.views import PageDetailView, PageListView
 from api.views.profile.views import ProfileDetailView
@@ -21,6 +22,7 @@ urlpatterns = [
         name="swagger-ui",
     ),
     path("schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    path("auth/login/", LoginView.as_view(), name="login"),
     path("profile/", ProfileDetailView.as_view(), name="profile-detail"),
     path("locations/", LocationListView.as_view(), name="location-list"),
     path("locations/<uuid:uuid>/", LocationDetailView.as_view(), name="location-detail"),

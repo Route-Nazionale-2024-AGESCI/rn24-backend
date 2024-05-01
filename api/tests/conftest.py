@@ -16,6 +16,11 @@ def person():
 
 
 @pytest.fixture
+def person_without_user():
+    return PersonFactory(user=None)
+
+
+@pytest.fixture
 def logged_api_client(person):
     client = APIClient()
     client.force_authenticate(user=person.user)
