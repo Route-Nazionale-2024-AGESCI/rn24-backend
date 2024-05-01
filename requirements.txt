@@ -114,8 +114,6 @@ filetype==1.2.0
     # via willow
 gunicorn==22.0.0
     # via -r requirements.in
-html5lib==1.1
-    # via wagtail
 identify==2.5.33
     # via pre-commit
 idna==3.6
@@ -226,7 +224,6 @@ sentry-sdk==2.0.1
 six==1.16.0
     # via
     #   asttokens
-    #   html5lib
     #   l18n
     #   python-dateutil
 soupsieve==2.5
@@ -254,7 +251,7 @@ urllib3==2.1.0
     #   sentry-sdk
 virtualenv==20.25.0
     # via pre-commit
-wagtail==6.0.2
+wagtail==6.1
     # via
     #   -r requirements.in
     #   wagtail-factories
@@ -262,8 +259,6 @@ wagtail-factories==4.1.0
     # via -r requirements.in
 wcwidth==0.2.13
     # via prompt-toolkit
-webencodings==0.5.1
-    # via html5lib
 wheel==0.42.0
     # via pip-tools
 whitenoise[brotli]==6.6.0
