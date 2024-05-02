@@ -18,6 +18,7 @@ class BasePageSerializer(UUIDRelatedModelSerializer):
             "created_at",
             "title",
             "slug",
+            "show_in_menus",
             "body",
         ]
 
