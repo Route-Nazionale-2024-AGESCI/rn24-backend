@@ -237,3 +237,15 @@ def test_get_events(logged_api_client, base_events_page):
             "uuid": str(events[1].uuid),
         },
     ]
+
+
+@pytest.mark.django_db
+def test_get_events_ordered_by_start_date(logged_api_client, base_events_page):
+    event_1 = EventFactory(starts_at=timezone.now() + timedelta(days=2))
+    event_2 = EventFactory(starts_at=timezone.now() + timedelta(days=1))
+    url = reverse("event-list")
+    response = logged_api_client.get(url)
+    assert response.status_code == 200, response.content
+    assert len(response.json()) == 2
+    assert response.json()[0]["uuid"] == str(event_2.uuid)
+    assert response.json()[1]["uuid"] == str(event_1.uuid)

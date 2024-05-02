@@ -13,7 +13,7 @@ from events.services.selectors import get_events_registered_to_person, get_event
 
 class EventListView(generics.ListAPIView):
     serializer_class = EventSerializer
-    queryset = Event.objects.all()
+    queryset = Event.objects.order_by("starts_at").all()
 
 
 class EventDetailView(generics.RetrieveAPIView):
