@@ -1,9 +1,11 @@
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics
 
 from api.views.events.serializers import (
     EventInvitationSerializer,
     EventRegistrationSerializer,
     EventSerializer,
+    EventWithVersionSerializer,
 )
 from events.models.event import Event
 from events.models.event_registration import PersonEventRegistration
@@ -11,9 +13,15 @@ from events.services.registration import delete_personal_registration
 from events.services.selectors import get_events_registered_to_person, get_events_visible_to_person
 
 
-class EventListView(generics.ListAPIView):
-    serializer_class = EventSerializer
-    queryset = Event.objects.order_by("starts_at").all()
+@extend_schema_view(get=extend_schema(operation_id="api_v1_events_list"))
+class EventListView(generics.RetrieveAPIView):
+    serializer_class = EventWithVersionSerializer
+
+    def get_object(self):
+        return {
+            "version": Event.get_last_updated_timestamp(),
+            "data": Event.objects.order_by("starts_at").all(),
+        }
 
 
 class EventDetailView(generics.RetrieveAPIView):

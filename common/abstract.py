@@ -26,6 +26,10 @@ class CommonAbstractModel(models.Model):
     objects_with_deleted = models.Manager()
     objects = SoftDeletableManager()
 
+    @classmethod
+    def get_last_updated_timestamp(cls):
+        return cls.objects.only("updated_at").order_by("-updated_at").first().updated_at
+
     def delete(self, using=None, soft=True, *args, **kwargs):
         if soft:
             self.deleted_at = now()

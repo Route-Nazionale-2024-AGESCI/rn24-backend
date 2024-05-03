@@ -43,3 +43,8 @@ class EventRegistrationSerializer(serializers.Serializer):
 
 class EventInvitationSerializer(serializers.Serializer):
     uuid = serializers.UUIDField()
+
+
+class EventWithVersionSerializer(serializers.Serializer):
+    version = serializers.DateTimeField()
+    data = EventSerializer(many=True)

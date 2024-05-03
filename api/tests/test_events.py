@@ -201,39 +201,42 @@ def test_get_events(logged_api_client, base_events_page):
     url = reverse("event-list")
     response = logged_api_client.get(url)
     assert response.status_code == 200, response.content
-    assert len(response.json()) == 2
-    assert response.json() == [
-        {
-            "created_at": DateTimeField().to_representation(event_1.created_at),
-            "ends_at": DateTimeField().to_representation(event_1.ends_at),
-            "is_registration_required": event_1.is_registration_required,
-            "kind": event_1.kind,
-            "location": str(event_1.location.uuid),
-            "name": event_1.name,
-            "page": str(event_1.page.uuid),
-            "registration_limit": event_1.registration_limit,
-            "registration_limit_from_same_scout_group": event_1.registration_limit_from_same_scout_group,
-            "registrations_close_at": None,
-            "registrations_open_at": None,
-            "starts_at": DateTimeField().to_representation(event_1.starts_at),
-            "uuid": str(event_1.uuid),
-        },
-        {
-            "created_at": DateTimeField().to_representation(event_2.created_at),
-            "ends_at": DateTimeField().to_representation(event_2.ends_at),
-            "is_registration_required": event_2.is_registration_required,
-            "kind": event_2.kind,
-            "location": str(event_2.location.uuid),
-            "name": event_2.name,
-            "page": str(event_2.page.uuid),
-            "registration_limit": event_2.registration_limit,
-            "registration_limit_from_same_scout_group": event_2.registration_limit_from_same_scout_group,
-            "registrations_close_at": None,
-            "registrations_open_at": None,
-            "starts_at": DateTimeField().to_representation(event_2.starts_at),
-            "uuid": str(event_2.uuid),
-        },
-    ]
+    assert len(response.json()["data"]) == 2
+    assert response.json() == {
+        "version": DateTimeField().to_representation(event_2.updated_at),
+        "data": [
+            {
+                "created_at": DateTimeField().to_representation(event_1.created_at),
+                "ends_at": DateTimeField().to_representation(event_1.ends_at),
+                "is_registration_required": event_1.is_registration_required,
+                "kind": event_1.kind,
+                "location": str(event_1.location.uuid),
+                "name": event_1.name,
+                "page": str(event_1.page.uuid),
+                "registration_limit": event_1.registration_limit,
+                "registration_limit_from_same_scout_group": event_1.registration_limit_from_same_scout_group,
+                "registrations_close_at": None,
+                "registrations_open_at": None,
+                "starts_at": DateTimeField().to_representation(event_1.starts_at),
+                "uuid": str(event_1.uuid),
+            },
+            {
+                "created_at": DateTimeField().to_representation(event_2.created_at),
+                "ends_at": DateTimeField().to_representation(event_2.ends_at),
+                "is_registration_required": event_2.is_registration_required,
+                "kind": event_2.kind,
+                "location": str(event_2.location.uuid),
+                "name": event_2.name,
+                "page": str(event_2.page.uuid),
+                "registration_limit": event_2.registration_limit,
+                "registration_limit_from_same_scout_group": event_2.registration_limit_from_same_scout_group,
+                "registrations_close_at": None,
+                "registrations_open_at": None,
+                "starts_at": DateTimeField().to_representation(event_2.starts_at),
+                "uuid": str(event_2.uuid),
+            },
+        ],
+    }
 
 
 @pytest.mark.django_db
@@ -243,6 +246,6 @@ def test_get_events_ordered_by_start_date(logged_api_client, base_events_page):
     url = reverse("event-list")
     response = logged_api_client.get(url)
     assert response.status_code == 200, response.content
-    assert len(response.json()) == 2
-    assert response.json()[0]["uuid"] == str(event_2.uuid)
-    assert response.json()[1]["uuid"] == str(event_1.uuid)
+    assert len(response.json()["data"]) == 2
+    assert response.json()["data"][0]["uuid"] == str(event_2.uuid)
+    assert response.json()["data"][1]["uuid"] == str(event_1.uuid)

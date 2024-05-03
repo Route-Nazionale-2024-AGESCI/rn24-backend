@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
 from cms.models.page import CMSPage
@@ -72,3 +73,8 @@ class PageDetailSerializer(BasePageSerializer):
         fields = BasePageSerializer.Meta.fields + [
             "children",
         ]
+
+
+class PageWithVersionSerializer(serializers.Serializer):
+    version = serializers.DateTimeField()
+    data = PageListSerializer(many=True)

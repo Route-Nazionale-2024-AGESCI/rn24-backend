@@ -11,18 +11,21 @@ def test_get_locations(logged_api_client):
     location = LocationFactory()
     response = logged_api_client.get(url)
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "coords": {
-                "coordinates": [
-                    location.coords.x,
-                    location.coords.y,
-                ],
-                "type": "Point",
+    assert response.json() == {
+        "version": DateTimeField().to_representation(location.updated_at),
+        "data": [
+            {
+                "coords": {
+                    "coordinates": [
+                        location.coords.x,
+                        location.coords.y,
+                    ],
+                    "type": "Point",
+                },
+                "created_at": DateTimeField().to_representation(location.created_at),
+                "name": location.name,
+                "polygon": None,
+                "uuid": str(location.uuid),
             },
-            "created_at": DateTimeField().to_representation(location.created_at),
-            "name": location.name,
-            "polygon": None,
-            "uuid": str(location.uuid),
-        },
-    ]
+        ],
+    }
