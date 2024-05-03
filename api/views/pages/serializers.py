@@ -23,13 +23,13 @@ class BasePageSerializer(UUIDRelatedModelSerializer):
         parent = obj.get_parent()
         if not parent or not hasattr(parent, "cmspage"):
             return ""
-        return f'<Link to="pages/{parent.cmspage.uuid}">{parent.cmspage.title}</Link>'
+        return f'<Link to="/pages/{parent.cmspage.uuid}">{parent.cmspage.title}</Link>'
 
     def get_children_link(self, obj):
         data = []
         for page in obj.get_children():
             if hasattr(page, "cmspage"):
-                data.append(f'<Link to="pages/{page.cmspage.uuid}">{page.cmspage.title}</Link>')
+                data.append(f'<Link to="/pages/{page.cmspage.uuid}">{page.cmspage.title}</Link>')
         return data
 
     class Meta:

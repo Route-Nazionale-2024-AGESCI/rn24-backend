@@ -13,4 +13,6 @@ class ReactPageLinkHandler(LinkHandler):
     @classmethod
     def expand_db_attributes(cls, attrs):
         page = cls.get_instance(attrs)
-        return f'<Link to="pages/{page.uuid}">{page.title}</Link>'
+        # it doesn't work :(
+        # return f'<Link to="/pages/{page.uuid}">{page.title}</Link>'
+        return f'<a href="/pages/{page.uuid}">'
