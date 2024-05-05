@@ -54,11 +54,8 @@ class ScoutGroup(CommonAbstractModel):
     happiness_path = models.CharField(
         max_length=255, choices=HAPPINESS_PATH_CHOICES, verbose_name="sentiero della felicità"
     )
+    is_arrived = models.BooleanField(db_index=True, verbose_name="arrivato?", default=False)
     arrived_at = models.DateTimeField(verbose_name="data di arrivo", null=True, blank=True)
-
-    @admin.display(description="arrivati?", boolean=True)
-    def is_arrived(self):
-        return self.arrived_at is not None
 
     @admin.display(description="n. persone")
     def people_count(self):

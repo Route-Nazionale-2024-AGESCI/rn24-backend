@@ -1,1 +1,1 @@
-0008_alter_district_location_alter_subdistrict_location
+0010_alter_person_is_arrived_alter_scoutgroup_is_arrived

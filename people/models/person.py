@@ -28,6 +28,8 @@ class Person(CommonAbstractModel):
         blank=True,
         verbose_name="gruppo scout",
     )
+    is_arrived = models.BooleanField(db_index=True, verbose_name="arrivato?", default=False)
+    arrived_at = models.DateTimeField(verbose_name="data di arrivo", null=True, blank=True)
 
     squads = models.ManyToManyField(
         "people.Squad", related_name="members", blank=True, verbose_name="pattuglie"

@@ -1,4 +1,8 @@
 from django.contrib import admin
+from django.db import transaction
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.safestring import mark_safe
 
 from common.admin import BaseAdmin
 from people.models.district import District
@@ -18,8 +22,16 @@ class PersonAdmin(BaseAdmin):
         "phone",
         "scout_group__name",
     )
-    list_display = ("agesci_id", "first_name", "last_name", "user", "scout_group", "squads_list")
+    list_display = (
+        "agesci_id",
+        "first_name",
+        "last_name",
+        "scout_group_link",
+        "squads_list",
+        "is_arrived",
+    )
     list_filter = (
+        "is_arrived",
         "scout_group__subdistrict__district",
         "scout_group__subdistrict",
         "scout_group__happiness_path",
@@ -27,6 +39,44 @@ class PersonAdmin(BaseAdmin):
     )
     filter_horizontal = ("squads",)
     autocomplete_fields = ("user", "scout_group")
+    readonly_fields = [
+        "is_arrived",
+        "arrived_at",
+    ]
+    actions = ["mark_as_arrived", "revert_arrival"]
+
+    @admin.display(description="Gruppo scout")
+    def scout_group_link(self, obj):
+        if not obj.scout_group:
+            return None
+        url = reverse("admin:people_scoutgroup_change", args=[obj.scout_group.id])
+        link = f'<a href="{url}">{obj.scout_group.name}</a>'
+        return mark_safe(link)
+
+    @admin.action(
+        # TODO: permissions=["publish"],
+        description="Marca come arrivati",
+    )
+    def mark_as_arrived(self, request, queryset):
+        now = timezone.now()
+        with transaction.atomic():
+            queryset.filter(is_arrived=False).update(is_arrived=True, arrived_at=now)
+            scout_group_qs = ScoutGroup.objects.filter(person__in=queryset).distinct()
+            scout_group_qs.filter(is_arrived=False).update(is_arrived=True, arrived_at=now)
+
+    @admin.action(
+        # TODO: permissions=["publish"],
+        description="Annulla arrivo",
+    )
+    def revert_arrival(self, request, queryset):
+        with transaction.atomic():
+            queryset.filter(is_arrived=True).update(is_arrived=False, arrived_at=None)
+            scout_group_qs = ScoutGroup.objects.filter(person__in=queryset).distinct()
+            for scout_group in scout_group_qs:
+                if not scout_group.person_set.filter(is_arrived=True).exists():
+                    scout_group.is_arrived = False
+                    scout_group.arrived_at = None
+                    scout_group.save()
 
 
 class PersonInline(admin.TabularInline):
@@ -36,29 +86,12 @@ class PersonInline(admin.TabularInline):
         "agesci_id",
         "first_name",
         "last_name",
-        "user",
+        "is_arrived",
     )
     extra = 0
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-
-class IsArrivedListFilter(admin.SimpleListFilter):
-    title = "arrivati?"
-    parameter_name = "is_arrived"
-
-    def lookups(self, request, model_admin):
-        return [
-            ("true", "si"),
-            ("false", "no"),
-        ]
-
-    def queryset(self, request, queryset):
-        if self.value() == "true":
-            return queryset.filter(arrived_at__isnull=False)
-        if self.value() == "false":
-            return queryset.filter(arrived_at__isnull=True)
 
 
 @admin.register(ScoutGroup)
@@ -72,11 +105,13 @@ class ScoutGroupAdmin(BaseAdmin):
         "people_count",
         "is_arrived",
     )
-    list_filter = ("region", "subdistrict", "happiness_path", IsArrivedListFilter)
+    list_filter = ("is_arrived", "region", "subdistrict", "happiness_path")
     search_fields = ("name", "zone", "region")
     inlines = [PersonInline]
     readonly_fields = [
         "district",
+        "is_arrived",
+        "arrived_at",
     ]
 
 
