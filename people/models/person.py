@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.db import models
 
 from common.abstract import CommonAbstractModel
@@ -39,9 +40,20 @@ class Person(CommonAbstractModel):
     def squads_list(self):
         return ", ".join([s.name for s in self.squads.all()])
 
+    def set_permissions_from_squads(self):
+        if not self.user:
+            return
+        groups = Group.objects.filter(squads__in=self.squads.all()).distinct()
+        self.user.groups.clear()
+        self.user.groups.add(*groups)
+        if not self.user.is_superuser:
+            self.user.is_staff = self.user.has_perm("people.is_staff")
+            self.user.save(update_fields=["is_staff"])
+
     class Meta:
         verbose_name = "persona"
         verbose_name_plural = "persone"
+        permissions = (("is_staff", "Può accedere al backoffice"),)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} [{self.scout_group}]"

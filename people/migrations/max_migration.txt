@@ -1,1 +1,1 @@
-0010_alter_person_is_arrived_alter_scoutgroup_is_arrived
+0012_alter_person_options

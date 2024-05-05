@@ -8,3 +8,5 @@ class EventsConfig(AppConfig):
 
     def ready(self):
         import events.signals  # noqa
+
+        return super().ready()

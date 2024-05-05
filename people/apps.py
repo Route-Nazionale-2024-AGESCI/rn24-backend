@@ -5,3 +5,8 @@ class PeopleConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "people"
     verbose_name = "Persone"
+
+    def ready(self) -> None:
+        import people.signals  # noqa
+
+        return super().ready()

@@ -8,3 +8,5 @@ class AuthenticationConfig(AppConfig):
 
     def ready(self):
         import authentication.signals  # noqa
+
+        return super().ready()
