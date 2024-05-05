@@ -3,7 +3,7 @@ from django.urls import reverse
 
 
 @pytest.mark.django_db
-def test_get_locations(logged_api_client, person):
+def test_get_profile(logged_api_client, person):
     url = reverse("profile-detail")
     response = logged_api_client.get(url)
     assert response.status_code == 200
@@ -14,6 +14,7 @@ def test_get_locations(logged_api_client, person):
         "last_name": person.last_name,
         "email": person.email,
         "phone": person.phone,
+        "is_staff": False,
         "scout_group": {
             "uuid": str(person.scout_group.uuid),
             "name": person.scout_group.name,

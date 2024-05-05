@@ -1,3 +1,5 @@
+from rest_framework import serializers
+
 from common.serializers import UUIDRelatedModelSerializer
 from people.models.district import District
 from people.models.person import Person
@@ -55,6 +57,7 @@ class ScoutGroupSerializer(UUIDRelatedModelSerializer):
 class ProfileSerializer(UUIDRelatedModelSerializer):
     scout_group = ScoutGroupSerializer()
     squads = SquadSerializer(many=True)
+    is_staff = serializers.BooleanField(source="user.is_staff", read_only=True)
 
     class Meta:
         model = Person
@@ -67,4 +70,5 @@ class ProfileSerializer(UUIDRelatedModelSerializer):
             "phone",
             "scout_group",
             "squads",
+            "is_staff",
         )
