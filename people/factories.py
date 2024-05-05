@@ -20,6 +20,10 @@ class DistrictFactory(DjangoModelFactory):
         model = District
 
     name = factory.Faker("city")
+    location = factory.SubFactory(
+        "maps.factories.LocationFactory",
+        name=factory.SelfAttribute("..name"),
+    )
 
 
 class SubdistrictFactory(DjangoModelFactory):
@@ -28,6 +32,10 @@ class SubdistrictFactory(DjangoModelFactory):
 
     name = factory.Faker("city")
     district = factory.SubFactory("people.factories.DistrictFactory")
+    location = factory.SubFactory(
+        "maps.factories.LocationFactory",
+        name=factory.SelfAttribute("..name"),
+    )
 
 
 class ScoutGroupFactory(DjangoModelFactory):

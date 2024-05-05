@@ -1,10 +1,6 @@
-API per versionare la cache locale
 check-in presenze individuale oltre che di gruppo
 esporre tramite API UUID della pagina termini e condizioni
 esporre tramite API UUID della pagina indicazioni di sicurezza
-collegare ogni contrada ad un luogo
-collegare ogni sottocampo ad un luogo
-restituire il luogo della mia contrada nel profilo
 API per controllo accessi agli eventi, con permessi
 API per tangram team per controllo identità
 MAPPA SVG

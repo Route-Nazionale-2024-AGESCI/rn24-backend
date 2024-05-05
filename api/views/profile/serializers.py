@@ -33,6 +33,7 @@ class SubdistrictSerializer(UUIDRelatedModelSerializer):
             "uuid",
             "name",
             "district",
+            "location",
         )
 
 

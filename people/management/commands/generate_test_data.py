@@ -2,11 +2,11 @@ from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 
 from people.factories import (
-    PersonFactory,
-    SquadFactory,
     DistrictFactory,
-    SubdistrictFactory,
+    PersonFactory,
     ScoutGroupFactory,
+    SquadFactory,
+    SubdistrictFactory,
 )
 
 
@@ -27,7 +27,10 @@ class Command(BaseCommand):
             district = DistrictFactory(name=str(i))
             print(district)
             for i in range(5):
-                subdistrict = SubdistrictFactory(district=district)
+                subdistrict = SubdistrictFactory(
+                    name=f"{district.name}-{i}",
+                    district=district,
+                )
                 print(subdistrict)
                 for i in range(20):
                     scout_group = ScoutGroupFactory(subdistrict=subdistrict)
