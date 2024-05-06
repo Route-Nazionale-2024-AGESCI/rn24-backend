@@ -1,5 +1,7 @@
 FROM node:lts AS node
 WORKDIR /
+# skip cache for git clone when HEAD changed
+ADD https://api.github.com/repos/Route-Nazionale-2024-AGESCI/rn24-app/git/refs/heads/master version.json
 RUN git clone https://github.com/Route-Nazionale-2024-AGESCI/rn24-app
 WORKDIR /rn24-app
 RUN yarn install

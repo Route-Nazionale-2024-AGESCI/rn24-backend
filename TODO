@@ -1,4 +1,5 @@
 unit tests per il sistema di permessi
+permettere il check-in solo a chi ha il permesso
 API per controllo accessi agli eventi, con permessi
 API per tangram team per controllo identità
 MAPPA SVG
