@@ -26,4 +26,7 @@ class LoginSerializer(serializers.Serializer):
 
     def to_representation(self, instance):
         request = self.context.get("request")
-        return {"token": request.user.auth_token.key}
+        return {
+            "token": request.user.auth_token.key,
+            "csrftoken": request.META["CSRF_COOKIE"],
+        }
