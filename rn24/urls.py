@@ -38,6 +38,8 @@ urlpatterns = (
     ]
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     + [
+        # serving React with gunicorn
+        path("", serve, {"document_root": settings.WHITENOISE_ROOT, "path": "index.html"}),
         re_path(r"^.*/$", serve, {"document_root": settings.WHITENOISE_ROOT, "path": "index.html"}),
     ]
 )
