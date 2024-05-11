@@ -54,7 +54,7 @@ class PersonAdmin(BaseAdmin):
         return mark_safe(link)
 
     @admin.action(
-        # TODO: permissions=["publish"],
+        permissions=["change"],
         description="Marca come arrivati",
     )
     def mark_as_arrived(self, request, queryset):
@@ -65,7 +65,7 @@ class PersonAdmin(BaseAdmin):
             scout_group_qs.filter(is_arrived=False).update(is_arrived=True, arrived_at=now)
 
     @admin.action(
-        # TODO: permissions=["publish"],
+        permissions=["change"],
         description="Annulla arrivo",
     )
     def revert_arrival(self, request, queryset):
