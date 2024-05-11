@@ -47,7 +47,8 @@ class Person(CommonAbstractModel):
         self.user.groups.clear()
         self.user.groups.add(*groups)
         if not self.user.is_superuser:
-            self.user.is_staff = self.user.has_perm("people.is_staff")
+            has_staff_permission = User.objects.get(pk=self.user.pk).has_perm("people.is_staff")
+            self.user.is_staff = has_staff_permission
             self.user.save(update_fields=["is_staff"])
 
     class Meta:
