@@ -12,6 +12,7 @@ from events.models import (
     PersonEventVisibility,
     ScoutGroupEventRegistration,
 )
+from events.models.event import Event
 from events.services.registration import RegistrationErrors
 from people.factories import PersonFactory
 
@@ -55,6 +56,21 @@ class TestRegisterToEvent:
         assert response.status_code == 201, response.content
         assert response.json() == {"event": str(event.uuid)}
         assert PersonEventRegistration.objects.filter(person=person, event=event).exists()
+
+    @pytest.mark.django_db
+    def test_register_to_event_dont_change_version(
+        self, logged_api_client, person, base_events_page, url
+    ):
+        event = EventFactory(
+            is_registration_required=True,
+            starts_at=timezone.now() + timedelta(days=1),
+        )
+        event_version_before = Event.get_last_updated_timestamp()
+        PersonEventVisibility.objects.create(person=person, event=event)
+        response = logged_api_client.post(url, {"event": str(event.uuid)})
+        assert response.status_code == 201, response.content
+        event_version_after = Event.get_last_updated_timestamp()
+        assert event_version_before == event_version_after
 
     @pytest.mark.django_db
     def test_register_to_event__not_exists(self, logged_api_client, person, base_events_page, url):

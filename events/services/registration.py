@@ -46,7 +46,6 @@ def register_person_to_event(person: Person, event: Event):
         raise ValidationError(RegistrationErrors.REGISTRATION_TIME_EXPIRED)
 
     event.registered_persons.add(person)
-    event.save()
 
 
 @transaction.atomic
@@ -54,4 +53,3 @@ def delete_personal_registration(person: Person, event: Event):
     event = Event.objects.select_for_update("registered_persons").get(pk=event.pk)
     if event.registered_persons.filter(pk=person.pk).exists():
         event.registered_persons.remove(person)
-        event.save()
