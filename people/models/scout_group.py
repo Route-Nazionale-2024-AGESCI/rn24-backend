@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.db import models
 
 from common.abstract import CommonAbstractModel
-from people.models.person import Person
 
 HAPPINESS_PATH_CHOICES = (
     ("FELICI_DI_ACCOGLIERE", "Felici di accogliere"),
@@ -49,7 +48,11 @@ class ScoutGroup(CommonAbstractModel):
         max_length=255, choices=ITALIAN_REGION_CHOICES, verbose_name="regione"
     )
     subdistrict = models.ForeignKey(
-        "people.Subdistrict", on_delete=models.CASCADE, verbose_name="contrada"
+        "people.Subdistrict",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="contrada",
     )
     happiness_path = models.CharField(
         max_length=255, choices=HAPPINESS_PATH_CHOICES, verbose_name="sentiero della felicità"
@@ -59,7 +62,7 @@ class ScoutGroup(CommonAbstractModel):
 
     @admin.display(description="n. persone")
     def people_count(self):
-        return Person.objects.filter(scout_group=self).count()
+        return self.person_set.all().count()
 
     @admin.display(description="sottocampo")
     def district(self):
