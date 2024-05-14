@@ -1,11 +1,14 @@
 import csv
 from datetime import datetime
 
+from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from tqdm import tqdm
 
 from people.models.person import Person
 from people.models.scout_group import ScoutGroup
+
+User = get_user_model()
 
 
 class Command(BaseCommand):
@@ -27,9 +30,18 @@ class Command(BaseCommand):
                             region=row["Regione"].upper(),
                         ),
                     )
+                    user, _ = User.objects.get_or_create(
+                        username=row["Codice"],
+                        defaults=dict(
+                            email=row["EmailContatto"],
+                            first_name=row["Nome"],
+                            last_name=row["Cognome"],
+                        ),
+                    )
                     person, _ = Person.objects.get_or_create(
                         agesci_id=row["Codice"],
                         defaults=dict(
+                            user=user,
                             first_name=row["Nome"],
                             last_name=row["Cognome"],
                             birth_date=datetime.strptime(row["DataNascita"], "%d/%m/%Y"),

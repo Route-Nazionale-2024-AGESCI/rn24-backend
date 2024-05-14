@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 
+from authentication.models.user import User
 from cms.models.page import CMSPage
 from maps.models.location import Location
 from people.models.district import District
@@ -23,3 +24,4 @@ class Command(BaseCommand):
         print(Person.objects.all().delete())
         print(CMSPage.objects.all().delete())
         print(Location.objects.all().delete())
+        print(User.objects.filter(is_superuser=False, is_staff=False).delete())
