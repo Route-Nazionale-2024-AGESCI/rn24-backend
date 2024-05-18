@@ -1,1 +1,1 @@
-0007_alter_event_kind_alter_event_page
+0008_alter_event_kind

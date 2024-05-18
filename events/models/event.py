@@ -16,6 +16,15 @@ EVENT_KIND_CHOICES = (
 
 
 class Event(CommonAbstractModel):
+    """
+    ogni COCA partecipa a 4 eventi di tipo di verso in 4 mezze giornate
+    SGUARDI: eventi visibili a tutta la COCA, ogni capo si iscrive individualmente ad un evento
+    CONFRONTI: eventi visibili a tutta la COCA, ogni capo si iscrive individualmente ad un evento
+    TRACCE: la COCA viene iscritta a forza ad un evento specifico
+    INCONTRI (alfieri): evento visibile a tutta la COCA, ma solo 2 alfieri per ogni gruppo devono iscriversi
+    INCONTRI: il resto della COCA ha altri eventi visibili a tutta la COCA, a qualcuno ci si iscrive personalmente
+    """
+
     name = models.CharField(max_length=255, db_index=True, verbose_name="nome")
     page = models.ForeignKey(
         "cms.CMSPage",
