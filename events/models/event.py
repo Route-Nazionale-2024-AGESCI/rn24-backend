@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
 
-
 from common.abstract import CommonAbstractModel
 
 EVENT_KIND_CHOICES = (
@@ -10,6 +9,8 @@ EVENT_KIND_CHOICES = (
     ("INCONTRI", "INCONTRI"),
     ("TRACCE", "TRACCE"),
     ("CONFRONTI", "CONFRONTI"),
+    ("PASTI", "PASTI"),
+    ("DOCCIA", "DOCCIA"),
     ("ALTRO", "ALTRO"),
 )
 
