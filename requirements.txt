@@ -219,7 +219,7 @@ rpds-py==0.18.0
     # via
     #   jsonschema
     #   referencing
-sentry-sdk==2.2.0
+sentry-sdk==2.2.1
     # via -r requirements.in
 six==1.16.0
     # via
