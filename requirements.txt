@@ -20,8 +20,6 @@ beautifulsoup4==4.12.3
     # via wagtail
 black==24.4.2
     # via -r requirements.in
-brotli==1.1.0
-    # via whitenoise
 build==1.0.3
     # via pip-tools
 certifi==2023.11.17
@@ -263,8 +261,6 @@ wcwidth==0.2.13
     # via prompt-toolkit
 wheel==0.42.0
     # via pip-tools
-whitenoise[brotli]==6.6.0
-    # via -r requirements.in
 willow[heif]==1.8.0
     # via
     #   wagtail

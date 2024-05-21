@@ -8,17 +8,22 @@ services:
       - rn24-db:/var/lib/postgresql/data
     env_file: .env
     restart: unless-stopped
-  web:
+  backend:
     build:
       context: .
-    image: rn24/web
+    image: rn24/backend
     command: gunicorn -c gunicorn.conf.py
-    ports:
-      - "127.0.0.1:8000:8000"
     volumes:
       - ./:/app
-      - /app/react/
     depends_on:
       - db
     env_file: .env
     restart: unless-stopped
+  frontend:
+    build: https://github.com/Route-Nazionale-2024-AGESCI/rn24-app.git
+    image: rn24/frontend
+    volumes_from:
+      - backend:rw
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:80"
