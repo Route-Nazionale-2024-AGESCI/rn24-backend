@@ -16,5 +16,7 @@ COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . /app/
 WORKDIR /app/
+# to fix ImproperlyConfigured: The SECRET_KEY setting must not be empty. during collectstatic
+ENV DJANGO_SECRET_KEY foo
 RUN ./manage.py collectstatic --noinput
 CMD ["/bin/bash"]
