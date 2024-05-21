@@ -11,7 +11,7 @@ services:
   backend:
     build:
       context: .
-    image: rn24/backend
+    image: ghcr.io/route-nazionale-2024-agesci/rn24-backend:master
     command: gunicorn -c gunicorn.conf.py
     volumes:
       - ./:/app
@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
   frontend:
     build: https://github.com/Route-Nazionale-2024-AGESCI/rn24-app.git
-    image: rn24/frontend
+    image: ghcr.io/route-nazionale-2024-agesci/rn24-app:master
     volumes_from:
       - backend:rw
     restart: unless-stopped
