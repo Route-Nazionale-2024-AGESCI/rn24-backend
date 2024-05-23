@@ -59,6 +59,7 @@ class SquadEventRegistrationInline(admin.TabularInline):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
+    date_hierarchy = "starts_at"
     list_display = ("name", "location", "starts_at", "ends_at", "kind", "is_registration_required")
     list_filter = ("kind", "is_registration_required")
     search_fields = ("name",)

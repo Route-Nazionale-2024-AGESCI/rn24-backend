@@ -1,7 +1,9 @@
 from django.contrib import admin
+from django.contrib.admin.models import DELETION, LogEntry
 from django.db import transaction
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
 from common.admin import BaseAdmin
@@ -174,3 +176,47 @@ class SquadAdmin(BaseAdmin):
     readonly_fields = ("people_count",)
     filter_horizontal = ("groups",)
     inlines = [SquadPersonInline]
+
+
+@admin.register(LogEntry)
+class LogEntryAdmin(admin.ModelAdmin):
+    date_hierarchy = "action_time"
+
+    list_filter = ["action_flag", "content_type"]
+
+    search_fields = ["change_message", "object_repr", "user__username"]
+
+    list_display = [
+        "action_time",
+        "user",
+        "content_type",
+        "object_link",
+        "action_flag",
+    ]
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    @admin.display(
+        description="object",
+        ordering="object_repr",
+    )
+    def object_link(self, obj):
+        if obj.action_flag == DELETION:
+            link = escape(obj.object_repr)
+        else:
+            ct = obj.content_type
+            link = '<a href="{}">{}</a>'.format(
+                reverse(f"admin:{ct.app_label}_{ct.model}_change", args=[obj.object_id]),
+                escape(obj.object_repr),
+            )
+        return mark_safe(link)
