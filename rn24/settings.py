@@ -47,7 +47,7 @@ ALLOWED_HOSTS = [
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-CSRF_TRUSTED_ORIGINS = ["https://" + os.getenv("ALLOWED_HOST")]
+CSRF_TRUSTED_ORIGINS = ["https://" + os.getenv("ALLOWED_HOST", "")]
 
 # Application definition
 
