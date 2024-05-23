@@ -42,3 +42,35 @@ class AGESCILoginClient:
         except Exception:
             # TODO: log error
             return (False, "Invalid credentials")
+
+
+class AGESCIResetPasswordClient:
+    """
+    curl
+    '/service/api/account/PasswordRecovery'
+    -H 'Accept: */*'
+    -H 'Content-Type: application/json'
+    --data-raw '{"cSocio":"XXX","email":"XXX"}'
+
+    HTTP/1.1 200 OK
+    "Ti è stata inviata una mail con un link per reimpostare la password"
+
+    HTTP/1.1 404 Not Found
+    "Errore! Utente non trovato"
+    """
+
+    AGESCI_HOSTNAME = settings.AGESCI_HOSTNAME
+    PASSWORD_RESET_URL = f"https://{AGESCI_HOSTNAME}/service/api/account/PasswordRecovery"
+
+    def send_reset_password_email(self, agesci_id: str, email: str):
+        try:
+            response = requests.post(
+                url=self.PASSWORD_RESET_URL,
+                json={"cSocio": agesci_id, "email": email},
+            )
+            if response.status_code == 200:
+                return (True, response.content)
+            return (False, response.content)
+        except Exception:
+            # TODO: log error
+            return (False, "Errore")
