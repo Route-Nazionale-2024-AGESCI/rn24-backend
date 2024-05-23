@@ -11,6 +11,7 @@ EVENT_KIND_CHOICES = (
     ("CONFRONTI", "CONFRONTI"),
     ("PASTI", "PASTI"),
     ("DOCCIA", "DOCCIA"),
+    ("LOGISTICO", "LOGISTICO"),
     ("ALTRO", "ALTRO"),
 )
 
