@@ -8,7 +8,7 @@ from api.views.events.views import (
     EventRegistrationDetailView,
     EventRegistrationListView,
 )
-from api.views.login.views import LoginView, PasswordResetView
+from api.views.login.views import LoginView, LogoutView, PasswordResetView
 from api.views.maps.views import LocationDetailView, LocationListView
 from api.views.pages.views import PageDetailView, PageListView
 from api.views.profile.views import ProfileDetailView
@@ -24,6 +24,7 @@ urlpatterns = [
     ),
     path("schema/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     path("auth/login/", LoginView.as_view(), name="login"),
+    path("auth/logout/", LogoutView.as_view(), name="logout"),
     path("auth/password-reset/", PasswordResetView.as_view(), name="password-reset"),
     path("profile/", ProfileDetailView.as_view(), name="profile-detail"),
     path("versions/", VersionListView.as_view(), name="version-list"),
