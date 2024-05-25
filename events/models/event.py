@@ -16,6 +16,12 @@ EVENT_KIND_CHOICES = (
 )
 
 
+class AnnotatedEventsManager(models.Manager):
+
+    def with_registered_count(self):
+        return self.annotate(persons_registration_count=models.Count("registered_persons"))
+
+
 class Event(CommonAbstractModel):
     """
     ogni COCA partecipa a 4 eventi di tipo di verso in 4 mezze giornate
@@ -37,23 +43,28 @@ class Event(CommonAbstractModel):
     )
     location = models.ForeignKey("maps.Location", on_delete=models.CASCADE, verbose_name="luogo")
     is_registration_required = models.BooleanField(
-        default=True, verbose_name="registrazione individuale abilitata?"
+        db_index=True, default=True, verbose_name="registrazione individuale abilitata?"
     )
     registration_limit = models.PositiveIntegerField(
-        null=True, blank=True, verbose_name="limite di iscrizioni"
+        db_index=True, null=True, blank=True, verbose_name="limite di iscrizioni"
     )
     registration_limit_from_same_scout_group = models.PositiveIntegerField(
-        null=True, blank=True, verbose_name="limite di iscrizioni dallo stesso groupo scout"
+        db_index=True,
+        null=True,
+        blank=True,
+        verbose_name="limite di iscrizioni dallo stesso groupo scout",
     )
-    starts_at = models.DateTimeField(verbose_name="data inizio")
-    ends_at = models.DateTimeField(verbose_name="data fine")
+    starts_at = models.DateTimeField(db_index=True, verbose_name="data inizio")
+    ends_at = models.DateTimeField(db_index=True, verbose_name="data fine")
     registrations_open_at = models.DateTimeField(
-        null=True, blank=True, verbose_name="data apertura iscrizioni"
+        db_index=True, null=True, blank=True, verbose_name="data apertura iscrizioni"
     )
     registrations_close_at = models.DateTimeField(
-        null=True, blank=True, verbose_name="data chiusura iscrizioni"
+        db_index=True, null=True, blank=True, verbose_name="data chiusura iscrizioni"
     )
-    kind = models.CharField(max_length=255, choices=EVENT_KIND_CHOICES, verbose_name="modulo")
+    kind = models.CharField(
+        db_index=True, max_length=255, choices=EVENT_KIND_CHOICES, verbose_name="modulo"
+    )
 
     visibility_to_persons = models.ManyToManyField(
         "people.Person", through="events.PersonEventVisibility", related_name="visible_events"
@@ -104,6 +115,8 @@ class Event(CommonAbstractModel):
         through="events.SquadEventRegistration",
         related_name="registered_events",
     )
+
+    objects_with_annotations = AnnotatedEventsManager()
 
     @admin.display(description="posti disponibili")
     def available_slots(self):

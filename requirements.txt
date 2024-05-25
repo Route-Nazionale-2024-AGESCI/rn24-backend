@@ -16,6 +16,8 @@ attrs==23.2.0
     # via
     #   jsonschema
     #   referencing
+autopep8==2.1.1
+    # via django-silk
 beautifulsoup4==4.12.3
     # via wagtail
 black==24.4.2
@@ -55,6 +57,7 @@ django==5.0.6
     #   django-linear-migrations
     #   django-modelcluster
     #   django-permissionedforms
+    #   django-silk
     #   django-taggit
     #   django-treebeard
     #   djangorestframework
@@ -76,6 +79,8 @@ django-modelcluster==6.3
     # via wagtail
 django-permissionedforms==0.1
     # via wagtail
+django-silk==5.1.0
+    # via -r requirements.in
 django-taggit==5.0.1
     # via wagtail
 django-treebeard==4.7.1
@@ -110,6 +115,8 @@ filelock==3.13.1
     # via virtualenv
 filetype==1.2.0
     # via willow
+gprof2dot==2022.7.29
+    # via django-silk
 gunicorn==22.0.0
     # via -r requirements.in
 identify==2.5.33
@@ -180,6 +187,8 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.2
     # via stack-data
+pycodestyle==2.11.1
+    # via autopep8
 pygments==2.17.2
     # via ipython
 pyproject-hooks==1.0.0
@@ -227,7 +236,9 @@ six==1.16.0
 soupsieve==2.5
     # via beautifulsoup4
 sqlparse==0.4.4
-    # via django
+    # via
+    #   django
+    #   django-silk
 stack-data==0.6.3
     # via ipython
 telepath==0.3.1

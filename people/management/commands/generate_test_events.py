@@ -163,6 +163,16 @@ class Command(BaseCommand):
             )
             event.registered_scout_groups.add(scout_group)
 
+        for district in District.objects.all():
+            event = EventFactory(
+                name="È ora di partire per il concerto",
+                is_registration_required=False,
+                starts_at="2024-08-24 21:00",
+                ends_at="2024-08-24 21:30",
+                kind="LOGISTICO",
+            )
+            event.registered_districts.add(district)
+
         print("SABATO sera: CONCERTO per TUTTI")
         mega_concerto = EventFactory(
             name="MEGA CONCERTO per TUTTI",

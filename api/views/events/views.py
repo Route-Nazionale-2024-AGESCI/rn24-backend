@@ -20,7 +20,7 @@ class EventListView(generics.RetrieveAPIView):
     def get_object(self):
         return {
             "version": Event.get_last_updated_timestamp(),
-            "data": Event.objects.order_by("starts_at").all(),
+            "data": Event.objects.select_related("location", "page").order_by("starts_at").all(),
         }
 
 

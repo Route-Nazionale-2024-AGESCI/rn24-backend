@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_linear_migrations",
     "corsheaders",
+    "silk",
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_gis",
@@ -99,6 +100,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
+
+if DEBUG:
+    MIDDLEWARE.append("silk.middleware.SilkyMiddleware")
 
 ROOT_URLCONF = "rn24.urls"
 
@@ -209,3 +213,8 @@ AUTHENTICATION_BACKENDS = [
 AGESCI_HOSTNAME = os.getenv("AGESCI_HOSTNAME")
 AGESCI_SECRET = os.getenv("AGESCI_SECRET")
 AGESCI_KEY = os.getenv("AGESCI_KEY")
+
+SILKY_AUTHENTICATION = True
+SILKY_AUTHORISATION = True
+SILKY_META = True
+SILKY_PYTHON_PROFILER = DEBUG

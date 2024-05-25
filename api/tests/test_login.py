@@ -10,6 +10,7 @@ from events.factories import EventFactory
 from events.models.event_visibility import PersonEventVisibility
 
 
+@pytest.mark.django_db
 def test_authentication_is_required(client):
     response = client.get(reverse("profile-detail"))
     assert response.status_code == 403, response.content
