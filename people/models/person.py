@@ -8,6 +8,22 @@ from people.models.scout_group import ITALIAN_REGION_CHOICES
 
 User = get_user_model()
 
+FOOD_ALLERGIES_CHOICES = (
+    ("Nessuna", "Nessuna"),
+    (
+        "Monodieta (selezionare nel caso di singola allergia/intolleranza)",
+        "Monodieta (selezionare nel caso di singola allergia/intolleranza)",
+    ),
+    (
+        "Multidieta (selezionare nel caso di più allergie/intolleranze)",
+        "Multidieta (selezionare nel caso di più allergie/intolleranze)",
+    ),
+    (
+        "Dieta da shock (selezionare nel caso di una o più allergie che possano causare shock anafilattico)",
+        "Dieta da shock (selezionare nel caso di una o più allergie che possano causare shock anafilattico)",
+    ),
+)
+
 
 class Person(CommonAbstractModel):
 
@@ -60,6 +76,80 @@ class Person(CommonAbstractModel):
         blank=True,
         null=True,
         choices=ITALIAN_REGION_CHOICES,
+    )
+
+    # accessibility
+    accessibility_has_wheelchair = models.BooleanField(
+        default=False, verbose_name="sedia a rotelle?"
+    )
+    accessibility_has_caretaker_not_registered = models.BooleanField(
+        default=False, verbose_name="viaggia con accompagnatore non iscritto?"
+    )
+
+    # sleeping
+    sleeping_is_sleeping_in_tent = models.BooleanField(
+        default=False, verbose_name="dorme in tenda personale?"
+    )
+    sleeping_requests = models.TextField(
+        null=True, blank=True, verbose_name="richieste per il pernotto"
+    )
+    sleeping_place = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="Per motivi di disabilità/patologie ho bisogno di dormire:",
+    )
+    sleeping_requests_2 = models.TextField(
+        null=True, blank=True, verbose_name="richieste per il pernotto (2)"
+    )
+
+    # food
+    food_diet_needed = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        choices=FOOD_ALLERGIES_CHOICES,
+        verbose_name="Allergie/intolleranze ad alimenti da segnalare.",
+    )
+    food_allergies = models.TextField(
+        null=True, blank=True, verbose_name="Selezionare una o più allergie/intolleranze elencate:"
+    )  # merged with "ALTRO"
+    food_is_vegan = models.BooleanField(default=False, verbose_name="Segui una dieta vegana?")
+
+    # transportation
+    transportation_has_problems_moving_on_foot = models.BooleanField(
+        default=False,
+        verbose_name="Hai disabilità/patologie/età che non ti permettono di sostenere gli spostamenti a piedi previsti?",
+    )
+    transportation_need_transport = models.BooleanField(
+        default=False,
+        verbose_name="Necessiti di un accompagnatore fornito dall'organizzazione durante l'evento?",
+    )
+
+    # health
+    health_has_allergies = models.BooleanField(
+        default=False, verbose_name="Hai allergie accertate?"
+    )
+    health_allergies = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="allergie",
+    )
+    health_has_movement_disorders = models.BooleanField(
+        default=False, verbose_name="Sei affetto da disturbi motori?"
+    )
+    health_movement_disorders = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="disturbi motori",
+    )
+    health_has_patologies = models.BooleanField(
+        default=False,
+        verbose_name="Sei affetto da patologie cardiovascolari/respiratorie/neurologiche?",
+    )
+    health_patologies = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="patologie accertate",
     )
 
     @admin.display(description="pattuglie")
