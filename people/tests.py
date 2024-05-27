@@ -1,8 +1,10 @@
+from unittest.mock import patch
+
 import pytest
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 
-from people.factories import PersonFactory, SquadFactory
+from people.factories import PersonFactory, ScoutGroupFactory, SquadFactory
 
 User = get_user_model()
 
@@ -45,3 +47,56 @@ def test_person_added_to_squad_gains_and_loses_permissions(person, squad_with_ba
     person.squads.clear()
     assert not User.objects.get(pk=person.user_id).has_perm("people.is_staff")
     assert not User.objects.get(pk=person.user_id).is_staff
+
+
+class TestQR:
+
+    @pytest.fixture
+    def mario(self):
+        scout_group = ScoutGroupFactory(name="ANCONA 2")
+        person = PersonFactory(
+            agesci_id="1234",
+            first_name="Mario",
+            last_name="Rossi",
+            email="mario@example.com",
+            phone="1234567890",
+            scout_group=scout_group,
+        )
+        squad_1 = SquadFactory(name="pompieri")
+        person.squads.add(squad_1)
+        squad_2 = SquadFactory(name="sicurezza")
+        person.squads.add(squad_2)
+        return person
+
+    @pytest.mark.django_db
+    def test_person_squad_list_to_string(self, mario):
+        assert mario.squad_list_string() == "pompieri, sicurezza"
+
+    @pytest.mark.django_db
+    def test_person_qr_string(self, mario):
+        assert (
+            mario.qr_string()
+            == "1234#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#pompieri, sicurezza"
+        )
+
+    @pytest.mark.django_db
+    def test_person_qr_string_without_scout_group(self, mario):
+        mario.scout_group = None
+        mario.save()
+        assert (
+            mario.qr_string()
+            == "1234#Mario#Rossi#mario@example.com#1234567890##pompieri, sicurezza"
+        )
+
+    @pytest.mark.django_db
+    def test_person_qr_string_without_squads(self, mario):
+        mario.squads.clear()
+        assert mario.qr_string() == "1234#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#"
+
+    @pytest.mark.django_db
+    @patch("people.models.person.sign_string", return_value="FOOBAR")
+    def test_person_qr_string_with_signature(self, mock, mario):
+        assert (
+            mario.qr_string_with_signature()
+            == "1234#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#pompieri, sicurezza#FOOBAR"
+        )

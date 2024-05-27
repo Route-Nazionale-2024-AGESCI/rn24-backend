@@ -55,6 +55,8 @@ coverage.xml
 *.mo
 *.pot
 
+*.pem
+
 # Django stuff:
 staticfiles/
 

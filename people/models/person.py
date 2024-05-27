@@ -1,9 +1,16 @@
+import base64
+import io
+
+import qrcode
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db import models
+from django.urls import reverse
+from django.utils.html import format_html
 
 from common.abstract import CommonAbstractModel
+from common.crypto import sign_string
 from people.models.scout_group import ITALIAN_REGION_CHOICES
 
 User = get_user_model()
@@ -76,6 +83,63 @@ class Person(CommonAbstractModel):
             has_staff_permission = User.objects.get(pk=self.user.pk).has_perm("people.is_staff")
             self.user.is_staff = has_staff_permission
             self.user.save(update_fields=["is_staff"])
+
+    def squad_list_string(self):
+        return ", ".join([s.name for s in self.squads.all()])
+
+    def qr_string(self):
+        data = [
+            self.agesci_id,
+            self.first_name,
+            self.last_name,
+            self.email,
+            self.phone,
+            self.scout_group.name if self.scout_group else "",
+            self.squad_list_string(),
+        ]
+        return "#".join(data)
+
+    def qr_string_with_signature(self):
+        data = self.qr_string()
+        return f"{data}#{sign_string(data)}"
+
+    def qr_ascii(self):
+        qr = qrcode.QRCode()
+        qr.add_data(self.qr_string_with_signature())
+        f = io.StringIO()
+        qr.print_ascii(out=f)
+        f.seek(0)
+        return f.read()
+
+    def qr_png(self):
+        qr = qrcode.QRCode()
+        qr.add_data(self.qr_string_with_signature())
+        qr.make()
+        img = qr.make_image()
+        f = io.BytesIO()
+        img.save(f, format="PNG")
+        f.seek(0)
+        return f.read()
+
+    def qr_png_base64(self):
+        png = self.qr_png()
+        base64_png = base64.b64encode(png)
+        return format_html('<img src="data:image/png;base64,{}">', base64_png.decode("utf-8"))
+
+    def qr_svg(self):
+        qr = qrcode.QRCode()
+        qr.add_data(self.qr_string_with_signature())
+        qr.make(image_factory=qrcode.image.svg.SvgImage)
+        img = qr.make_image(fill_color="black", back_color="white")
+        f = io.StringIO()
+        img.save(f, format="SVG")
+        f.seek(0)
+        return f.read()
+
+    @admin.display(description="badge")
+    def badge_url(self):
+        url = reverse("badge-detail", kwargs={"uuid": self.uuid})
+        return format_html('<a href="{}" target="_blank">Genera badge</a>', url)
 
     class Meta:
         verbose_name = "persona"

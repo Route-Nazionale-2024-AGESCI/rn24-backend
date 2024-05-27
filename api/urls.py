@@ -1,6 +1,7 @@
 from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
+from api.views.badges.views import BadgeDetailView
 from api.views.events.views import (
     EventDetailView,
     EventInvitationListView,
@@ -26,6 +27,7 @@ urlpatterns = [
     path("auth/login/", LoginView.as_view(), name="login"),
     path("auth/logout/", LogoutView.as_view(), name="logout"),
     path("auth/password-reset/", PasswordResetView.as_view(), name="password-reset"),
+    path("badges/<uuid:uuid>/", BadgeDetailView.as_view(), name="badge-detail"),
     path("profile/", ProfileDetailView.as_view(), name="profile-detail"),
     path("versions/", VersionListView.as_view(), name="version-list"),
     path("locations/", LocationListView.as_view(), name="location-list"),

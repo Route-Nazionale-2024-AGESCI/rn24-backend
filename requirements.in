@@ -25,3 +25,5 @@ factory_boy
 requests-mock
 tqdm
 django-silk
+pycryptodome
+qrcode

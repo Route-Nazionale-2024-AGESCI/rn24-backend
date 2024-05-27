@@ -44,6 +44,7 @@ class PersonAdmin(BaseAdmin):
     readonly_fields = [
         "is_arrived",
         "arrived_at",
+        "badge_url",
     ]
     actions = ["mark_as_arrived", "revert_arrival"]
 
