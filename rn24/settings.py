@@ -64,7 +64,6 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_linear_migrations",
     "corsheaders",
-    "silk",
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_gis",
@@ -105,6 +104,7 @@ MIDDLEWARE = [
 
 if SILK_ENABLED:
     MIDDLEWARE.append("silk.middleware.SilkyMiddleware")
+    INSTALLED_APPS.append("silk")
 
 SILKY_AUTHENTICATION = SILK_ENABLED
 SILKY_AUTHORISATION = SILK_ENABLED
@@ -223,4 +223,4 @@ AGESCI_KEY = os.getenv("AGESCI_KEY")
 
 PRIVATE_KEY_PATH = "privkey.pem"
 PUBLIC_KEY_PATH = "pubkey.pem"
-PUBLIC_KEY = open(PUBLIC_KEY_PATH).read()
+PUBLIC_KEY = open(PUBLIC_KEY_PATH).read() if os.path.exists(PUBLIC_KEY_PATH) else None
