@@ -1,12 +1,15 @@
 from django.contrib import admin
 from django.contrib.admin.models import DELETION, LogEntry
 from django.db import transaction
+from django.http import HttpResponse
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
 from common.admin import BaseAdmin
+from common.pdf import html_to_pdf
 from people.models.district import District
 from people.models.person import Person
 from people.models.scout_group import ScoutGroup
@@ -46,7 +49,7 @@ class PersonAdmin(BaseAdmin):
         "arrived_at",
         "badge_url",
     ]
-    actions = ["mark_as_arrived", "revert_arrival"]
+    actions = ["mark_as_arrived", "revert_arrival", "print_badge"]
 
     @admin.display(description="Gruppo scout")
     def scout_group_link(self, obj):
@@ -80,6 +83,16 @@ class PersonAdmin(BaseAdmin):
                     scout_group.is_arrived = False
                     scout_group.arrived_at = None
                     scout_group.save()
+
+    @admin.action(
+        description="Stampa badge",
+    )
+    def print_badge(self, request, queryset):
+        html = render_to_string("badge_detail.html", {"person_list": queryset})
+        pdf = html_to_pdf(html)
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response["Content-Disposition"] = 'attachment; filename="badge.pdf"'
+        return response
 
 
 class PersonInline(admin.TabularInline):
