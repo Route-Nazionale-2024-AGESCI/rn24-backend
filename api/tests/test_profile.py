@@ -1,4 +1,5 @@
 import pytest
+from django.conf import settings
 from django.urls import reverse
 
 
@@ -32,4 +33,5 @@ def test_get_profile(logged_api_client, person):
             "happiness_path": person.scout_group.happiness_path,
         },
         "squads": [],
+        "public_key": settings.PUBLIC_KEY,
     }

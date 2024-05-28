@@ -90,7 +90,7 @@ class Person(CommonAbstractModel):
     def qr_string(self):
         data = [
             "B",  # B=badge, P=page
-            self.agesci_id,
+            str(self.uuid),
             self.first_name,
             self.last_name,
             self.email,

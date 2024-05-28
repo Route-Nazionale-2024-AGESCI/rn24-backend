@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import serializers
 
 from common.serializers import UUIDRelatedModelSerializer
@@ -58,6 +59,10 @@ class ProfileSerializer(UUIDRelatedModelSerializer):
     scout_group = ScoutGroupSerializer()
     squads = SquadSerializer(many=True)
     is_staff = serializers.BooleanField(source="user.is_staff", read_only=True)
+    public_key = serializers.SerializerMethodField()
+
+    def get_public_key(self, obj):
+        return settings.PUBLIC_KEY
 
     class Meta:
         model = Person
@@ -71,4 +76,5 @@ class ProfileSerializer(UUIDRelatedModelSerializer):
             "scout_group",
             "squads",
             "is_staff",
+            "public_key",
         )

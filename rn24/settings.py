@@ -40,6 +40,8 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool_from_env("DJANGO_DEBUG")
 
+SILK_ENABLED = bool_from_env("SILK_ENABLED")
+
 ALLOWED_HOSTS = [
     os.getenv("ALLOWED_HOST"),
 ]
@@ -101,8 +103,13 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
-if DEBUG:
+if SILK_ENABLED:
     MIDDLEWARE.append("silk.middleware.SilkyMiddleware")
+
+SILKY_AUTHENTICATION = SILK_ENABLED
+SILKY_AUTHORISATION = SILK_ENABLED
+SILKY_META = SILK_ENABLED
+SILKY_PYTHON_PROFILER = SILK_ENABLED
 
 ROOT_URLCONF = "rn24.urls"
 
@@ -214,7 +221,6 @@ AGESCI_HOSTNAME = os.getenv("AGESCI_HOSTNAME")
 AGESCI_SECRET = os.getenv("AGESCI_SECRET")
 AGESCI_KEY = os.getenv("AGESCI_KEY")
 
-SILKY_AUTHENTICATION = True
-SILKY_AUTHORISATION = True
-SILKY_META = True
-SILKY_PYTHON_PROFILER = DEBUG
+PRIVATE_KEY_PATH = "privkey.pem"
+PUBLIC_KEY_PATH = "pubkey.pem"
+PUBLIC_KEY = open(PUBLIC_KEY_PATH).read()

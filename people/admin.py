@@ -21,6 +21,7 @@ from people.models.subdistrict import Subdistrict
 class PersonAdmin(BaseAdmin):
     search_fields = (
         "agesci_id",
+        "uuid",
         "first_name",
         "last_name",
         "email",

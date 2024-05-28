@@ -61,6 +61,7 @@ class TestQR:
             email="mario@example.com",
             phone="1234567890",
             scout_group=scout_group,
+            uuid="73e12e83-4ee8-4c1a-9d29-703ab6685c33",
         )
         squad_1 = SquadFactory(name="pompieri")
         person.squads.add(squad_1)
@@ -76,7 +77,7 @@ class TestQR:
     def test_person_qr_string(self, mario):
         assert (
             mario.qr_string()
-            == "B#1234#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#pompieri, sicurezza"
+            == "B#73e12e83-4ee8-4c1a-9d29-703ab6685c33#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#pompieri, sicurezza"
         )
 
     @pytest.mark.django_db
@@ -85,18 +86,21 @@ class TestQR:
         mario.save()
         assert (
             mario.qr_string()
-            == "B#1234#Mario#Rossi#mario@example.com#1234567890##pompieri, sicurezza"
+            == "B#73e12e83-4ee8-4c1a-9d29-703ab6685c33#Mario#Rossi#mario@example.com#1234567890##pompieri, sicurezza"
         )
 
     @pytest.mark.django_db
     def test_person_qr_string_without_squads(self, mario):
         mario.squads.clear()
-        assert mario.qr_string() == "B#1234#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#"
+        assert (
+            mario.qr_string()
+            == "B#73e12e83-4ee8-4c1a-9d29-703ab6685c33#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#"
+        )
 
     @pytest.mark.django_db
     @patch("people.models.person.sign_string", return_value="FOOBAR")
     def test_person_qr_string_with_signature(self, mock, mario):
         assert (
             mario.qr_string_with_signature()
-            == "B#1234#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#pompieri, sicurezza#FOOBAR"
+            == "B#73e12e83-4ee8-4c1a-9d29-703ab6685c33#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#pompieri, sicurezza#FOOBAR"
         )
