@@ -69,6 +69,20 @@ class Person(CommonAbstractModel):
         choices=ITALIAN_REGION_CHOICES,
     )
 
+    def subdistrict_name(self):
+        return (
+            self.scout_group.subdistrict.name
+            if self.scout_group and self.scout_group.subdistrict
+            else ""
+        )
+
+    def district_name(self):
+        return (
+            self.scout_group.subdistrict.district.name
+            if self.scout_group and self.scout_group.subdistrict
+            else ""
+        )
+
     @admin.display(description="pattuglie")
     def squads_list(self):
         return ", ".join([s.name for s in self.squads.all()])
@@ -94,11 +108,15 @@ class Person(CommonAbstractModel):
             self.first_name,
             self.last_name,
             self.email,
-            self.phone,
+            self.phone or "",
             self.scout_group.name if self.scout_group else "",
+            self.region or "",
+            self.subdistrict_name(),
+            self.district_name(),
             self.squad_list_string(),
         ]
-        return "#".join(data)
+        base_string = "#".join(data)
+        return base64.b64encode(base_string.encode("utf-8")).decode("utf-8")
 
     def qr_string_with_signature(self):
         data = self.qr_string()
@@ -139,8 +157,13 @@ class Person(CommonAbstractModel):
 
     @admin.display(description="badge")
     def badge_url(self):
-        url = reverse("badge-detail", kwargs={"uuid": self.uuid})
-        return format_html('<a href="{}" target="_blank">Genera badge</a>', url)
+        HTML_url = reverse("badge-detail", kwargs={"uuid": self.uuid})
+        PDF_url = reverse("badge-detail-pdf", kwargs={"uuid": self.uuid})
+        return format_html(
+            '<a href="{}" target="_blank">HTML</a> - <a href="{}" target="_blank">PDF</a>',
+            HTML_url,
+            PDF_url,
+        )
 
     class Meta:
         verbose_name = "persona"

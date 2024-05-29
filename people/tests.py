@@ -1,10 +1,17 @@
+import base64
 from unittest.mock import patch
 
 import pytest
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 
-from people.factories import PersonFactory, ScoutGroupFactory, SquadFactory
+from people.factories import (
+    DistrictFactory,
+    PersonFactory,
+    ScoutGroupFactory,
+    SquadFactory,
+    SubdistrictFactory,
+)
 
 User = get_user_model()
 
@@ -53,7 +60,9 @@ class TestQR:
 
     @pytest.fixture
     def mario(self):
-        scout_group = ScoutGroupFactory(name="ANCONA 2")
+        district = DistrictFactory(name="1")
+        subdistrict = SubdistrictFactory(name="2", district=district)
+        scout_group = ScoutGroupFactory(name="ANCONA 2", subdistrict=subdistrict)
         person = PersonFactory(
             agesci_id="1234",
             first_name="Mario",
@@ -62,6 +71,7 @@ class TestQR:
             phone="1234567890",
             scout_group=scout_group,
             uuid="73e12e83-4ee8-4c1a-9d29-703ab6685c33",
+            region="MARCHE",
         )
         squad_1 = SquadFactory(name="pompieri")
         person.squads.add(squad_1)
@@ -69,38 +79,40 @@ class TestQR:
         person.squads.add(squad_2)
         return person
 
+    @pytest.fixture
+    def expected_qr_string_base64(self, mario):
+        payload_list = "#".join(
+            [
+                "B",
+                f"{mario.uuid}",
+                f"{mario.first_name}",
+                f"{mario.last_name}",
+                f"{mario.email}",
+                f"{mario.phone}",
+                f"{mario.scout_group.name}",
+                f"{mario.region}",
+                f"{mario.subdistrict_name()}",
+                f"{mario.district_name()}",
+                f"{mario.squad_list_string()}",
+            ]
+        )
+        base64_payload = base64.b64encode(payload_list.encode("utf-8")).decode("utf-8")
+        return base64_payload
+
+    @pytest.fixture
+    def expected_qr_string(self):
+        return "B#73e12e83-4ee8-4c1a-9d29-703ab6685c33#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#MARCHE#2#1#pompieri, sicurezza"
+
     @pytest.mark.django_db
     def test_person_squad_list_to_string(self, mario):
         assert mario.squad_list_string() == "pompieri, sicurezza"
 
     @pytest.mark.django_db
-    def test_person_qr_string(self, mario):
-        assert (
-            mario.qr_string()
-            == "B#73e12e83-4ee8-4c1a-9d29-703ab6685c33#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#pompieri, sicurezza"
-        )
-
-    @pytest.mark.django_db
-    def test_person_qr_string_without_scout_group(self, mario):
-        mario.scout_group = None
-        mario.save()
-        assert (
-            mario.qr_string()
-            == "B#73e12e83-4ee8-4c1a-9d29-703ab6685c33#Mario#Rossi#mario@example.com#1234567890##pompieri, sicurezza"
-        )
-
-    @pytest.mark.django_db
-    def test_person_qr_string_without_squads(self, mario):
-        mario.squads.clear()
-        assert (
-            mario.qr_string()
-            == "B#73e12e83-4ee8-4c1a-9d29-703ab6685c33#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#"
-        )
+    def test_person_qr_string(self, mario, expected_qr_string_base64, expected_qr_string):
+        assert mario.qr_string() == expected_qr_string_base64
+        assert base64.b64decode(mario.qr_string()).decode("utf-8") == expected_qr_string
 
     @pytest.mark.django_db
     @patch("people.models.person.sign_string", return_value="FOOBAR")
-    def test_person_qr_string_with_signature(self, mock, mario):
-        assert (
-            mario.qr_string_with_signature()
-            == "B#73e12e83-4ee8-4c1a-9d29-703ab6685c33#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#pompieri, sicurezza#FOOBAR"
-        )
+    def test_person_qr_string_with_signature(self, mock, mario, expected_qr_string_base64):
+        assert mario.qr_string_with_signature() == expected_qr_string_base64 + "#FOOBAR"

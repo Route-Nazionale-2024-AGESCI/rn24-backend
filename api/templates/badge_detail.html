@@ -1,11 +1,46 @@
 {% for person in person_list %}
-<p>UUID: {{ person.uuid }}</p>
-<p>Nome: {{ person.first_name }}</p>
-<p>Cognome: {{ person.last_name }}</p>
-<p>Email: {{ person.email }}</p>
-<p>Telefono: {{ person.phone }}</p>
-<p>Gruppo Scout: {{ person.scout_group }}</p>
-<p>Pattuglie: {{ person.squad_list_string|default:"-" }}</p>
+<table>
+    <tr>
+        <td>UUID</td>
+        <td>{{ person.uuid }}</td>
+    </tr>
+    <tr>
+        <td>Nome</td>
+        <td>{{ person.first_name }}</td>
+    </tr>
+    <tr>
+        <td>Cognome</td>
+        <td>{{ person.last_name }}</td>
+    </tr>
+    <tr>
+        <td>E-mail</td>
+        <td>{{ person.email }}</td>
+    </tr>
+    <tr>
+        <td>Telefono</td>
+        <td>{{ person.phone }}</td>
+    </tr>
+    <tr>
+        <td>Gruppo:</td>
+        <td>{{ person.scout_group }}</td>
+    </tr>
+    <tr>
+        <td>Regione</td>
+        <td>{{ person.region }}</td>
+    </tr>
+    <tr>
+        <td>Contrada</td>
+        <td>{{ person.subdistrict_name }}</td>
+    </tr>
+    <tr>
+        <td>Sottocampo</td>
+        <td>{{ person.district_name }}</td>
+    </tr>
+    <tr>
+        <td>Pattuglie</td>
+        <td>{{ person.squad_list_string|default:"-" }}</td>
+    </tr>
+</table>
 <p>{{ person.qr_png_base64 }}</p>
 {% if not forloop.last %}
 <p style="page-break-after: always;">&nbsp;</p>
