@@ -28,7 +28,10 @@ class CommonAbstractModel(models.Model):
 
     @classmethod
     def get_last_updated_timestamp(cls):
-        return cls.objects.only("updated_at").order_by("-updated_at").first().updated_at
+        last_updated = cls.objects.only("updated_at").order_by("-updated_at").first()
+        if not last_updated:
+            return now()
+        return last_updated.updated_at
 
     def delete(self, using=None, soft=True, *args, **kwargs):
         if soft:

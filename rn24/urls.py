@@ -25,6 +25,11 @@ admin.sites.AdminSite.site_header = "RN24 backoffice"
 admin.sites.AdminSite.site_title = "RN24 backoffice"
 admin.sites.AdminSite.index_title = "RN24 backoffice"
 
+
+def trigger_error(request):
+    return 1 / 0
+
+
 urlpatterns = [
     path(
         "api",
@@ -36,6 +41,7 @@ urlpatterns = [
                 path("/documents/", include(wagtaildocs_urls)),
                 path("/pages/", include(wagtail_urls)),
                 path("/silk/", include("silk.urls", namespace="silk")),
+                path("/500/", trigger_error),
             ]
         ),
     )
