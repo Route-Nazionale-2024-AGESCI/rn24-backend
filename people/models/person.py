@@ -165,10 +165,19 @@ class Person(CommonAbstractModel):
             PDF_url,
         )
 
+    def is_staff(self):
+        return self.user.has_perm("people.is_staff")
+
+    def can_scan_qr(self):
+        return self.user.has_perm("people.can_scan_qr")
+
     class Meta:
         verbose_name = "persona"
         verbose_name_plural = "persone"
-        permissions = (("is_staff", "Può accedere al backoffice"),)
+        permissions = (
+            ("is_staff", "Può accedere al backoffice"),
+            ("can_scan_qr", "Può scansionare i badge"),
+        )
 
     def __str__(self):
         group = f" [{self.scout_group.name}]" if self.scout_group else ""

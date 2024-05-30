@@ -55,12 +55,17 @@ class ScoutGroupSerializer(UUIDRelatedModelSerializer):
         )
 
 
+class PermissionsSerializer(serializers.Serializer):
+    is_staff = serializers.BooleanField(source="user.is_staff", read_only=True)
+    can_scan_qr = serializers.BooleanField(read_only=True)
+
+
 class ProfileSerializer(UUIDRelatedModelSerializer):
     scout_group = ScoutGroupSerializer()
     squads = SquadSerializer(many=True)
-    is_staff = serializers.BooleanField(source="user.is_staff", read_only=True)
     public_key = serializers.SerializerMethodField()
     qr_code = serializers.SerializerMethodField()
+    permissions = PermissionsSerializer(source="*")
 
     def get_public_key(self, obj):
         return settings.PUBLIC_KEY
@@ -79,7 +84,7 @@ class ProfileSerializer(UUIDRelatedModelSerializer):
             "phone",
             "scout_group",
             "squads",
-            "is_staff",
             "public_key",
             "qr_code",
+            "permissions",
         )
