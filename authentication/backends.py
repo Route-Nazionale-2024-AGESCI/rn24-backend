@@ -1,8 +1,12 @@
+import logging
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import BaseBackend
 
 from authentication.AGESCI import AGESCILoginClient
 from people.models.person import Person
+
+logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
@@ -16,7 +20,10 @@ class AGESCIAuthenticationBackend(BaseBackend):
         person = Person.objects.filter(agesci_id=username).first()
         if not person:
             # this is a valid Scout but not registered to RN24
-            # TODO: log
+            logger.info(
+                "[AGESCI gateway] valid scout, not registered to RN24: %s",
+                username,
+            )
             return None
         # we do not update Person data from AGESCI payload
         # we decide to trust the data we have in our DB

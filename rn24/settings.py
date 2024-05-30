@@ -224,3 +224,18 @@ AGESCI_KEY = os.getenv("AGESCI_KEY")
 PRIVATE_KEY_PATH = "privkey.pem"
 PUBLIC_KEY_PATH = "pubkey.pem"
 PUBLIC_KEY = open(PUBLIC_KEY_PATH).read() if os.path.exists(PUBLIC_KEY_PATH) else None
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "DEBUG",
+    },
+}

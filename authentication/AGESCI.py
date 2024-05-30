@@ -1,5 +1,9 @@
+import logging
+
 import requests
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 class AGESCILoginClient:
@@ -34,8 +38,9 @@ class AGESCILoginClient:
         )
         if response.status_code == 200:
             self.access_token = response.json()["accessToken"]
+            logger.info("AGESCI gateway: access token refreshed")
             return
-        # TODO: log error
+        logging.error("Error refreshing access token", response.content)
 
     def login_AGESCI(self, username, password):
         """
@@ -74,15 +79,31 @@ class AGESCILoginClient:
                 headers={"Authorization": f"Bearer {self.access_token}"},
             )
             if response.status_code == 200:
+                logger.info(
+                    "[AGESCI gateway] login successful",
+                )
                 return (True, response.json())
             if response.status_code == 401:
+                logger.info(
+                    "[AGESCI gateway] accessToken invalid. status code: %s response: %s",
+                    response.status_code,
+                    response.content,
+                )
                 self.refresh_access_token()
                 # TODO: avoid endless loop
                 return self.login_AGESCI(username=username, password=password)
-            # TODO: log other errors
+            logger.error(
+                "[AGESCI gateway] login request failed. status code: %s response: %s",
+                response.status_code,
+                response.content,
+            )
             return (False, "Invalid credentials")
         except Exception:
-            # TODO: log error
+            logger.error(
+                "[AGESCI gateway] login request failed. status code: %s response: %s",
+                response.status_code,
+                response.content,
+            )
             return (False, "Invalid credentials")
 
 
@@ -111,8 +132,13 @@ class AGESCIResetPasswordClient:
                 json={"cSocio": agesci_id, "email": email},
             )
             if response.status_code == 200:
+                logger.info("[AGESCI gateway] password reset successful.")
                 return (True, response.content)
             return (False, response.content)
         except Exception:
-            # TODO: log error
+            logger.error(
+                "[AGESCI gateway] password reset failed. status code: %s response: %s",
+                response.status_code,
+                response.content,
+            )
             return (False, "Errore")
