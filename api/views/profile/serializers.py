@@ -60,9 +60,13 @@ class ProfileSerializer(UUIDRelatedModelSerializer):
     squads = SquadSerializer(many=True)
     is_staff = serializers.BooleanField(source="user.is_staff", read_only=True)
     public_key = serializers.SerializerMethodField()
+    qr_code = serializers.SerializerMethodField()
 
     def get_public_key(self, obj):
         return settings.PUBLIC_KEY
+
+    def get_qr_code(self, obj):
+        return obj.qr_string_with_signature()
 
     class Meta:
         model = Person
@@ -77,4 +81,5 @@ class ProfileSerializer(UUIDRelatedModelSerializer):
             "squads",
             "is_staff",
             "public_key",
+            "qr_code",
         )
