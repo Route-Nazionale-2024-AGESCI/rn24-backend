@@ -15,16 +15,58 @@ class AGESCILoginClient:
         self.access_token = None
 
     def refresh_access_token(self):
+        """
+        curl -XPOST
+        https://XXX/service-ext/api/Applicazione/Login
+        -H "Content-Type: application/json"
+        --data '{"secret":"XXX","key":"XXX"}'
+
+        HTTP/1.1 200 OK
+        {"accessToken":"XXX","duration":20,"expiryDate":"2024-05-31T00:03:42.0333513+02:00"}
+
+        HTTP/1.1 400 Bad Request
+        Applicazione non riconosciuta.
+
+        """
         response = requests.post(
             url=self.access_token_url,
             json={"secret": self.AGESCI_SECRET, "key": self.AGESCI_KEY},
         )
         if response.status_code == 200:
-            self.access_token = response.json()["access_token"]
+            self.access_token = response.json()["accessToken"]
             return
         # TODO: log error
 
     def login_AGESCI(self, username, password):
+        """
+        curl -XPOST
+        https://XXX/service-ext/api/UtenteExt/Login
+        -H "Content-Type: application/json"
+        -H "Authorization: Bearer XXX"
+        --data '{"username":"XXX","password":"XXX"}'
+
+        HTTP/1.1 200 OK
+        {
+            "codSocio":,
+            "nome":,
+            "cognome":,
+            "dataNascita":,
+            "sesso":,
+            "codGruppo":,
+            "nomeGruppo":,
+            "codZona":,
+            "nomeZona":,
+            "codRegione":,
+            "nomeRegione":
+        }
+
+        HTTP/1.1 400 Bad Request
+        Username e/o password non corretti.
+
+        (token errato)
+        HTTP/1.1 401 Unauthorized
+        body vuoto
+        """
         try:
             response = requests.post(
                 url=self.login_url,
