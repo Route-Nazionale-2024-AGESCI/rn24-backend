@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.contrib.admin.models import DELETION, LogEntry
+from django.contrib.postgres.aggregates import StringAgg
 from django.db import transaction
-from django.http import HttpResponse
+from django.db.models import F
+from django.db.models.query import QuerySet
+from django.http import HttpRequest, HttpResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -33,7 +36,7 @@ class PersonAdmin(BaseAdmin):
         "first_name",
         "last_name",
         "scout_group_link",
-        "squads_list",
+        "annotated_squads",
         "is_arrived",
     )
     list_filter = (
@@ -51,6 +54,20 @@ class PersonAdmin(BaseAdmin):
         "badge_url",
     ]
     actions = ["mark_as_arrived", "revert_arrival", "print_badge"]
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet:
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(
+            annotated_squads=StringAgg(
+                F("squads__name"),
+                ", ",
+            )
+        )
+        return queryset
+
+    @admin.display(description="pattuglie")
+    def annotated_squads(self, obj):
+        return obj.annotated_squads
 
     @admin.display(description="Gruppo scout")
     def scout_group_link(self, obj):

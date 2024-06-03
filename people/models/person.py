@@ -82,10 +82,6 @@ class Person(QRCodeMixin, CommonAbstractModel):
             else ""
         )
 
-    @admin.display(description="pattuglie")
-    def squads_list(self):
-        return ", ".join([s.name for s in self.squads.all()])
-
     def set_permissions_from_squads(self):
         if not self.user:
             return
