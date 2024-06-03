@@ -32,3 +32,4 @@ services:
     command:
       - "gotenberg"
       - "--chromium-auto-start=true"
+      - "--gotenberg-graceful-shutdown-duration=1"
