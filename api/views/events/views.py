@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics
 
@@ -29,6 +30,12 @@ class EventDetailView(generics.RetrieveAPIView):
     queryset = Event.objects.all()
     lookup_field = "uuid"
     lookup_url_kwarg = "uuid"
+
+
+class EventQRDetailView(EventDetailView):
+    def get(self, request, *args, **kwargs):
+        # response = super().get(request, *args, **kwargs)
+        return HttpResponse(self.get_object().qr_png(), content_type="image/png")
 
 
 class EventRegistrationListView(generics.ListCreateAPIView):

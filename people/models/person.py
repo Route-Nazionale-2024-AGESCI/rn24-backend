@@ -1,7 +1,5 @@
 import base64
-import io
 
-import qrcode
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -11,12 +9,13 @@ from django.utils.html import format_html
 
 from common.abstract import CommonAbstractModel
 from common.crypto import sign_string
+from common.qr import QRCodeMixin
 from people.models.scout_group import ITALIAN_REGION_CHOICES
 
 User = get_user_model()
 
 
-class Person(CommonAbstractModel):
+class Person(QRCodeMixin, CommonAbstractModel):
 
     agesci_id = models.CharField(
         max_length=255, db_index=True, verbose_name="codice AGESCI", unique=True
@@ -122,38 +121,8 @@ class Person(CommonAbstractModel):
         data = self.qr_string()
         return f"{data}#{sign_string(data)}"
 
-    def qr_ascii(self):
-        qr = qrcode.QRCode()
-        qr.add_data(self.qr_string_with_signature())
-        f = io.StringIO()
-        qr.print_ascii(out=f)
-        f.seek(0)
-        return f.read()
-
-    def qr_png(self):
-        qr = qrcode.QRCode()
-        qr.add_data(self.qr_string_with_signature())
-        qr.make()
-        img = qr.make_image()
-        f = io.BytesIO()
-        img.save(f, format="PNG")
-        f.seek(0)
-        return f.read()
-
-    def qr_png_base64(self):
-        png = self.qr_png()
-        base64_png = base64.b64encode(png)
-        return format_html('<img src="data:image/png;base64,{}">', base64_png.decode("utf-8"))
-
-    def qr_svg(self):
-        qr = qrcode.QRCode()
-        qr.add_data(self.qr_string_with_signature())
-        qr.make(image_factory=qrcode.image.svg.SvgImage)
-        img = qr.make_image(fill_color="black", back_color="white")
-        f = io.StringIO()
-        img.save(f, format="SVG")
-        f.seek(0)
-        return f.read()
+    def qr_payload(self):
+        return self.qr_string_with_signature()
 
     @admin.display(description="badge")
     def badge_url(self):

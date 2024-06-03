@@ -3,6 +3,7 @@ from django.db import models
 from django.utils.html import format_html
 
 from common.abstract import CommonAbstractModel
+from common.qr import QRCodeMixin
 
 EVENT_KIND_CHOICES = (
     ("SGUARDI", "SGUARDI"),
@@ -22,7 +23,7 @@ class AnnotatedEventsManager(models.Manager):
         return self.annotate(persons_registration_count=models.Count("registered_persons"))
 
 
-class Event(CommonAbstractModel):
+class Event(QRCodeMixin, CommonAbstractModel):
     """
     ogni COCA partecipa a 4 eventi di tipo di verso in 4 mezze giornate
     SGUARDI: eventi visibili a tutta la COCA, ogni capo si iscrive individualmente ad un evento
@@ -145,6 +146,9 @@ class Event(CommonAbstractModel):
             self.page.get_admin_url(),
             self.page.get_admin_url(),
         )
+
+    def qr_payload(self):
+        return f"E#{self.uuid}"
 
     class Meta:
         verbose_name = "evento"

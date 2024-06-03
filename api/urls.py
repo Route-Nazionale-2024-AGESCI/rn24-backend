@@ -6,12 +6,13 @@ from api.views.events.views import (
     EventDetailView,
     EventInvitationListView,
     EventListView,
+    EventQRDetailView,
     EventRegistrationDetailView,
     EventRegistrationListView,
 )
 from api.views.login.views import LoginView, LogoutView, PasswordResetView
 from api.views.maps.views import LocationDetailView, LocationListView
-from api.views.pages.views import PageDetailView, PageListView
+from api.views.pages.views import PageDetailView, PageListView, PageQRDetailView
 from api.views.profile.views import ProfileDetailView
 from api.views.version.views import VersionListView
 
@@ -35,6 +36,7 @@ urlpatterns = [
     path("locations/<uuid:uuid>/", LocationDetailView.as_view(), name="location-detail"),
     path("events/", EventListView.as_view(), name="event-list"),
     path("events/<uuid:uuid>/", EventDetailView.as_view(), name="event-detail"),
+    path("events/<uuid:uuid>/qr/", EventQRDetailView.as_view(), name="event-qr-detail"),
     path(
         "events/registrations/",
         EventRegistrationListView.as_view(),
@@ -48,4 +50,5 @@ urlpatterns = [
     path("events/invitations/", EventInvitationListView.as_view(), name="event-invitation-list"),
     path("pages/", PageListView.as_view(), name="page-list"),
     path("pages/<uuid:uuid>/", PageDetailView.as_view(), name="page-detail"),
+    path("pages/<uuid:uuid>/qr/", PageQRDetailView.as_view(), name="page-qr-detail"),
 ]

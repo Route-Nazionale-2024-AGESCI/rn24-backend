@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics
 from wagtail.models import Site
@@ -22,3 +23,9 @@ class PageDetailView(generics.RetrieveAPIView):
     queryset = CMSPage.objects.live().all()
     lookup_field = "uuid"
     lookup_url_kwarg = "uuid"
+
+
+class PageQRDetailView(PageDetailView):
+    def get(self, request, *args, **kwargs):
+        # response = super().get(request, *args, **kwargs)
+        return HttpResponse(self.get_object().qr_png(), content_type="image/png")

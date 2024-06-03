@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import format_html
 
 from events.models.event import Event
 
@@ -76,9 +78,18 @@ class EventAdmin(admin.ModelAdmin):
         DistrictEventRegistrationInline,
         SquadEventRegistrationInline,
     )
+
+    @admin.display(description="QR code")
+    def qr_link(self, obj):
+        return format_html(
+            '<a href="{}" target="_blank">QR</a>',
+            reverse("event-qr-detail", kwargs={"uuid": obj.uuid}),
+        )
+
     readonly_fields = (
         "cms_page_link",
         "available_slots",
         "persons_visibility_count",
         "persons_registration_count",
+        "qr_link",
     )
