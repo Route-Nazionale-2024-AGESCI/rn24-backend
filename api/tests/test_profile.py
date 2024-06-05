@@ -23,13 +23,18 @@ def test_get_profile(mock, logged_api_client, person):
             "name": person.scout_group.name,
             "zone": person.scout_group.zone,
             "region": person.scout_group.region,
-            "subdistrict": {
-                "uuid": str(person.scout_group.subdistrict.uuid),
-                "name": person.scout_group.subdistrict.name,
-                "location": str(person.scout_group.subdistrict.location.uuid),
-                "district": {
-                    "uuid": str(person.scout_group.subdistrict.district.uuid),
-                    "name": person.scout_group.subdistrict.district.name,
+            "line": {
+                "uuid": str(person.scout_group.line.uuid),
+                "name": person.scout_group.line.name,
+                "location": str(person.scout_group.line.location.uuid),
+                "subdistrict": {
+                    "uuid": str(person.scout_group.line.subdistrict.uuid),
+                    "name": person.scout_group.line.subdistrict.name,
+                    "location": str(person.scout_group.line.subdistrict.location.uuid),
+                    "district": {
+                        "uuid": str(person.scout_group.line.subdistrict.district.uuid),
+                        "name": person.scout_group.line.subdistrict.district.name,
+                    },
                 },
             },
             "happiness_path": person.scout_group.happiness_path,

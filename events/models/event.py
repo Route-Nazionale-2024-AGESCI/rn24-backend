@@ -75,6 +75,11 @@ class Event(QRCodeMixin, CommonAbstractModel):
         through="events.ScoutGroupEventVisibility",
         related_name="visible_events",
     )
+    visibility_to_lines = models.ManyToManyField(
+        "people.Line",
+        through="events.LineEventVisibility",
+        related_name="visible_events",
+    )
     visibility_to_subdistricts = models.ManyToManyField(
         "people.Subdistrict",
         through="events.SubdistrictEventVisibility",
@@ -99,6 +104,11 @@ class Event(QRCodeMixin, CommonAbstractModel):
     registered_scout_groups = models.ManyToManyField(
         "people.ScoutGroup",
         through="events.ScoutGroupEventRegistration",
+        related_name="registered_events",
+    )
+    registered_lines = models.ManyToManyField(
+        "people.Line",
+        through="events.LineEventRegistration",
         related_name="registered_events",
     )
     registered_subdistricts = models.ManyToManyField(

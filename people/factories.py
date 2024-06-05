@@ -11,6 +11,7 @@ from people.models import (
     Squad,
     Subdistrict,
 )
+from people.models.line import Line
 
 User = get_user_model()
 
@@ -38,6 +39,18 @@ class SubdistrictFactory(DjangoModelFactory):
     )
 
 
+class LineFactory(DjangoModelFactory):
+    class Meta:
+        model = Line
+
+    name = factory.Faker("city")
+    subdistrict = factory.SubFactory("people.factories.SubdistrictFactory")
+    location = factory.SubFactory(
+        "maps.factories.LocationFactory",
+        name=factory.SelfAttribute("..name"),
+    )
+
+
 class ScoutGroupFactory(DjangoModelFactory):
     class Meta:
         model = ScoutGroup
@@ -53,7 +66,7 @@ class ScoutGroupFactory(DjangoModelFactory):
     agesci_id = factory.Faker("uuid4")
     zone = factory.Faker("administrative_unit")
     region = factory.Faker("random_element", elements=[x[0] for x in ITALIAN_REGION_CHOICES])
-    subdistrict = factory.SubFactory("people.factories.SubdistrictFactory")
+    line = factory.SubFactory(LineFactory)
     happiness_path = factory.Faker(
         "random_element", elements=[x[0] for x in HAPPINESS_PATH_CHOICES]
     )

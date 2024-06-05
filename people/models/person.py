@@ -68,19 +68,23 @@ class Person(QRCodeMixin, CommonAbstractModel):
         choices=ITALIAN_REGION_CHOICES,
     )
 
+    def line_name(self):
+        try:
+            return self.scout_group.line.name
+        except AttributeError:
+            return ""
+
     def subdistrict_name(self):
-        return (
-            self.scout_group.subdistrict.name
-            if self.scout_group and self.scout_group.subdistrict
-            else ""
-        )
+        try:
+            return self.scout_group.line.subdistrict.name
+        except AttributeError:
+            return ""
 
     def district_name(self):
-        return (
-            self.scout_group.subdistrict.district.name
-            if self.scout_group and self.scout_group.subdistrict
-            else ""
-        )
+        try:
+            return self.scout_group.line.subdistrict.district.name
+        except AttributeError:
+            return ""
 
     def set_permissions_from_squads(self):
         if not self.user:
@@ -106,6 +110,7 @@ class Person(QRCodeMixin, CommonAbstractModel):
             self.phone or "",
             self.scout_group.name if self.scout_group else "",
             self.region or "",
+            self.line_name(),
             self.subdistrict_name(),
             self.district_name(),
             self.squad_list_string(),

@@ -4,6 +4,7 @@ from authentication.models.user import User
 from cms.models.page import CMSPage
 from maps.models.location import Location
 from people.models.district import District
+from people.models.line import Line
 from people.models.person import Person
 from people.models.scout_group import ScoutGroup
 from people.models.squad import Squad
@@ -19,6 +20,7 @@ class Command(BaseCommand):
             return
         print(District.objects.all().delete())
         print(Subdistrict.objects.all().delete())
+        print(Line.objects.all().delete())
         print(ScoutGroup.objects.all().delete())
         print(Squad.objects.all().delete())
         print(Person.objects.all().delete())

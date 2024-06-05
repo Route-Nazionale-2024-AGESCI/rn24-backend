@@ -7,6 +7,7 @@ from django.contrib.auth.models import Group, Permission
 
 from people.factories import (
     DistrictFactory,
+    LineFactory,
     PersonFactory,
     ScoutGroupFactory,
     SquadFactory,
@@ -62,7 +63,8 @@ class TestQR:
     def mario(self):
         district = DistrictFactory(name="1")
         subdistrict = SubdistrictFactory(name="2", district=district)
-        scout_group = ScoutGroupFactory(name="ANCONA 2", subdistrict=subdistrict)
+        line = LineFactory(name="3", subdistrict=subdistrict)
+        scout_group = ScoutGroupFactory(name="ANCONA 2", line=line)
         person = PersonFactory(
             agesci_id="1234",
             first_name="Mario",
@@ -91,6 +93,7 @@ class TestQR:
                 f"{mario.phone}",
                 f"{mario.scout_group.name}",
                 f"{mario.region}",
+                f"{mario.line_name()}",
                 f"{mario.subdistrict_name()}",
                 f"{mario.district_name()}",
                 f"{mario.squad_list_string()}",
@@ -101,7 +104,7 @@ class TestQR:
 
     @pytest.fixture
     def expected_qr_string(self):
-        return "B#73e12e83-4ee8-4c1a-9d29-703ab6685c33#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#MARCHE#2#1#pompieri, sicurezza"
+        return "B#73e12e83-4ee8-4c1a-9d29-703ab6685c33#Mario#Rossi#mario@example.com#1234567890#ANCONA 2#MARCHE#3#2#1#pompieri, sicurezza"
 
     @pytest.mark.django_db
     def test_person_squad_list_to_string(self, mario):

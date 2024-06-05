@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
+from cms.factories import CMSPageFactory
 from events.factories import EventFactory
 from people.models.district import District
 from people.models.scout_group import ScoutGroup
@@ -13,6 +14,7 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **options):
         print("GIOVEDI: arrivo e cena")
+        page = CMSPageFactory()
         for scout_group in ScoutGroup.objects.all().iterator():
             event = EventFactory(
                 name="Cena",
@@ -20,6 +22,7 @@ class Command(BaseCommand):
                 starts_at="2024-08-22 19:00",
                 ends_at="2024-08-22 21:00",
                 kind="PASTI",
+                page=page,
             )
             event.registered_scout_groups.add(scout_group)
 
@@ -41,6 +44,7 @@ class Command(BaseCommand):
                 event.visibility_to_scout_groups.add(scout_group)
 
         print("VENERDI pranzo")
+        page = CMSPageFactory()
         for scout_group in ScoutGroup.objects.all().iterator():
             event = EventFactory(
                 name="Pranzo",
@@ -48,6 +52,7 @@ class Command(BaseCommand):
                 starts_at="2024-08-23 12:00",
                 ends_at="2024-08-23 14:00",
                 kind="PASTI",
+                page=page,
             )
             event.registered_scout_groups.add(scout_group)
 
@@ -69,6 +74,7 @@ class Command(BaseCommand):
                 event.visibility_to_scout_groups.add(scout_group)
 
         print("VENERDI cena")
+        page = CMSPageFactory()
         for scout_group in ScoutGroup.objects.all().iterator():
             event = EventFactory(
                 name="Cena",
@@ -76,6 +82,7 @@ class Command(BaseCommand):
                 starts_at="2024-08-23 19:30",
                 ends_at="2024-08-23 20:30",
                 kind="PASTI",
+                page=page,
             )
             event.registered_scout_groups.add(scout_group)
 
@@ -91,6 +98,7 @@ class Command(BaseCommand):
             event.registered_districts.add(district)
 
         print("SABATO mattina presto: doccia di contrada")
+        page = CMSPageFactory()
         for subdistrict in Subdistrict.objects.all().iterator():
             event = EventFactory(
                 name="Doccia di contrada",
@@ -98,10 +106,12 @@ class Command(BaseCommand):
                 starts_at="2024-08-24 07:30",
                 ends_at="2024-08-24 08:30",
                 kind="DOCCIA",
+                page=page,
             )
             event.registered_subdistricts.add(subdistrict)
 
         print("SABATO mattina: TRACCE")
+        page = CMSPageFactory()
         for scout_group in ScoutGroup.objects.all().iterator():
             event = EventFactory(
                 name="Tracce: evento di test",
@@ -109,10 +119,12 @@ class Command(BaseCommand):
                 starts_at="2024-08-24 09:00",
                 ends_at="2024-08-24 12:00",
                 kind="TRACCE",
+                page=page,
             )
             event.registered_scout_groups.add(scout_group)
 
         print("SABATO pranzo")
+        page = CMSPageFactory()
         for scout_group in ScoutGroup.objects.all().iterator():
             event = EventFactory(
                 name="Pranzo",
@@ -120,6 +132,7 @@ class Command(BaseCommand):
                 starts_at="2024-08-24 12:30",
                 ends_at="2024-08-24 14:00",
                 kind="PASTI",
+                page=page,
             )
             event.registered_scout_groups.add(scout_group)
 
@@ -153,6 +166,7 @@ class Command(BaseCommand):
                 event.visibility_to_scout_groups.add(scout_group)
 
         print("SABATO cena")
+        page = CMSPageFactory()
         for scout_group in ScoutGroup.objects.all().iterator():
             event = EventFactory(
                 name="Cena",
@@ -160,6 +174,7 @@ class Command(BaseCommand):
                 starts_at="2024-08-24 19:30",
                 ends_at="2024-08-24 20:30",
                 kind="PASTI",
+                page=page,
             )
             event.registered_scout_groups.add(scout_group)
 

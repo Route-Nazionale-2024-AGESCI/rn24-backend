@@ -29,6 +29,18 @@ class ScoutGroupEventVisibility(CommonAbstractModel):
         return f"{self.event} - {self.scout_group}"
 
 
+class LineEventVisibility(CommonAbstractModel):
+    event = models.ForeignKey("events.Event", on_delete=models.CASCADE, verbose_name="evento")
+    line = models.ForeignKey("people.Line", on_delete=models.CASCADE, verbose_name="fila")
+
+    class Meta:
+        verbose_name = "disponibilità evento a fila"
+        verbose_name_plural = "disponibilità evento a fila"
+
+    def __str__(self):
+        return f"{self.event} - {self.line}"
+
+
 class SubdistrictEventVisibility(CommonAbstractModel):
     event = models.ForeignKey("events.Event", on_delete=models.CASCADE, verbose_name="evento")
     subdistrict = models.ForeignKey(
