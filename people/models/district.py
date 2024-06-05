@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.db import models
 
 from common.abstract import CommonAbstractModel
+from people.models.line import Line
 from people.models.person import Person
 from people.models.scout_group import ScoutGroup
 
@@ -12,15 +13,19 @@ class District(CommonAbstractModel):
 
     @admin.display(description="n. persone")
     def people_count(self):
-        return Person.objects.filter(scout_group__subdistrict__district=self).count()
+        return Person.objects.filter(scout_group__line__subdistrict__district=self).count()
 
     @admin.display(description="n. contrade")
     def subdistricts_count(self):
         return self.subdistrict_set.count()
 
+    @admin.display(description="n. file")
+    def lines_count(self):
+        return Line.objects.filter(subdistrict__district=self).count()
+
     @admin.display(description="n. gruppi scout")
     def scout_groups_count(self):
-        return ScoutGroup.objects.filter(subdistrict__district=self).count()
+        return ScoutGroup.objects.filter(line__subdistrict__district=self).count()
 
     class Meta:
         verbose_name = "sottocampo"

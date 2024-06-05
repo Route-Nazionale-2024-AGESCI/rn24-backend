@@ -14,6 +14,7 @@ from django.utils.safestring import mark_safe
 from common.admin import BaseAdmin
 from common.pdf import html_to_pdf
 from people.models.district import District
+from people.models.line import Line
 from people.models.person import Person
 from people.models.scout_group import ScoutGroup
 from people.models.squad import Squad
@@ -41,8 +42,7 @@ class PersonAdmin(BaseAdmin):
     )
     list_filter = (
         "is_arrived",
-        "scout_group__subdistrict__district",
-        "scout_group__subdistrict",
+        "scout_group__line__subdistrict__district",
         "scout_group__happiness_path",
         "squads",
     )
@@ -134,16 +134,17 @@ class ScoutGroupAdmin(BaseAdmin):
         "name",
         "zone",
         "region",
-        "subdistrict",
+        "line",
         "happiness_path",
         "people_count",
         "is_arrived",
     )
-    list_filter = ("is_arrived", "region", "subdistrict", "happiness_path")
+    list_filter = ("is_arrived", "region", "line__subdistrict__district", "happiness_path")
     search_fields = ("name", "zone", "region")
     inlines = [PersonInline]
     readonly_fields = [
         "district",
+        "subdistrict",
         "is_arrived",
         "arrived_at",
     ]
@@ -166,17 +167,17 @@ class ScoutGroupInline(admin.TabularInline):
         return False
 
 
-@admin.register(Subdistrict)
-class SubdistrictAdmin(BaseAdmin):
-    list_display = ("name", "district", "scout_groups_count", "people_count")
-    readonly_fields = ("scout_groups_count", "people_count")
+@admin.register(Line)
+class LineAdmin(BaseAdmin):
+    list_display = ("name", "subdistrict", "scout_groups_count", "people_count")
     search_fields = ("name",)
-    list_filter = ("district",)
+    readonly_fields = ("scout_groups_count", "people_count")
+    list_filter = ("subdistrict__district", "subdistrict")
     inlines = [ScoutGroupInline]
 
 
-class SubdistrictInline(admin.TabularInline):
-    model = Subdistrict
+class LineInline(admin.TabularInline):
+    model = Line
     show_change_link = True
     fields = ("name", "scout_groups_count", "people_count")
     readonly_fields = ("scout_groups_count", "people_count")
@@ -186,9 +187,35 @@ class SubdistrictInline(admin.TabularInline):
         return False
 
 
+@admin.register(Subdistrict)
+class SubdistrictAdmin(BaseAdmin):
+    list_display = ("name", "district", "lines_count", "scout_groups_count", "people_count")
+    readonly_fields = ("scout_groups_count", "people_count")
+    search_fields = ("name",)
+    list_filter = ("district",)
+    inlines = [LineInline]
+
+
+class SubdistrictInline(admin.TabularInline):
+    model = Subdistrict
+    show_change_link = True
+    fields = ("name", "lines_count", "scout_groups_count", "people_count")
+    readonly_fields = ("lines_count", "scout_groups_count", "people_count")
+    extra = 0
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 @admin.register(District)
 class DistrictAdmin(BaseAdmin):
-    list_display = ("name", "subdistricts_count", "scout_groups_count", "people_count")
+    list_display = (
+        "name",
+        "subdistricts_count",
+        "lines_count",
+        "scout_groups_count",
+        "people_count",
+    )
     search_fields = ("name",)
     readonly_fields = ("subdistricts_count", "scout_groups_count", "people_count")
     inlines = [SubdistrictInline]

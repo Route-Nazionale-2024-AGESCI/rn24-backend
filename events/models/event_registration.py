@@ -29,6 +29,18 @@ class ScoutGroupEventRegistration(CommonAbstractModel):
         return f"{self.event} - {self.scout_group}"
 
 
+class LineEventRegistration(CommonAbstractModel):
+    event = models.ForeignKey("events.Event", on_delete=models.CASCADE, verbose_name="evento")
+    line = models.ForeignKey("people.Line", on_delete=models.CASCADE, verbose_name="fila")
+
+    class Meta:
+        verbose_name = "registrazione evento a fila"
+        verbose_name_plural = "registrazione evento a fila"
+
+    def __str__(self):
+        return f"{self.event} - {self.line}"
+
+
 class SubdistrictEventRegistration(CommonAbstractModel):
     event = models.ForeignKey("events.Event", on_delete=models.CASCADE, verbose_name="evento")
     subdistrict = models.ForeignKey(

@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from common.serializers import UUIDRelatedModelSerializer
 from people.models.district import District
+from people.models.line import Line
 from people.models.person import Person
 from people.models.scout_group import ScoutGroup
 from people.models.squad import Squad
@@ -40,8 +41,21 @@ class SubdistrictSerializer(UUIDRelatedModelSerializer):
         )
 
 
-class ScoutGroupSerializer(UUIDRelatedModelSerializer):
+class LineSerializer(UUIDRelatedModelSerializer):
     subdistrict = SubdistrictSerializer()
+
+    class Meta:
+        model = Line
+        fields = (
+            "uuid",
+            "name",
+            "subdistrict",
+            "location",
+        )
+
+
+class ScoutGroupSerializer(UUIDRelatedModelSerializer):
+    line = LineSerializer()
 
     class Meta:
         model = ScoutGroup
@@ -50,7 +64,7 @@ class ScoutGroupSerializer(UUIDRelatedModelSerializer):
             "name",
             "zone",
             "region",
-            "subdistrict",
+            "line",
             "happiness_path",
         )
 

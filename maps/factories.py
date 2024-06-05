@@ -11,8 +11,8 @@ from maps.models import Location
 class FuzzyPoint(BaseFuzzyAttribute):
     def fuzz(self):
         return Point(
-            random.uniform(45.40, 45.45),
             random.uniform(10.96, 11.04),
+            random.uniform(45.40, 45.45),
         )
 
 
