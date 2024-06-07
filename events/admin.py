@@ -20,11 +20,13 @@ class ScoutGroupEventVisibilityInline(admin.TabularInline):
 
 class LineEventVisibilityInline(admin.TabularInline):
     model = Event.visibility_to_lines.through
+    autocomplete_fields = ("line",)
     extra = 1
 
 
 class SubdistrictEventVisibilityInline(admin.TabularInline):
     model = Event.visibility_to_subdistricts.through
+    autocomplete_fields = ("subdistrict",)
     extra = 1
 
 
@@ -52,11 +54,13 @@ class ScoutGroupEventRegistrationInline(admin.TabularInline):
 
 class LineEventRegistrationInline(admin.TabularInline):
     model = Event.registered_lines.through
+    autocomplete_fields = ("line",)
     extra = 1
 
 
 class SubdistrictEventRegistrationInline(admin.TabularInline):
     model = Event.registered_subdistricts.through
+    autocomplete_fields = ("subdistrict",)
     extra = 1
 
 
