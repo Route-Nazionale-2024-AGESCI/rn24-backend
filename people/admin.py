@@ -21,6 +21,34 @@ from people.models.squad import Squad
 from people.models.subdistrict import Subdistrict
 
 
+class LastLoginAdminFilter(admin.SimpleListFilter):
+    title = "Ultimo accesso"
+    parameter_name = "last_login"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("never", "Mai"),
+            ("today", "Oggi"),
+            ("this_week", "Questa settimana"),
+            ("this_month", "Questo mese"),
+            ("this_year", "Quest'anno"),
+        )
+
+    def queryset(self, request, queryset):
+        now = timezone.now()
+        if self.value() == "never":
+            return queryset.filter(user__last_login__isnull=True)
+        if self.value() == "today":
+            return queryset.filter(user__last_login__date=now.date())
+        if self.value() == "this_week":
+            return queryset.filter(user__last_login__week=now.isocalendar()[1])
+        if self.value() == "this_month":
+            return queryset.filter(user__last_login__month=now.month)
+        if self.value() == "this_year":
+            return queryset.filter(user__last_login__year=now.year)
+        return queryset
+
+
 @admin.register(Person)
 class PersonAdmin(BaseAdmin):
     search_fields = (
@@ -38,6 +66,7 @@ class PersonAdmin(BaseAdmin):
         "last_name",
         "scout_group_link",
         "annotated_squads",
+        "annotated_last_login",
         "is_arrived",
     )
     list_filter = (
@@ -45,6 +74,7 @@ class PersonAdmin(BaseAdmin):
         "scout_group__line__subdistrict__district",
         "scout_group__happiness_path",
         "squads",
+        LastLoginAdminFilter,
     )
     filter_horizontal = ("squads",)
     autocomplete_fields = ("user", "scout_group")
@@ -61,9 +91,14 @@ class PersonAdmin(BaseAdmin):
             annotated_squads=StringAgg(
                 F("squads__name"),
                 ", ",
-            )
+            ),
+            annotated_last_login=F("user__last_login"),
         )
         return queryset
+
+    @admin.display(description="Ultimo accesso", ordering="annotated_last_login")
+    def annotated_last_login(self, obj):
+        return obj.annotated_last_login
 
     @admin.display(description="pattuglie")
     def annotated_squads(self, obj):
