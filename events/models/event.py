@@ -55,6 +55,9 @@ class Event(QRCodeMixin, CommonAbstractModel):
         blank=True,
         verbose_name="limite di iscrizioni dallo stesso groupo scout",
     )
+    personal_registrations_count = models.PositiveIntegerField(
+        db_index=True, default=0, verbose_name="numero di iscrizioni personali"
+    )
     starts_at = models.DateTimeField(db_index=True, verbose_name="data inizio")
     ends_at = models.DateTimeField(db_index=True, verbose_name="data fine")
     registrations_open_at = models.DateTimeField(

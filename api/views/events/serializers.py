@@ -18,6 +18,7 @@ class EventSerializer(UUIDRelatedModelSerializer):
             "is_registration_required",
             "registration_limit",
             "registration_limit_from_same_scout_group",
+            "personal_registrations_count",
             "starts_at",
             "ends_at",
             "registrations_open_at",

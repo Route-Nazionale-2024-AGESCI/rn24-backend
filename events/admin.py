@@ -72,7 +72,15 @@ class SquadEventRegistrationInline(admin.TabularInline):
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     date_hierarchy = "starts_at"
-    list_display = ("name", "location", "starts_at", "ends_at", "kind", "is_registration_required")
+    list_display = (
+        "name",
+        "location",
+        "starts_at",
+        "ends_at",
+        "kind",
+        "personal_registrations_count",
+        "is_registration_required",
+    )
     list_filter = ("kind", "is_registration_required")
     autocomplete_fields = ("location", "page")
     search_fields = ("name",)
@@ -99,6 +107,7 @@ class EventAdmin(admin.ModelAdmin):
         )
 
     readonly_fields = (
+        "personal_registrations_count",
         "cms_page_link",
         "available_slots",
         "persons_visibility_count",

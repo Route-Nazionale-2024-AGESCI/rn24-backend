@@ -56,6 +56,8 @@ class TestRegisterToEvent:
         assert response.status_code == 201, response.content
         assert response.json() == {"event": str(event.uuid)}
         assert PersonEventRegistration.objects.filter(person=person, event=event).exists()
+        event.refresh_from_db()
+        assert event.personal_registrations_count == 1
 
     @pytest.mark.django_db
     def test_register_to_event_dont_change_version(
@@ -119,11 +121,14 @@ class TestRegisterToEvent:
             is_registration_required=True,
             starts_at=timezone.now() + timedelta(days=1),
         )
+        initial_registration_count = event.personal_registrations_count
         PersonEventRegistration.objects.create(person=person, event=event)
         PersonEventVisibility.objects.create(person=person, event=event)
         response = logged_api_client.post(url, {"event": str(event.uuid)})
         assert response.status_code == 400, response.content
         assert response.json() == [RegistrationErrors.ALREADY_REGISTERED]
+        event.refresh_from_db()
+        assert event.personal_registrations_count == initial_registration_count
 
     @pytest.mark.django_db
     def test_register_to_event__full(self, logged_api_client, person, base_events_page, url):
@@ -197,7 +202,7 @@ class TestDeleteRegistration:
 
     @pytest.mark.django_db
     def test_delete_registration__ok(self, logged_api_client, person, base_events_page, url_name):
-        event = EventFactory()
+        event = EventFactory(personal_registrations_count=4)
         PersonEventRegistration.objects.create(person=person, event=event)
         response = logged_api_client.delete(
             reverse(
@@ -208,6 +213,8 @@ class TestDeleteRegistration:
         assert response.status_code == 204, response.content
         assert not response.content
         assert not PersonEventRegistration.objects.filter(person=person, event=event).exists()
+        event.refresh_from_db()
+        assert event.personal_registrations_count == 3
 
 
 @pytest.mark.django_db
@@ -231,6 +238,7 @@ def test_get_events(logged_api_client, base_events_page):
                 "page": str(event_1.page.uuid),
                 "registration_limit": event_1.registration_limit,
                 "registration_limit_from_same_scout_group": event_1.registration_limit_from_same_scout_group,
+                "personal_registrations_count": 0,
                 "registrations_close_at": None,
                 "registrations_open_at": None,
                 "starts_at": DateTimeField().to_representation(event_1.starts_at),
@@ -246,6 +254,7 @@ def test_get_events(logged_api_client, base_events_page):
                 "page": str(event_2.page.uuid),
                 "registration_limit": event_2.registration_limit,
                 "registration_limit_from_same_scout_group": event_2.registration_limit_from_same_scout_group,
+                "personal_registrations_count": 0,
                 "registrations_close_at": None,
                 "registrations_open_at": None,
                 "starts_at": DateTimeField().to_representation(event_2.starts_at),

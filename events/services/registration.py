@@ -44,7 +44,8 @@ def register_person_to_event(person: Person, event: Event):
         raise ValidationError(RegistrationErrors.REGISTRATION_NOT_OPEN_YET)
     if event.registrations_close_at and now > event.registrations_close_at:
         raise ValidationError(RegistrationErrors.REGISTRATION_TIME_EXPIRED)
-
+    event.personal_registrations_count = event.personal_registrations_count + 1
+    event.save(update_fields=["personal_registrations_count"])
     event.registered_persons.add(person)
 
 
@@ -52,4 +53,6 @@ def register_person_to_event(person: Person, event: Event):
 def delete_personal_registration(person: Person, event: Event):
     event = Event.objects.select_for_update("registered_persons").get(pk=event.pk)
     if event.registered_persons.filter(pk=person.pk).exists():
+        event.personal_registrations_count = event.personal_registrations_count - 1
+        event.save(update_fields=["personal_registrations_count"])
         event.registered_persons.remove(person)
