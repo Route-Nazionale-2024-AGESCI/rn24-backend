@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
+from common.admin import BaseAdmin
 from events.models.event import Event
 
 
@@ -69,8 +70,27 @@ class SquadEventRegistrationInline(admin.TabularInline):
     extra = 1
 
 
+class PersonalRegistrationCountAdminFilter(admin.SimpleListFilter):
+    title = "numero di iscrizioni personali"
+    parameter_name = "personal_registrations_count"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("0", "nessuna iscrizione"),
+            ("1", "con iscritti"),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() is None:
+            return queryset
+        if self.value() == "0":
+            return queryset.filter(personal_registrations_count=0)
+        if self.value() == "1":
+            return queryset.filter(personal_registrations_count__gt=0)
+
+
 @admin.register(Event)
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(BaseAdmin):
     date_hierarchy = "starts_at"
     list_display = (
         "name",
@@ -81,7 +101,7 @@ class EventAdmin(admin.ModelAdmin):
         "personal_registrations_count",
         "is_registration_required",
     )
-    list_filter = ("kind", "is_registration_required")
+    list_filter = ("kind", "is_registration_required", PersonalRegistrationCountAdminFilter)
     autocomplete_fields = ("location", "page")
     search_fields = ("uuid", "name", "location__name")
     inlines = (

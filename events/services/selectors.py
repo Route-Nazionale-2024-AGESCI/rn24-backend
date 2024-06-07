@@ -37,7 +37,7 @@ def get_persons_visible_to_event(event: Event):
         | Q(scout_group__line__subdistrict__visible_events=event)
         | Q(scout_group__line__subdistrict__district__visible_events=event)
         | Q(squads__visible_events=event)
-    )
+    ).distinct()
 
 
 def get_persons_registered_to_event(event: Event):
@@ -48,4 +48,4 @@ def get_persons_registered_to_event(event: Event):
         | Q(scout_group__line__subdistrict__registered_events=event)
         | Q(scout_group__line__subdistrict__district__registered_events=event)
         | Q(squads__registered_events=event)
-    )
+    ).distinct()

@@ -102,3 +102,21 @@ class ProfileSerializer(UUIDRelatedModelSerializer):
             "qr_code",
             "permissions",
         )
+
+
+class PersonSummarySerializer(UUIDRelatedModelSerializer):
+    scout_group = ScoutGroupSerializer()
+    squads = SquadSerializer(many=True)
+
+    class Meta:
+        model = Person
+        fields = (
+            "uuid",
+            "agesci_id",
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "scout_group",
+            "squads",
+        )

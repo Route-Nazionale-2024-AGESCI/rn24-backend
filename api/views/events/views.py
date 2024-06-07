@@ -1,17 +1,24 @@
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics
 
+from api.views.events.permissions import CanScanQRPermission
 from api.views.events.serializers import (
     EventInvitationSerializer,
     EventRegistrationSerializer,
     EventSerializer,
     EventWithVersionSerializer,
 )
+from api.views.profile.serializers import PersonSummarySerializer
 from events.models.event import Event
 from events.models.event_registration import PersonEventRegistration
 from events.services.registration import delete_personal_registration
-from events.services.selectors import get_events_registered_to_person, get_events_visible_to_person
+from events.services.selectors import (
+    get_events_registered_to_person,
+    get_events_visible_to_person,
+    get_persons_registered_to_event,
+)
 
 
 @extend_schema_view(get=extend_schema(operation_id="api_v1_events_list"))
@@ -63,3 +70,12 @@ class EventInvitationListView(generics.ListAPIView):
 
     def get_queryset(self):
         return get_events_visible_to_person(self.request.user.person)
+
+
+class EventAttendeesListView(generics.ListAPIView):
+    serializer_class = PersonSummarySerializer
+    permission_classes = [CanScanQRPermission]
+
+    def get_queryset(self):
+        event = get_object_or_404(Event, uuid=self.kwargs["uuid"])
+        return get_persons_registered_to_event(event)

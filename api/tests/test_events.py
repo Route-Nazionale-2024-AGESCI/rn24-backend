@@ -2,6 +2,7 @@ import uuid
 from datetime import timedelta
 
 import pytest
+from django.contrib.auth.models import Permission
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework.fields import DateTimeField
@@ -276,3 +277,33 @@ def test_get_events_ordered_by_start_date(logged_api_client, base_events_page):
     assert len(response.json()["data"]) == 2
     assert response.json()["data"][0]["uuid"] == str(event_2.uuid)
     assert response.json()["data"][1]["uuid"] == str(event_1.uuid)
+
+
+class TestEventAttendee:
+    @pytest.fixture
+    def url(self, event):
+        return reverse("event-attendees-list", kwargs={"uuid": event.uuid})
+
+    @pytest.fixture
+    def attendee(self):
+        return PersonFactory()
+
+    @pytest.fixture
+    def event(self, attendee):
+        event = EventFactory()
+        event.registered_persons.add(attendee)
+        return event
+
+    @pytest.mark.django_db
+    def test_get_attendees__no_permission(self, logged_api_client, url):
+        response = logged_api_client.get(url)
+        assert response.status_code == 403, response.content
+
+    @pytest.mark.django_db
+    def test_get_attendees__ok(self, logged_api_client, url, person, attendee):
+        permission = Permission.objects.get(codename="can_scan_qr")
+        person.user.user_permissions.add(permission)
+        response = logged_api_client.get(url)
+        assert response.status_code == 200, response.content
+        assert len(response.json()) == 1
+        assert response.json()[0]["uuid"] == str(attendee.uuid)
