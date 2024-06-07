@@ -140,7 +140,7 @@ class ScoutGroupAdmin(BaseAdmin):
         "is_arrived",
     )
     list_filter = ("is_arrived", "region", "line__subdistrict__district", "happiness_path")
-    search_fields = ("name", "zone", "region")
+    search_fields = ("uuid", "name", "zone", "region")
     inlines = [PersonInline]
     readonly_fields = [
         "district",
@@ -170,7 +170,7 @@ class ScoutGroupInline(admin.TabularInline):
 @admin.register(Line)
 class LineAdmin(BaseAdmin):
     list_display = ("name", "subdistrict", "scout_groups_count", "people_count")
-    search_fields = ("name",)
+    search_fields = ("name", "uuid")
     readonly_fields = ("scout_groups_count", "people_count")
     list_filter = ("subdistrict__district", "subdistrict")
     inlines = [ScoutGroupInline]
@@ -191,7 +191,7 @@ class LineInline(admin.TabularInline):
 class SubdistrictAdmin(BaseAdmin):
     list_display = ("name", "district", "lines_count", "scout_groups_count", "people_count")
     readonly_fields = ("scout_groups_count", "people_count")
-    search_fields = ("name",)
+    search_fields = ("name", "uuid")
     list_filter = ("district",)
     inlines = [LineInline]
 
@@ -216,7 +216,7 @@ class DistrictAdmin(BaseAdmin):
         "scout_groups_count",
         "people_count",
     )
-    search_fields = ("name",)
+    search_fields = ("name", "uuid")
     readonly_fields = ("subdistricts_count", "scout_groups_count", "people_count")
     inlines = [SubdistrictInline]
 
@@ -231,7 +231,7 @@ class SquadPersonInline(admin.TabularInline):
 @admin.register(Squad)
 class SquadAdmin(BaseAdmin):
     list_display = ("name", "description", "people_count")
-    search_fields = ("name", "description")
+    search_fields = ("name", "description", "uuid")
     readonly_fields = ("people_count",)
     filter_horizontal = ("groups",)
     inlines = [SquadPersonInline]

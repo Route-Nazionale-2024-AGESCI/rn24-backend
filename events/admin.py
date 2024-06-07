@@ -83,7 +83,7 @@ class EventAdmin(admin.ModelAdmin):
     )
     list_filter = ("kind", "is_registration_required")
     autocomplete_fields = ("location", "page")
-    search_fields = ("name",)
+    search_fields = ("uuid", "name", "location__name")
     inlines = (
         PersonEventVisibilityInline,
         ScoutGroupEventVisibilityInline,
