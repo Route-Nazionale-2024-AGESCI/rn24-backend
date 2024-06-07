@@ -12,6 +12,7 @@ class EventSerializer(UUIDRelatedModelSerializer):
         fields = (
             "uuid",
             "created_at",
+            "id",
             "name",
             "page",
             "location",

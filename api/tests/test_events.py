@@ -243,6 +243,7 @@ def test_get_events(logged_api_client, base_events_page):
                 "registrations_open_at": None,
                 "starts_at": DateTimeField().to_representation(event_1.starts_at),
                 "uuid": str(event_1.uuid),
+                "id": event_1.id,
             },
             {
                 "created_at": DateTimeField().to_representation(event_2.created_at),
@@ -259,6 +260,7 @@ def test_get_events(logged_api_client, base_events_page):
                 "registrations_open_at": None,
                 "starts_at": DateTimeField().to_representation(event_2.starts_at),
                 "uuid": str(event_2.uuid),
+                "id": event_2.id,
             },
         ],
     }

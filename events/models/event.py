@@ -168,4 +168,4 @@ class Event(QRCodeMixin, CommonAbstractModel):
         verbose_name_plural = "eventi"
 
     def __str__(self):
-        return self.name
+        return f"[{self.id}] {self.name}"
