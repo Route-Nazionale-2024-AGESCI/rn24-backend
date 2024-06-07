@@ -65,7 +65,6 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_linear_migrations",
     "corsheaders",
-    "silk",
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_gis",
@@ -105,12 +104,13 @@ MIDDLEWARE = [
 ]
 
 if SILK_ENABLED:
+    INSTALLED_APPS.append("silk")
     MIDDLEWARE.append("silk.middleware.SilkyMiddleware")
 
-SILKY_AUTHENTICATION = SILK_ENABLED
-SILKY_AUTHORISATION = SILK_ENABLED
-SILKY_META = SILK_ENABLED
-SILKY_PYTHON_PROFILER = SILK_ENABLED
+    SILKY_AUTHENTICATION = True
+    SILKY_AUTHORISATION = True
+    SILKY_META = True
+    SILKY_PYTHON_PROFILER = True
 
 ROOT_URLCONF = "rn24.urls"
 
@@ -209,6 +209,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 WAGTAIL_SITE_NAME = "RN24 backoffice CMS"
+WAGTAILADMIN_BASE_URL = "/cms"
 
 # TODO: enable this with an env variable only for test environment
 CORS_ALLOW_ALL_ORIGINS = True
