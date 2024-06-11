@@ -24,12 +24,12 @@ class UserAdmin(BaseUserAdmin):
     def __init__(self, *args, **kwargs) -> None:
         self.request: HttpRequest | None = None
         super().__init__(*args, **kwargs)
-    
+
     def get_list_display(self, request: HttpRequest) -> Sequence[str]:
         self.request = request
         return super().get_list_display(request)
 
-    @admin.display(ordering=None, description='Impersona')
+    @admin.display(ordering=None, description="Impersona")
     def impersonate_button(self, obj: User) -> str:
         return format_html(
             '<a href="{}/login?at={}&ct={}" target="_blank">Impersona</a>',
