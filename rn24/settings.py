@@ -243,6 +243,8 @@ LOGGING = {
     },
 }
 
+RN24_FRONTEND_URL = os.getenv("RN24_FRONTEND_URL", '')
+
 SENTRY_DSN = os.getenv("SENTRY_DSN")
 
 sentry_sdk.init(
