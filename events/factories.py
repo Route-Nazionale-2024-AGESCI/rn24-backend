@@ -1,5 +1,7 @@
 import factory
 from factory.django import DjangoModelFactory
+from wagtail.models import Page
+
 from events.models import Event
 
 
@@ -8,7 +10,13 @@ class EventFactory(DjangoModelFactory):
         model = Event
 
     name = factory.Faker("word")
-    page = factory.SubFactory("cms.factories.CMSPageFactory")
+    page = factory.SubFactory(
+        "cms.factories.CMSPageFactory",
+        title=factory.SelfAttribute("..name"),
+        parent=Page.objects.get(
+            slug="rn24-events-root",
+        ),
+    )
     location = factory.SubFactory("maps.factories.LocationFactory")
     is_registration_required = False
     registration_limit = 10
