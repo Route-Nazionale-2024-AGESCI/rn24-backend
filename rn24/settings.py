@@ -55,7 +55,6 @@ CSRF_TRUSTED_ORIGINS = ["https://" + os.getenv("ALLOWED_HOST", "")]
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -83,12 +82,14 @@ INSTALLED_APPS = [
     "wagtail",
     "modelcluster",
     "taggit",
+    "fontawesomefree",
     "authentication.apps.AuthenticationConfig",
     "people.apps.PeopleConfig",
     "events.apps.EventsConfig",
     "maps.apps.MapsConfig",
     "api.apps.ApiConfig",
     "cms.apps.CmsConfig",
+    "django.contrib.admin",
 ]
 
 MIDDLEWARE = [

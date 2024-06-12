@@ -19,6 +19,9 @@ def _location_expected_representation(location):
         "name": location.name,
         "polygon": None,
         "uuid": str(location.uuid),
+        "is_public": location.is_public,
+        "category": location.category.name,
+        "icon": location.category.icon,
     }
 
 

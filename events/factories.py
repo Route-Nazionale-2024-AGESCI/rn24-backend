@@ -1,7 +1,7 @@
 import factory
 from factory.django import DjangoModelFactory
-from wagtail.models import Page
 
+from cms.models.page import CMSPage
 from events.models import Event
 
 
@@ -13,8 +13,8 @@ class EventFactory(DjangoModelFactory):
     page = factory.SubFactory(
         "cms.factories.CMSPageFactory",
         title=factory.SelfAttribute("..name"),
-        parent=Page.objects.get(
-            slug="rn24-events-root",
+        parent=factory.LazyAttribute(
+            lambda obj: CMSPage.objects.filter(slug="rn24-events-root").first()
         ),
     )
     location = factory.SubFactory("maps.factories.LocationFactory")

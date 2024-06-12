@@ -21,4 +21,14 @@ class LocationFactory(DjangoModelFactory):
         model = Location
 
     name = factory.Faker("word")
+    is_public = False
+    category = factory.SubFactory("maps.factories.LocationCategoryFactory")
     coords = FuzzyPoint()
+
+
+class LocationCategoryFactory(DjangoModelFactory):
+    class Meta:
+        model = "maps.LocationCategory"
+
+    name = factory.Faker("uuid4")
+    icon = factory.Faker("word")
