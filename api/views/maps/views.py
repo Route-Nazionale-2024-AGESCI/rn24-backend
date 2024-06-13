@@ -12,6 +12,7 @@ def get_location_queryset():
         .annotate(
             annotated_icon=F("category__icon"),
             annotated_category=F("category__name"),
+            annotated_color=F("category__color"),
         )
         .all()
     )

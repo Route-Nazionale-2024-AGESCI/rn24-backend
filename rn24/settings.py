@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "cms.apps.CmsConfig",
     "django.contrib.admin",
+    "colorfield",
 ]
 
 MIDDLEWARE = [

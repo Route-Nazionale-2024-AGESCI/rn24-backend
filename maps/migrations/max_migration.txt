@@ -1,1 +1,1 @@
-0004_locationcategory_location_is_public_and_more
+0006_locationcategory_color

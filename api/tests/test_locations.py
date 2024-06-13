@@ -18,10 +18,12 @@ def _location_expected_representation(location):
         "created_at": DateTimeField().to_representation(location.created_at),
         "name": location.name,
         "polygon": None,
+        "path": None,
         "uuid": str(location.uuid),
         "is_public": location.is_public,
         "category": location.category.name,
         "icon": location.category.icon,
+        "color": location.category.color,
     }
 
 

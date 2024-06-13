@@ -28,3 +28,4 @@ django-silk
 pycryptodome
 qrcode
 fontawesomefree
+django-colorfield

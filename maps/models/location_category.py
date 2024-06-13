@@ -1,3 +1,4 @@
+from colorfield.fields import ColorField
 from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
@@ -14,6 +15,7 @@ class LocationCategory(CommonAbstractModel):
         verbose_name="icona",
         help_text="scegli il codice icona di font awesome https://fontawesome.com/icons",
     )
+    color = ColorField(default="#32a852")
 
     @admin.display(description="icona")
     def icon_html(self):
