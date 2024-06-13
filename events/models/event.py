@@ -4,6 +4,7 @@ from django.utils.html import format_html
 
 from common.abstract import CommonAbstractModel
 from common.qr import QRCodeMixin
+from people.models.scout_group import HAPPINESS_PATH_CHOICES
 
 EVENT_KIND_CHOICES = (
     ("SGUARDI", "SGUARDI"),
@@ -68,6 +69,21 @@ class Event(QRCodeMixin, CommonAbstractModel):
     )
     kind = models.CharField(
         db_index=True, max_length=255, choices=EVENT_KIND_CHOICES, verbose_name="modulo"
+    )
+    correlation_id = models.CharField(
+        max_length=255,
+        db_index=True,
+        null=True,
+        blank=True,
+        verbose_name="id di correlazione accadimenti",
+        help_text="deve essere uguale per tutti gli accandimenti dello stesso evento",
+    )
+    happiness_path = models.CharField(
+        max_length=255,
+        choices=HAPPINESS_PATH_CHOICES,
+        null=True,
+        blank=True,
+        verbose_name="sentiero della felicità",
     )
 
     visibility_to_persons = models.ManyToManyField(

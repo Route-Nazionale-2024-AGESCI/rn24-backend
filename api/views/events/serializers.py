@@ -25,6 +25,8 @@ class EventSerializer(UUIDRelatedModelSerializer):
             "registrations_open_at",
             "registrations_close_at",
             "kind",
+            "correlation_id",
+            "happiness_path",
         )
 
 

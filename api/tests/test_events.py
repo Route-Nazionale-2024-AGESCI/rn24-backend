@@ -245,6 +245,8 @@ def test_get_events(logged_api_client, base_events_page):
                 "starts_at": DateTimeField().to_representation(event_1.starts_at),
                 "uuid": str(event_1.uuid),
                 "id": event_1.id,
+                "happiness_path": event_1.happiness_path,
+                "correlation_id": event_1.correlation_id,
             },
             {
                 "created_at": DateTimeField().to_representation(event_2.created_at),
@@ -262,6 +264,8 @@ def test_get_events(logged_api_client, base_events_page):
                 "starts_at": DateTimeField().to_representation(event_2.starts_at),
                 "uuid": str(event_2.uuid),
                 "id": event_2.id,
+                "happiness_path": event_2.happiness_path,
+                "correlation_id": event_2.correlation_id,
             },
         ],
     }
