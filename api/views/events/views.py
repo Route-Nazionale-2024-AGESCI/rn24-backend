@@ -17,7 +17,7 @@ from events.services.registration import delete_personal_registration
 from events.services.selectors import (
     get_events_registered_to_person,
     get_events_visible_to_person,
-    get_persons_registered_to_event,
+    get_personal_registrations_for_event,
 )
 
 
@@ -78,4 +78,4 @@ class EventAttendeesListView(generics.ListAPIView):
 
     def get_queryset(self):
         event = get_object_or_404(Event, uuid=self.kwargs["uuid"])
-        return get_persons_registered_to_event(event)
+        return get_personal_registrations_for_event(event)

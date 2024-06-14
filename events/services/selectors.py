@@ -49,3 +49,7 @@ def get_persons_registered_to_event(event: Event):
         | Q(scout_group__line__subdistrict__district__registered_events=event)
         | Q(squads__registered_events=event)
     ).distinct()
+
+
+def get_personal_registrations_for_event(event: Event):
+    return Person.objects.filter(registered_events=event).distinct()
