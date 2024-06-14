@@ -194,6 +194,27 @@ class TestRegisterToEvent:
         assert response.json() == [RegistrationErrors.REGISTRATION_TIME_EXPIRED]
         assert not PersonEventRegistration.objects.filter(person=person, event=event).exists()
 
+    @pytest.mark.django_db
+    def test_register_to_multiple_events_of_same_module(
+        self, logged_api_client, person, base_events_page, url
+    ):
+        event_1 = EventFactory(
+            is_registration_required=True,
+            starts_at=timezone.now() + timedelta(days=1),
+            kind="SGUARDI",
+        )
+        event_2 = EventFactory(
+            is_registration_required=True,
+            starts_at=timezone.now() + timedelta(days=1),
+            kind="SGUARDI",
+        )
+        PersonEventRegistration.objects.create(person=person, event=event_1)
+        PersonEventVisibility.objects.create(person=person, event=event_2)
+        response = logged_api_client.post(url, {"event": str(event_2.uuid)})
+        assert response.status_code == 400, response.content
+        assert response.json() == [RegistrationErrors.ALREADY_REGISTERED_TO_SAME_KIND]
+        assert not PersonEventRegistration.objects.filter(person=person, event=event_2).exists()
+
 
 class TestDeleteRegistration:
 

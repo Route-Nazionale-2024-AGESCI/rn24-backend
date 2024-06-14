@@ -4,6 +4,7 @@ from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
 from events.models import Event
+from events.models.event_registration import PersonEventRegistration
 from events.services.selectors import get_events_visible_to_person
 from people.models import Person
 
@@ -17,6 +18,7 @@ class RegistrationErrors(TextChoices):
     SAME_GROUP_LIMIT = "iscrizione non possibile: limite persone dello stesso gruppo raggiunto"
     REGISTRATION_NOT_OPEN_YET = "iscrizioni non ancora aperte"
     REGISTRATION_TIME_EXPIRED = "iscrizioni chiuse"
+    ALREADY_REGISTERED_TO_SAME_KIND = "sei già iscritto ad un evento per questo modulo"
 
 
 @transaction.atomic
@@ -44,6 +46,12 @@ def register_person_to_event(person: Person, event: Event):
         raise ValidationError(RegistrationErrors.REGISTRATION_NOT_OPEN_YET)
     if event.registrations_close_at and now > event.registrations_close_at:
         raise ValidationError(RegistrationErrors.REGISTRATION_TIME_EXPIRED)
+    EVENT_KINDS_LIMITED_TO_ONE_PERSONAL_REGISTRATION = ("SGUARDI", "CONFRONTI", "INCONTRI")
+    if event.kind in EVENT_KINDS_LIMITED_TO_ONE_PERSONAL_REGISTRATION:
+        if PersonEventRegistration.objects.filter(event__kind=event.kind).exists():
+            raise ValidationError(RegistrationErrors.ALREADY_REGISTERED_TO_SAME_KIND)
+
+    # we can proceed with the registration
     event.personal_registrations_count = event.personal_registrations_count + 1
     event.save(update_fields=["personal_registrations_count"])
     event.registered_persons.add(person)
