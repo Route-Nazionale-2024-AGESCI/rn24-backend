@@ -30,6 +30,25 @@ class Command(BaseCommand):
             ("2024-08-24 15:00", "2024-08-24 18:00"),
         )
 
+        hours_for_incontri = (
+            #
+            ("2024-08-23 09:00", "2024-08-23 10:00"),
+            ("2024-08-23 10:00", "2024-08-23 11:00"),
+            ("2024-08-23 11:00", "2024-08-23 12:00"),
+            #
+            ("2024-08-23 15:00", "2024-08-23 16:00"),
+            ("2024-08-23 16:00", "2024-08-23 17:00"),
+            ("2024-08-23 17:00", "2024-08-23 18:00"),
+            #
+            ("2024-08-24 09:00", "2024-08-24 10:00"),
+            ("2024-08-24 10:00", "2024-08-24 11:00"),
+            ("2024-08-24 11:00", "2024-08-24 12:00"),
+            #
+            ("2024-08-24 15:00", "2024-08-24 16:00"),
+            ("2024-08-24 16:00", "2024-08-24 17:00"),
+            ("2024-08-24 17:00", "2024-08-24 18:00"),
+        )
+
         district_1, district_2, district_3, district_4 = list(District.objects.all())
 
         # SGUARDI: 8+8+8+8
@@ -43,7 +62,21 @@ class Command(BaseCommand):
 
         SGUARDI_sequence = [district_1, district_2, district_3, district_4]
         CONFRONTI_sequence = [district_3, district_3, district_4, district_1]
-        INCONTRI_sequence = [district_3, district_4, district_1, district_2]
+        INCONTRI_alfieri_sequence = [district_3, district_4, district_1, district_2]
+        INCONTRI_sequence = [
+            district_3,
+            district_3,
+            district_3,
+            district_4,
+            district_4,
+            district_4,
+            district_1,
+            district_1,
+            district_1,
+            district_2,
+            district_2,
+            district_2,
+        ]
         TRACCE_sequence = [district_4, district_1, district_2, district_3]
 
         print("SGUARDI")
@@ -74,9 +107,9 @@ class Command(BaseCommand):
                 )
                 event.visibility_to_districts.add(district)
 
-        print("INCONTRI")
+        print("INCONTRI (alfieri)")
         for i, (starts_at, ends_at) in enumerate(half_day_hours):
-            district = INCONTRI_sequence[i]
+            district = INCONTRI_alfieri_sequence[i]
             event_alfieri = EventFactory(
                 name="Incontri: evento di test per gli alfieri",
                 is_registration_required=True,
@@ -87,7 +120,10 @@ class Command(BaseCommand):
                 kind="INCONTRI",
             )
             event_alfieri.visibility_to_districts.add(district)
-            for i in range(1, 100 + 1):
+        print("INCONTRI")
+        for i, (starts_at, ends_at) in enumerate(hours_for_incontri):
+            district = INCONTRI_sequence[i]
+            for i in range(1, 60 + 1):
                 event = EventFactory(
                     name=f"Incontri: evento di test numero {i}",
                     is_registration_required=True,
