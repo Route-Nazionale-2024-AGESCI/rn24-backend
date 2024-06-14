@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
+from django.utils.timezone import datetime, make_aware
 
 from common.abstract import CommonAbstractModel
 from common.qr import QRCodeMixin
+from events.models.event_registration import PersonEventRegistration
 from people.models.scout_group import HAPPINESS_PATH_CHOICES
 
 EVENT_KIND_CHOICES = (
@@ -147,6 +149,15 @@ class Event(QRCodeMixin, CommonAbstractModel):
     )
 
     objects_with_annotations = AnnotatedEventsManager()
+
+    @classmethod
+    def get_last_updated_timestamp(cls):
+        event_timestamp = super().get_last_updated_timestamp()
+        if PersonEventRegistration.objects.exists():
+            personal_registration_timestamp = PersonEventRegistration.get_last_updated_timestamp()
+        else:
+            personal_registration_timestamp = make_aware(datetime(2000, 1, 1))
+        return max(event_timestamp, personal_registration_timestamp)
 
     @admin.display(description="posti disponibili")
     def available_slots(self):
