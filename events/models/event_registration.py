@@ -6,6 +6,7 @@ from common.abstract import CommonAbstractModel
 class PersonEventRegistration(CommonAbstractModel):
     event = models.ForeignKey("events.Event", on_delete=models.CASCADE, verbose_name="evento")
     person = models.ForeignKey("people.Person", on_delete=models.CASCADE, verbose_name="persona")
+    check_in = models.BooleanField(default=False, verbose_name="check-in")
 
     class Meta:
         verbose_name = "registrazione evento a persona"
@@ -20,6 +21,7 @@ class ScoutGroupEventRegistration(CommonAbstractModel):
     scout_group = models.ForeignKey(
         "people.ScoutGroup", on_delete=models.CASCADE, verbose_name="gruppo scout"
     )
+    check_in = models.BooleanField(default=False, verbose_name="check-in")
 
     class Meta:
         verbose_name = "registrazione evento a gruppo scout"
@@ -32,6 +34,7 @@ class ScoutGroupEventRegistration(CommonAbstractModel):
 class LineEventRegistration(CommonAbstractModel):
     event = models.ForeignKey("events.Event", on_delete=models.CASCADE, verbose_name="evento")
     line = models.ForeignKey("people.Line", on_delete=models.CASCADE, verbose_name="fila")
+    check_in = models.BooleanField(default=False, verbose_name="check-in")
 
     class Meta:
         verbose_name = "registrazione evento a fila"
@@ -46,6 +49,7 @@ class SubdistrictEventRegistration(CommonAbstractModel):
     subdistrict = models.ForeignKey(
         "people.Subdistrict", on_delete=models.CASCADE, verbose_name="contrada"
     )
+    check_in = models.BooleanField(default=False, verbose_name="check-in")
 
     class Meta:
         verbose_name = "registrazione evento a contrada"
@@ -60,6 +64,7 @@ class DistrictEventRegistration(CommonAbstractModel):
     district = models.ForeignKey(
         "people.District", on_delete=models.CASCADE, verbose_name="sottocampo"
     )
+    check_in = models.BooleanField(default=False, verbose_name="check-in")
 
     class Meta:
         verbose_name = "registrazione evento a sottocampo"
@@ -72,6 +77,7 @@ class DistrictEventRegistration(CommonAbstractModel):
 class SquadEventRegistration(CommonAbstractModel):
     event = models.ForeignKey("events.Event", on_delete=models.CASCADE, verbose_name="evento")
     squad = models.ForeignKey("people.Squad", on_delete=models.CASCADE, verbose_name="pattuglia")
+    check_in = models.BooleanField(default=False, verbose_name="check-in")
 
     class Meta:
         verbose_name = "registrazione evento a pattuglia"

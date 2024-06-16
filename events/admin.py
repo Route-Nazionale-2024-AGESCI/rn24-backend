@@ -1,9 +1,11 @@
 from django.contrib import admin
+from django.db.models import F
 from django.urls import reverse
 from django.utils.html import format_html
 
 from common.admin import BaseAdmin
 from events.models.event import Event
+from events.models.event_registration import ScoutGroupEventRegistration
 
 
 class PersonEventVisibilityInline(admin.TabularInline):
@@ -138,3 +140,33 @@ class EventAdmin(BaseAdmin):
         "persons_registration_count",
         "qr_link",
     )
+
+
+@admin.register(ScoutGroupEventRegistration)
+class ScoutGroupEventRegistrationAdmin(BaseAdmin):
+    date_hierarchy = "event__starts_at"
+    list_display = (
+        "event",
+        "annotated_event_starts_at",
+        "scout_group",
+        "check_in",
+    )
+    list_filter = ("check_in", "event__kind")
+    search_fields = (
+        "event__uuid",
+        "event__name",
+        "event__kind",
+        "event__location__name",
+        "scout_group__name",
+    )
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(
+            annotated_event_starts_at=F("event__starts_at"),
+        )
+        return queryset
+
+    @admin.display(description="data inizio", ordering="annotated_event_starts_at")
+    def annotated_event_starts_at(self, obj):
+        return obj.annotated_event_starts_at

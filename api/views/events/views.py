@@ -5,6 +5,7 @@ from rest_framework import generics
 
 from api.views.events.permissions import CanScanQRPermission
 from api.views.events.serializers import (
+    EventCheckinDetailSerializer,
     EventInvitationSerializer,
     EventRegistrationSerializer,
     EventSerializer,
@@ -12,7 +13,7 @@ from api.views.events.serializers import (
 )
 from api.views.profile.serializers import PersonSummarySerializer
 from events.models.event import Event
-from events.models.event_registration import PersonEventRegistration
+from events.models.event_registration import PersonEventRegistration, ScoutGroupEventRegistration
 from events.services.registration import delete_personal_registration
 from events.services.selectors import (
     get_events_registered_to_person,
@@ -43,6 +44,27 @@ class EventQRDetailView(EventDetailView):
     def get(self, request, *args, **kwargs):
         # response = super().get(request, *args, **kwargs)
         return HttpResponse(self.get_object().qr_png(), content_type="image/png")
+
+
+class EventCheckInDetailView(generics.RetrieveDestroyAPIView, generics.CreateAPIView):
+    serializer_class = EventCheckinDetailSerializer
+
+    def get_object(self):
+        event = get_object_or_404(Event, uuid=self.kwargs["uuid"])
+        scout_group = self.request.user.person.scout_group
+        object = get_object_or_404(
+            ScoutGroupEventRegistration, event=event, scout_group=scout_group
+        )
+        return object
+
+    def perform_create(self, serializer):
+        object = self.get_object()
+        object.check_in = True
+        object.save(update_fields=["check_in"])
+
+    def perform_destroy(self, instance):
+        instance.check_in = False
+        instance.save(update_fields=["check_in"])
 
 
 class EventRegistrationListView(generics.ListCreateAPIView):

@@ -4,6 +4,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 from api.views.badges.views import BadgeDetailPDFView, BadgeDetailView
 from api.views.events.views import (
     EventAttendeesListView,
+    EventCheckInDetailView,
     EventDetailView,
     EventInvitationListView,
     EventListView,
@@ -37,6 +38,11 @@ urlpatterns = [
     path("locations/<uuid:uuid>/", LocationDetailView.as_view(), name="location-detail"),
     path("events/", EventListView.as_view(), name="event-list"),
     path("events/<uuid:uuid>/", EventDetailView.as_view(), name="event-detail"),
+    path(
+        "events/<uuid:uuid>/check-in/",
+        EventCheckInDetailView.as_view(),
+        name="event-check-in-detail",
+    ),
     path("events/<uuid:uuid>/qr/", EventQRDetailView.as_view(), name="event-qr-detail"),
     path(
         "events/<uuid:uuid>/attendees/",

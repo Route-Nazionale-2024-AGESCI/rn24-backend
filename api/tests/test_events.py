@@ -332,3 +332,117 @@ class TestEventAttendee:
         assert response.status_code == 200, response.content
         assert len(response.json()) == 1
         assert response.json()[0]["uuid"] == str(attendee.uuid)
+
+
+class TestEventCheckIn:
+
+    @pytest.fixture
+    def event(self):
+        return EventFactory()
+
+    @pytest.fixture
+    def event_with_registered_scout_group(self, event, person):
+        ScoutGroupEventRegistration.objects.create(event=event, scout_group=person.scout_group)
+        return event
+
+    @pytest.fixture
+    def event_with_registered_scout_group_check_in_done(self, event, person):
+        ScoutGroupEventRegistration.objects.create(
+            event=event, scout_group=person.scout_group, check_in=True
+        )
+        return event
+
+    @pytest.fixture
+    def url(self, event):
+        return reverse("event-check-in-detail", kwargs={"uuid": event.uuid})
+
+    @pytest.mark.django_db
+    def test_event_check_in(self, logged_api_client, url, event_with_registered_scout_group):
+        assert (
+            ScoutGroupEventRegistration.objects.filter(event=event_with_registered_scout_group)
+            .first()
+            .check_in
+            is False
+        )
+        response = logged_api_client.post(url)
+        assert response.status_code == 201, response.content
+        assert response.json() == {}
+        assert (
+            ScoutGroupEventRegistration.objects.filter(event=event_with_registered_scout_group)
+            .first()
+            .check_in
+            is True
+        )
+
+    @pytest.mark.django_db
+    def test_event_check_in_idempotent(
+        self, logged_api_client, url, event_with_registered_scout_group_check_in_done
+    ):
+        response = logged_api_client.post(url)
+        assert response.status_code == 201, response.content
+        assert (
+            ScoutGroupEventRegistration.objects.filter(
+                event=event_with_registered_scout_group_check_in_done, check_in=True
+            ).exists()
+            is True
+        )
+
+    @pytest.mark.django_db
+    def test_event_check_in_not_registered(self, logged_api_client, url, event):
+        response = logged_api_client.post(url)
+        assert response.status_code == 404, response.content
+        assert ScoutGroupEventRegistration.objects.filter(event=event).exists() is False
+
+    @pytest.mark.django_db
+    def test_event_get_check_in_done(
+        self, logged_api_client, url, event_with_registered_scout_group_check_in_done
+    ):
+        response = logged_api_client.get(url)
+        assert response.status_code == 200, response.content
+        assert response.json() == {"check_in": True}
+
+    @pytest.mark.django_db
+    def test_event_get_check_in_not_done(
+        self, logged_api_client, url, event_with_registered_scout_group
+    ):
+        response = logged_api_client.get(url)
+        assert response.status_code == 200, response.content
+        assert response.json() == {"check_in": False}
+
+    @pytest.mark.django_db
+    def test_event_get_for_event_not_registered(self, logged_api_client, url, event):
+        response = logged_api_client.get(url)
+        assert response.status_code == 404, response.content
+
+    @pytest.mark.django_db
+    def test_event_checkin_delete__ok(
+        self, logged_api_client, url, event_with_registered_scout_group_check_in_done
+    ):
+        assert ScoutGroupEventRegistration.objects.filter(
+            event=event_with_registered_scout_group_check_in_done, check_in=True
+        ).exists()
+        response = logged_api_client.delete(url)
+        assert response.status_code == 204, response.content
+        assert not ScoutGroupEventRegistration.objects.filter(
+            event=event_with_registered_scout_group_check_in_done, check_in=True
+        ).exists()
+
+    @pytest.mark.django_db
+    def test_event_checkin_delete__not_registered(self, logged_api_client, url, event):
+        assert not ScoutGroupEventRegistration.objects.filter(event=event, check_in=True).exists()
+        response = logged_api_client.delete(url)
+        assert response.status_code == 404, response.content
+        assert not ScoutGroupEventRegistration.objects.filter(event=event, check_in=True).exists()
+
+    @pytest.mark.django_db
+    def test_event_checkin_delete__not_checked_in_is_idempotent(
+        self, logged_api_client, url, event_with_registered_scout_group
+    ):
+        assert not ScoutGroupEventRegistration.objects.filter(
+            event=event_with_registered_scout_group, check_in=True
+        ).exists()
+        response = logged_api_client.delete(url)
+        assert response.status_code == 204, response.content
+        assert not ScoutGroupEventRegistration.objects.filter(
+            event=event_with_registered_scout_group, check_in=True
+        ).exists()
