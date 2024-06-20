@@ -18,11 +18,21 @@ User = get_user_model()
 class Person(QRCodeMixin, CommonAbstractModel):
 
     agesci_id = models.CharField(
-        max_length=255, db_index=True, verbose_name="codice AGESCI", unique=True
+        max_length=255,
+        db_index=True,
+        verbose_name="codice AGESCI",
+        unique=True,
+        null=True,
+        blank=True,
     )
 
     user = models.OneToOneField(
-        User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="utente"
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="utente",
+        help_text="se stai creando una persona lascia vuoto questo campo: un utente viene creato in automatico",
     )
 
     first_name = models.CharField(db_index=True, max_length=255, verbose_name="nome")

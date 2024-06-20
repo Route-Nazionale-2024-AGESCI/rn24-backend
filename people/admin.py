@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin.models import DELETION, LogEntry
+from django.contrib.auth import get_user_model
 from django.contrib.postgres.aggregates import StringAgg
 from django.db import transaction
 from django.db.models import F
@@ -19,6 +20,8 @@ from people.models.person import Person
 from people.models.scout_group import ScoutGroup
 from people.models.squad import Squad
 from people.models.subdistrict import Subdistrict
+
+User = get_user_model()
 
 
 class LastLoginAdminFilter(admin.SimpleListFilter):
@@ -146,6 +149,20 @@ class PersonAdmin(BaseAdmin):
         response = HttpResponse(pdf, content_type="application/pdf")
         response["Content-Disposition"] = 'attachment; filename="badge.pdf"'
         return response
+
+    def save_model(self, request, obj, form, change):
+        if not obj.user:
+            if obj.agesci_id:
+                username = obj.agesci_id
+            else:
+                username = obj.email
+            obj.user = User.objects.create_user(
+                username=username,
+                email=obj.email,
+                first_name=obj.first_name,
+                last_name=obj.last_name,
+            )
+        super().save_model(request, obj, form, change)
 
 
 class PersonInline(admin.TabularInline):
