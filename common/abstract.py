@@ -42,3 +42,8 @@ class CommonAbstractModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class NoSoftDeleteMixin:
+    def delete(self, using=None, soft=True, *args, **kwargs):
+        return super().delete(using=using, soft=False, *args, **kwargs)

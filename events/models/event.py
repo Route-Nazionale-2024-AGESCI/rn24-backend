@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.db import models
+from django.db import models, transaction
 from django.utils.html import format_html
 from django.utils.timezone import datetime, make_aware
 
@@ -189,6 +189,12 @@ class Event(QRCodeMixin, CommonAbstractModel):
 
     def qr_payload(self):
         return f"E#{self.uuid}"
+
+    def update_personal_registrations_count(self):
+        with transaction.atomic():
+            event = Event.objects.select_for_update().get(id=self.id)
+            event.personal_registrations_count = event.registered_persons.count()
+            event.save(update_fields=["personal_registrations_count"])
 
     class Meta:
         verbose_name = "evento"

@@ -5,7 +5,7 @@ from django.utils.html import format_html
 
 from common.admin import BaseAdmin
 from events.models.event import Event
-from events.models.event_registration import ScoutGroupEventRegistration
+from events.models.event_registration import PersonEventRegistration, ScoutGroupEventRegistration
 
 
 class PersonEventVisibilityInline(admin.TabularInline):
@@ -43,7 +43,7 @@ class SquadEventVisibilityInline(admin.TabularInline):
 
 
 class PersonEventRegistrationInline(admin.TabularInline):
-    model = Event.registered_persons.through
+    model = PersonEventRegistration
     autocomplete_fields = ("person",)
     extra = 1
 
@@ -140,6 +140,11 @@ class EventAdmin(BaseAdmin):
         "persons_registration_count",
         "qr_link",
     )
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        event = form.instance
+        event.update_personal_registrations_count()
 
 
 @admin.register(ScoutGroupEventRegistration)

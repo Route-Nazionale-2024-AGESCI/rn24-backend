@@ -1,9 +1,9 @@
 from django.db import models
 
-from common.abstract import CommonAbstractModel
+from common.abstract import CommonAbstractModel, NoSoftDeleteMixin
 
 
-class PersonEventVisibility(CommonAbstractModel):
+class PersonEventVisibility(NoSoftDeleteMixin, CommonAbstractModel):
     event = models.ForeignKey("events.Event", on_delete=models.CASCADE, verbose_name="evento")
     person = models.ForeignKey("people.Person", on_delete=models.CASCADE, verbose_name="persona")
 
@@ -15,7 +15,7 @@ class PersonEventVisibility(CommonAbstractModel):
         return f"{self.event} - {self.person}"
 
 
-class ScoutGroupEventVisibility(CommonAbstractModel):
+class ScoutGroupEventVisibility(NoSoftDeleteMixin, CommonAbstractModel):
     event = models.ForeignKey("events.Event", on_delete=models.CASCADE, verbose_name="evento")
     scout_group = models.ForeignKey(
         "people.ScoutGroup", on_delete=models.CASCADE, verbose_name="gruppo scout"
@@ -29,7 +29,7 @@ class ScoutGroupEventVisibility(CommonAbstractModel):
         return f"{self.event} - {self.scout_group}"
 
 
-class LineEventVisibility(CommonAbstractModel):
+class LineEventVisibility(NoSoftDeleteMixin, CommonAbstractModel):
     event = models.ForeignKey("events.Event", on_delete=models.CASCADE, verbose_name="evento")
     line = models.ForeignKey("people.Line", on_delete=models.CASCADE, verbose_name="fila")
 
@@ -41,7 +41,7 @@ class LineEventVisibility(CommonAbstractModel):
         return f"{self.event} - {self.line}"
 
 
-class SubdistrictEventVisibility(CommonAbstractModel):
+class SubdistrictEventVisibility(NoSoftDeleteMixin, CommonAbstractModel):
     event = models.ForeignKey("events.Event", on_delete=models.CASCADE, verbose_name="evento")
     subdistrict = models.ForeignKey(
         "people.Subdistrict", on_delete=models.CASCADE, verbose_name="contrada"
@@ -55,7 +55,7 @@ class SubdistrictEventVisibility(CommonAbstractModel):
         return f"{self.event} - {self.subdistrict}"
 
 
-class DistrictEventVisibility(CommonAbstractModel):
+class DistrictEventVisibility(NoSoftDeleteMixin, CommonAbstractModel):
     event = models.ForeignKey("events.Event", on_delete=models.CASCADE, verbose_name="evento")
     district = models.ForeignKey(
         "people.District", on_delete=models.CASCADE, verbose_name="sottocampo"
@@ -69,7 +69,7 @@ class DistrictEventVisibility(CommonAbstractModel):
         return f"{self.event} - {self.district}"
 
 
-class SquadEventVisibility(CommonAbstractModel):
+class SquadEventVisibility(NoSoftDeleteMixin, CommonAbstractModel):
     event = models.ForeignKey("events.Event", on_delete=models.CASCADE, verbose_name="evento")
     squad = models.ForeignKey("people.Squad", on_delete=models.CASCADE, verbose_name="pattuglia")
 
