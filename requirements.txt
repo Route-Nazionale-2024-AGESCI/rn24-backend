@@ -66,7 +66,7 @@ django==5.0.6
     #   laces
     #   sentry-sdk
     #   wagtail
-django-anymail[mailgun]==10.3
+django-anymail[mailgun]==11.0
     # via -r requirements.in
 django-colorfield==0.11.0
     # via -r requirements.in
