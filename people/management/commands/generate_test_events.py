@@ -123,14 +123,15 @@ class Command(BaseCommand):
         print("INCONTRI")
         for i, (starts_at, ends_at) in enumerate(hours_for_incontri):
             district = INCONTRI_sequence[i]
-            for i in range(1, 60 + 1):
+            for j in range(1, 60 + 1):
                 event = EventFactory(
-                    name=f"Incontri: evento di test numero {i}",
+                    name=f"Incontri: evento di test numero {j}",
                     is_registration_required=True,
                     starts_at=starts_at,
                     ends_at=ends_at,
                     registration_limit=625,
                     kind="INCONTRI",
+                    correlation_id=f"{int(i/3)}-{j}",
                 )
                 event.visibility_to_districts.add(district)
 
