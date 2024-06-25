@@ -113,6 +113,8 @@ if SILK_ENABLED:
     SILKY_AUTHORISATION = True
     SILKY_META = True
     SILKY_PYTHON_PROFILER = True
+    SILKY_PYTHON_PROFILER_BINARY = True
+
 
 ROOT_URLCONF = "rn24.urls"
 
@@ -259,3 +261,5 @@ sentry_sdk.init(
     # We recommend adjusting this value in production.
     profiles_sample_rate=1.0,
 )
+
+SHELL_PLUS_PRINT_SQL_TRUNCATE = None
