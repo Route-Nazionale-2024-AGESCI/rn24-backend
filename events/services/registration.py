@@ -48,7 +48,7 @@ def register_person_to_event(person: Person, event: Event):
         raise ValidationError(RegistrationErrors.REGISTRATION_TIME_EXPIRED)
     EVENT_KINDS_LIMITED_TO_ONE_PERSONAL_REGISTRATION = ("SGUARDI", "CONFRONTI", "INCONTRI")
     if event.kind in EVENT_KINDS_LIMITED_TO_ONE_PERSONAL_REGISTRATION:
-        if PersonEventRegistration.objects.filter(event__kind=event.kind).exists():
+        if PersonEventRegistration.objects.filter(event__kind=event.kind, person=person).exists():
             raise ValidationError(RegistrationErrors.ALREADY_REGISTERED_TO_SAME_KIND)
 
     # we can proceed with the registration

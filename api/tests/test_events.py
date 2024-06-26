@@ -215,6 +215,45 @@ class TestRegisterToEvent:
         assert response.json() == [RegistrationErrors.ALREADY_REGISTERED_TO_SAME_KIND]
         assert not PersonEventRegistration.objects.filter(person=person, event=event_2).exists()
 
+    @pytest.mark.django_db
+    def test_person_can_register_to_multiple_events_of_different_modules(
+        self, logged_api_client, person, base_events_page, url
+    ):
+        another_person = PersonFactory()
+        event_1 = EventFactory(
+            is_registration_required=True,
+            starts_at=timezone.now() + timedelta(days=1),
+            kind="SGUARDI",
+        )
+        PersonEventVisibility.objects.create(person=person, event=event_1)
+        PersonEventRegistration.objects.create(person=another_person, event=event_1)
+        event_2 = EventFactory(
+            is_registration_required=True,
+            starts_at=timezone.now() + timedelta(days=1),
+            kind="CONFRONTI",
+        )
+        PersonEventVisibility.objects.create(person=person, event=event_2)
+        PersonEventRegistration.objects.create(person=another_person, event=event_2)
+        event_3 = EventFactory(
+            is_registration_required=True,
+            starts_at=timezone.now() + timedelta(days=1),
+            kind="INCONTRI",
+        )
+        PersonEventVisibility.objects.create(person=person, event=event_3)
+        PersonEventRegistration.objects.create(person=another_person, event=event_3)
+
+        response = logged_api_client.post(url, {"event": str(event_1.uuid)})
+        assert response.status_code == 201, response.content
+        assert PersonEventRegistration.objects.filter(person=person, event=event_1).exists()
+
+        response = logged_api_client.post(url, {"event": str(event_2.uuid)})
+        assert response.status_code == 201, response.content
+        assert PersonEventRegistration.objects.filter(person=person, event=event_2).exists()
+
+        response = logged_api_client.post(url, {"event": str(event_3.uuid)})
+        assert response.status_code == 201, response.content
+        assert PersonEventRegistration.objects.filter(person=person, event=event_3).exists()
+
 
 class TestDeleteRegistration:
 
