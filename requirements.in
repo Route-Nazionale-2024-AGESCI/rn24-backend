@@ -29,3 +29,5 @@ pycryptodome
 qrcode
 fontawesomefree
 django-colorfield
+redis
+hiredis

@@ -1,9 +1,39 @@
+import logging
+
+from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.db import transaction
-from django.db.models.signals import m2m_changed
+from django.db.models.signals import m2m_changed, post_delete, post_save
 from django.dispatch import receiver
 
+from cms.models.page import CMSPage
+from events.models.event import Event
+from events.models.event_registration import (
+    DistrictEventRegistration,
+    LineEventRegistration,
+    PersonEventRegistration,
+    SquadEventRegistration,
+    SubdistrictEventRegistration,
+)
+from events.models.event_visibility import (
+    DistrictEventVisibility,
+    LineEventVisibility,
+    PersonEventVisibility,
+    ScoutGroupEventVisibility,
+    SquadEventVisibility,
+    SubdistrictEventVisibility,
+)
+from maps.models.location import Location
+from people.models.district import District
+from people.models.line import Line
 from people.models.person import Person
+from people.models.scout_group import ScoutGroup
 from people.models.squad import Squad
+from people.models.subdistrict import Subdistrict
+
+User = get_user_model()
+
+logger = logging.getLogger(__name__)
 
 
 @receiver(m2m_changed, sender=Person.squads.through)
@@ -19,3 +49,31 @@ def squad_groups_m2m_changed(sender, instance=None, action=None, **kwargs):
         with transaction.atomic():
             for person in instance.members.all():
                 person.set_permissions_from_squads()
+
+
+# invalidate cache
+@receiver([post_save, post_delete], sender=Person)
+@receiver([post_save, post_delete], sender=User)
+@receiver([post_save, post_delete], sender=Squad)
+@receiver([post_save, post_delete], sender=ScoutGroup)
+@receiver([post_save, post_delete], sender=Line)
+@receiver([post_save, post_delete], sender=Subdistrict)
+@receiver([post_save, post_delete], sender=District)
+@receiver([post_save, post_delete], sender=CMSPage)
+@receiver([post_save, post_delete], sender=Location)
+@receiver([post_save, post_delete], sender=Event)
+@receiver([post_save, post_delete], sender=SquadEventVisibility)
+@receiver([post_save, post_delete], sender=LineEventVisibility)
+@receiver([post_save, post_delete], sender=SubdistrictEventVisibility)
+@receiver([post_save, post_delete], sender=DistrictEventVisibility)
+@receiver([post_save, post_delete], sender=ScoutGroupEventVisibility)
+@receiver([post_save, post_delete], sender=PersonEventVisibility)
+@receiver([post_save, post_delete], sender=SquadEventRegistration)
+@receiver([post_save, post_delete], sender=PersonEventRegistration)
+@receiver([post_save, post_delete], sender=LineEventRegistration)
+@receiver([post_save, post_delete], sender=SubdistrictEventRegistration)
+@receiver([post_save, post_delete], sender=DistrictEventRegistration)
+@receiver([post_save, post_delete], sender=SquadEventRegistration)
+def invalidate_cache(sender, instance=None, **kwargs):
+    logger.info("Invalidating cache for %s: %s", sender, instance)
+    cache.clear()

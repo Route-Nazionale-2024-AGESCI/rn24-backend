@@ -263,3 +263,13 @@ sentry_sdk.init(
 )
 
 SHELL_PLUS_PRINT_SQL_TRUNCATE = None
+
+CACHE_TIMEOUT = 60 * 5  # seconds: 5 minutes
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379",
+        "TIMEOUT": CACHE_TIMEOUT,
+    }
+}

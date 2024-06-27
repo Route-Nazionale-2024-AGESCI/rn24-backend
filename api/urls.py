@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.decorators.cache import cache_page
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 from api.views.badges.views import BadgeDetailPDFView, BadgeDetailView
@@ -17,6 +18,7 @@ from api.views.maps.views import LocationDetailView, LocationListView
 from api.views.pages.views import PageDetailView, PageListView, PageQRDetailView
 from api.views.profile.views import ProfileDetailView
 from api.views.version.views import VersionListView
+from rn24.settings import CACHE_TIMEOUT
 
 urlpatterns = [
     # path("api-auth/", include("rest_framework.urls")),
@@ -34,9 +36,9 @@ urlpatterns = [
     path("badges/<uuid:uuid>.pdf", BadgeDetailPDFView.as_view(), name="badge-detail-pdf"),
     path("profile/", ProfileDetailView.as_view(), name="profile-detail"),
     path("versions/", VersionListView.as_view(), name="version-list"),
-    path("locations/", LocationListView.as_view(), name="location-list"),
+    path("locations/", cache_page(CACHE_TIMEOUT)(LocationListView.as_view()), name="location-list"),
     path("locations/<uuid:uuid>/", LocationDetailView.as_view(), name="location-detail"),
-    path("events/", EventListView.as_view(), name="event-list"),
+    path("events/", cache_page(CACHE_TIMEOUT)(EventListView.as_view()), name="event-list"),
     path("events/<uuid:uuid>/", EventDetailView.as_view(), name="event-detail"),
     path(
         "events/<uuid:uuid>/check-in/",
@@ -60,7 +62,7 @@ urlpatterns = [
         name="event-registration-detail",
     ),
     path("events/invitations/", EventInvitationListView.as_view(), name="event-invitation-list"),
-    path("pages/", PageListView.as_view(), name="page-list"),
+    path("pages/", cache_page(CACHE_TIMEOUT)(PageListView.as_view()), name="page-list"),
     path("pages/<uuid:uuid>/", PageDetailView.as_view(), name="page-detail"),
     path("pages/<uuid:uuid>/qr/", PageQRDetailView.as_view(), name="page-qr-detail"),
 ]

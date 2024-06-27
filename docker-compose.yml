@@ -33,3 +33,5 @@ services:
       - "gotenberg"
       - "--chromium-auto-start=true"
       - "--gotenberg-graceful-shutdown-duration=1s"
+  redis:
+    image: redis

@@ -124,6 +124,8 @@ gprof2dot==2022.7.29
     # via django-silk
 gunicorn==22.0.0
     # via -r requirements.in
+hiredis==2.3.2
+    # via -r requirements.in
 identify==2.5.33
     # via pre-commit
 idna==3.6
@@ -222,6 +224,8 @@ pyyaml==6.0.1
     #   drf-spectacular
     #   pre-commit
 qrcode==7.4.2
+    # via -r requirements.in
+redis==5.0.7
     # via -r requirements.in
 referencing==0.34.0
     # via
