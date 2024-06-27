@@ -14,8 +14,15 @@ from events.models import (
     ScoutGroupEventRegistration,
 )
 from events.models.event import Event
+from events.models.event_visibility import (
+    DistrictEventVisibility,
+    LineEventVisibility,
+    ScoutGroupEventVisibility,
+    SquadEventVisibility,
+    SubdistrictEventVisibility,
+)
 from events.services.registration import RegistrationErrors
-from people.factories import PersonFactory
+from people.factories import PersonFactory, SquadFactory
 
 
 @pytest.mark.django_db
@@ -38,6 +45,118 @@ def test_get_registrations(logged_api_client, person, base_events_page):
             "is_personal": False,
         },
     ]
+
+
+class TestEventVisibility:
+    @pytest.fixture
+    def url(self):
+        return reverse("event-invitation-list")
+
+    @pytest.fixture
+    def event(self):
+        return EventFactory()
+
+    @pytest.fixture
+    def event_personal_visibility(self, event, person):
+        return PersonEventVisibility.objects.create(person=person, event=event)
+
+    @pytest.fixture
+    def event_scout_group_visibility(self, event, person):
+        return ScoutGroupEventVisibility.objects.create(scout_group=person.scout_group, event=event)
+
+    @pytest.fixture
+    def event_line_visibility(self, event, person):
+        return LineEventVisibility.objects.create(line=person.scout_group.line, event=event)
+
+    @pytest.fixture
+    def event_subdistrict_visibility(self, event, person):
+        return SubdistrictEventVisibility.objects.create(
+            subdistrict=person.scout_group.line.subdistrict, event=event
+        )
+
+    @pytest.fixture
+    def event_district_visibility(self, event, person):
+        return DistrictEventVisibility.objects.create(
+            district=person.scout_group.line.subdistrict.district, event=event
+        )
+
+    @pytest.fixture
+    def event_squad_visibility(self, event, person):
+        squad = SquadFactory()
+        person.squads.add(squad)
+        return SquadEventVisibility.objects.create(squad=squad, event=event)
+
+    @pytest.mark.django_db
+    def test_get_event_visibility__no_events(self, event, person, logged_api_client, url):
+        response = logged_api_client.get(url)
+        assert response.status_code == 200, response.content
+        assert response.json() == []
+
+    @pytest.mark.django_db
+    def test_get_personal_event_visibility(
+        self, event, person, logged_api_client, url, event_personal_visibility
+    ):
+        response = logged_api_client.get(url)
+        assert response.status_code == 200, response.content
+        assert response.json() == [{"uuid": str(event.uuid)}]
+
+    @pytest.mark.django_db
+    def test_get_scout_group_event_visibility(
+        self, event, person, logged_api_client, url, event_scout_group_visibility
+    ):
+        response = logged_api_client.get(url)
+        assert response.status_code == 200, response.content
+        assert response.json() == [{"uuid": str(event.uuid)}]
+
+    @pytest.mark.django_db
+    def test_get_line_event_visibility(
+        self, event, person, logged_api_client, url, event_line_visibility
+    ):
+        response = logged_api_client.get(url)
+        assert response.status_code == 200, response.content
+        assert response.json() == [{"uuid": str(event.uuid)}]
+
+    @pytest.mark.django_db
+    def test_get_subdistrict_event_visibility(
+        self, event, person, logged_api_client, url, event_subdistrict_visibility
+    ):
+        response = logged_api_client.get(url)
+        assert response.status_code == 200, response.content
+        assert response.json() == [{"uuid": str(event.uuid)}]
+
+    @pytest.mark.django_db
+    def test_get_district_event_visibility(
+        self, event, person, logged_api_client, url, event_district_visibility
+    ):
+        response = logged_api_client.get(url)
+        assert response.status_code == 200, response.content
+        assert response.json() == [{"uuid": str(event.uuid)}]
+
+    @pytest.mark.django_db
+    def test_get_squad_event_visibility(
+        self, event, person, logged_api_client, url, event_squad_visibility
+    ):
+        response = logged_api_client.get(url)
+        assert response.status_code == 200, response.content
+        assert response.json() == [{"uuid": str(event.uuid)}]
+
+    @pytest.mark.django_db
+    def test_multiple_visibility(
+        self,
+        event,
+        person,
+        logged_api_client,
+        url,
+        event_personal_visibility,
+        event_scout_group_visibility,
+        event_line_visibility,
+        event_subdistrict_visibility,
+        event_district_visibility,
+        event_squad_visibility,
+    ):
+        response = logged_api_client.get(url)
+        assert response.status_code == 200, response.content
+        assert response.json() == [{"uuid": str(event.uuid)}]
 
 
 class TestRegisterToEvent:
