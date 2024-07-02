@@ -187,9 +187,9 @@ pre-commit==3.7.1
     # via -r requirements.in
 prompt-toolkit==3.0.43
     # via ipython
-psycopg[binary]==3.1.19
+psycopg[binary]==3.2.1
     # via -r requirements.in
-psycopg-binary==3.1.19
+psycopg-binary==3.2.1
     # via psycopg
 ptyprocess==0.7.0
     # via pexpect
