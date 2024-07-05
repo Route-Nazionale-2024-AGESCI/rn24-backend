@@ -18,6 +18,7 @@ from people.models.district import District
 from people.models.line import Line
 from people.models.person import Person
 from people.models.scout_group import ScoutGroup
+from people.models.sensible_data import SensibleData
 from people.models.squad import Squad
 from people.models.subdistrict import Subdistrict
 
@@ -54,6 +55,11 @@ class LastLoginAdminFilter(admin.SimpleListFilter):
 
 @admin.register(Person)
 class PersonAdmin(BaseAdmin):
+
+    def get_fields(self, request, obj):
+        all_fields = super().get_fields(request, obj)
+        return list(set(all_fields) - set(Person.SENSIBLE_FIELDS))
+
     search_fields = (
         "agesci_id",
         "uuid",
@@ -85,6 +91,7 @@ class PersonAdmin(BaseAdmin):
         "is_arrived",
         "arrived_at",
         "badge_url",
+        "sensible_data_admin_link",
     ]
     actions = ["mark_as_arrived", "revert_arrival", "print_badge"]
 
@@ -106,14 +113,6 @@ class PersonAdmin(BaseAdmin):
     @admin.display(description="pattuglie")
     def annotated_squads(self, obj):
         return obj.annotated_squads
-
-    @admin.display(description="Gruppo scout")
-    def scout_group_link(self, obj):
-        if not obj.scout_group:
-            return None
-        url = reverse("admin:people_scoutgroup_change", args=[obj.scout_group.id])
-        link = f'<a href="{url}">{obj.scout_group.name}</a>'
-        return mark_safe(link)
 
     @admin.action(
         permissions=["change"],
@@ -177,6 +176,49 @@ class PersonInline(admin.TabularInline):
     extra = 0
 
     def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(SensibleData)
+class SensibleDataAdmin(BaseAdmin):
+    search_fields = (
+        "agesci_id",
+        "uuid",
+        "first_name",
+        "last_name",
+        "email",
+        "phone",
+        "scout_group__name",
+    )
+    list_display = [
+        "agesci_id",
+        "first_name",
+        "last_name",
+        "scout_group_link",
+    ] + Person.SENSIBLE_FIELDS
+
+    list_filter = [
+        "accessibility_has_wheelchair",
+        "accessibility_has_caretaker_not_registered",
+        "sleeping_is_sleeping_in_tent",
+        "food_is_vegan",
+        "transportation_has_problems_moving_on_foot",
+        "health_has_allergies",
+        "health_has_movement_disorders",
+        "health_has_patologies",
+    ]
+
+    def get_fields(self, request, obj):
+        all_fields = super().get_fields(request, obj)
+        return ["person_admin_link"] + all_fields
+
+    def has_add_permission(self, request, *args, **kwargs):
+        return False
+
+    def has_change_permission(self, request, *args, **kwargs):
+        return False
+
+    def has_delete_permission(self, request, *args, **kwargs):
         return False
 
 

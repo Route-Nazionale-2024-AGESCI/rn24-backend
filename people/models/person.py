@@ -6,6 +6,7 @@ from django.contrib.auth.models import Group
 from django.db import models
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 from common.abstract import CommonAbstractModel
 from common.crypto import sign_string
@@ -13,6 +14,22 @@ from common.qr import QRCodeMixin
 from people.models.scout_group import ITALIAN_REGION_CHOICES
 
 User = get_user_model()
+
+FOOD_ALLERGIES_CHOICES = (
+    ("Nessuna", "Nessuna"),
+    (
+        "Monodieta (selezionare nel caso di singola allergia/intolleranza)",
+        "Monodieta (selezionare nel caso di singola allergia/intolleranza)",
+    ),
+    (
+        "Multidieta (selezionare nel caso di più allergie/intolleranze)",
+        "Multidieta (selezionare nel caso di più allergie/intolleranze)",
+    ),
+    (
+        "Dieta da shock (selezionare nel caso di una o più allergie che possano causare shock anafilattico)",
+        "Dieta da shock (selezionare nel caso di una o più allergie che possano causare shock anafilattico)",
+    ),
+)
 
 
 class Person(QRCodeMixin, CommonAbstractModel):
@@ -77,6 +94,106 @@ class Person(QRCodeMixin, CommonAbstractModel):
         null=True,
         choices=ITALIAN_REGION_CHOICES,
     )
+
+    # accessibility
+    accessibility_has_wheelchair = models.BooleanField(
+        default=False, verbose_name="sedia a rotelle?"
+    )
+    accessibility_has_caretaker_not_registered = models.BooleanField(
+        default=False, verbose_name="viaggia con accompagnatore non iscritto?"
+    )
+
+    # sleeping
+    sleeping_is_sleeping_in_tent = models.BooleanField(
+        default=False, verbose_name="dorme in tenda personale?"
+    )
+    sleeping_requests = models.TextField(
+        null=True, blank=True, verbose_name="richieste per il pernotto"
+    )
+    sleeping_place = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="Per motivi di disabilità/patologie ho bisogno di dormire:",
+    )
+    sleeping_requests_2 = models.TextField(
+        null=True, blank=True, verbose_name="richieste per il pernotto (2)"
+    )
+
+    # food
+    food_diet_needed = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        choices=FOOD_ALLERGIES_CHOICES,
+        verbose_name="Allergie/intolleranze ad alimenti da segnalare.",
+    )
+    food_allergies = models.TextField(
+        null=True, blank=True, verbose_name="Selezionare una o più allergie/intolleranze elencate:"
+    )  # merged with "ALTRO"
+    food_is_vegan = models.BooleanField(default=False, verbose_name="Segui una dieta vegana?")
+
+    # transportation
+    transportation_has_problems_moving_on_foot = models.BooleanField(
+        default=False,
+        verbose_name="Hai disabilità/patologie/età che non ti permettono di sostenere gli spostamenti a piedi previsti?",
+    )
+    transportation_need_transport = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="Necessiti di un accompagnatore fornito dall'organizzazione durante l'evento?",
+    )
+
+    # health
+    health_has_allergies = models.BooleanField(
+        default=False, verbose_name="Hai allergie accertate?"
+    )
+    health_allergies = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="allergie",
+    )
+    health_has_movement_disorders = models.BooleanField(
+        default=False, verbose_name="Sei affetto da disturbi motori?"
+    )
+    health_movement_disorders = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="disturbi motori",
+    )
+    health_has_patologies = models.BooleanField(
+        default=False,
+        verbose_name="Sei affetto da patologie cardiovascolari/respiratorie/neurologiche?",
+    )
+    health_patologies = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name="patologie accertate",
+    )
+
+    SENSIBLE_FIELDS = [
+        "accessibility_has_wheelchair",
+        "accessibility_has_caretaker_not_registered",
+        "sleeping_is_sleeping_in_tent",
+        "sleeping_requests",
+        "sleeping_place",
+        "sleeping_requests_2",
+        "food_diet_needed",
+        "food_allergies",
+        "food_is_vegan",
+        "transportation_has_problems_moving_on_foot",
+        "transportation_need_transport",
+        "health_has_allergies",
+        "health_allergies",
+        "health_has_movement_disorders",
+        "health_movement_disorders",
+        "health_has_patologies",
+        "health_patologies",
+    ]
+
+    @admin.display(description="pattuglie")
+    def squads_list(self):
+        return ", ".join([s.name for s in self.squads.all()])
 
     def line_name(self):
         try:
@@ -144,6 +261,26 @@ class Person(QRCodeMixin, CommonAbstractModel):
             HTML_url,
             PDF_url,
         )
+
+    @admin.display(description="Gruppo scout")
+    def scout_group_link(self):
+        if not self.scout_group:
+            return None
+        url = reverse("admin:people_scoutgroup_change", args=[self.scout_group.id])
+        link = f'<a href="{url}">{self.scout_group.name}</a>'
+        return mark_safe(link)
+
+    @admin.display(description="Persona")
+    def person_admin_link(self):
+        url = reverse("admin:people_person_change", args=[self.id])
+        link = f'<a href="{url}">{self}</a>'
+        return mark_safe(link)
+
+    @admin.display(description="Dati sensibili")
+    def sensible_data_admin_link(self):
+        url = reverse("admin:people_sensibledata_change", args=[self.id])
+        link = f'<a href="{url}">{self}</a>'
+        return mark_safe(link)
 
     def is_staff(self):
         return self.user.has_perm("people.is_staff")

@@ -31,3 +31,5 @@ fontawesomefree
 django-colorfield
 redis
 hiredis
+pandas
+pdbpp
