@@ -4,9 +4,10 @@ from wagtail.models import Page
 from wagtail.search import index
 
 from common.abstract import CommonAbstractModel
+from common.qr import QRCodeMixin
 
 
-class CMSPage(Page, CommonAbstractModel):
+class CMSPage(Page, QRCodeMixin, CommonAbstractModel):
     body = RichTextField(blank=True)
     search_fields = Page.search_fields + [
         index.SearchField("body"),
@@ -15,8 +16,11 @@ class CMSPage(Page, CommonAbstractModel):
         FieldPanel("body"),
     ]
 
+    def qr_payload(self):
+        return f"P#{self.uuid}"
+
     def get_admin_url(self):
-        return f"/cms/pages/{self.id}/edit/"
+        return f"/api/cms/pages/{self.id}/edit/"
 
     class Meta:
         verbose_name = "pagina"

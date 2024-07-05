@@ -1,16 +1,25 @@
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics
 
+from api.views.events.permissions import CanScanQRPermission
 from api.views.events.serializers import (
+    EventCheckinDetailSerializer,
     EventInvitationSerializer,
     EventRegistrationSerializer,
     EventSerializer,
     EventWithVersionSerializer,
 )
+from api.views.profile.serializers import PersonSummarySerializer
 from events.models.event import Event
-from events.models.event_registration import PersonEventRegistration
+from events.models.event_registration import PersonEventRegistration, ScoutGroupEventRegistration
 from events.services.registration import delete_personal_registration
-from events.services.selectors import get_events_registered_to_person, get_events_visible_to_person
+from events.services.selectors import (
+    get_events_registered_to_person,
+    get_events_visible_to_person,
+    get_personal_registrations_for_event,
+)
 
 
 @extend_schema_view(get=extend_schema(operation_id="api_v1_events_list"))
@@ -29,6 +38,33 @@ class EventDetailView(generics.RetrieveAPIView):
     queryset = Event.objects.all()
     lookup_field = "uuid"
     lookup_url_kwarg = "uuid"
+
+
+class EventQRDetailView(EventDetailView):
+    def get(self, request, *args, **kwargs):
+        # response = super().get(request, *args, **kwargs)
+        return HttpResponse(self.get_object().qr_png(), content_type="image/png")
+
+
+class EventCheckInDetailView(generics.RetrieveDestroyAPIView, generics.CreateAPIView):
+    serializer_class = EventCheckinDetailSerializer
+
+    def get_object(self):
+        event = get_object_or_404(Event, uuid=self.kwargs["uuid"])
+        scout_group = self.request.user.person.scout_group
+        object = get_object_or_404(
+            ScoutGroupEventRegistration, event=event, scout_group=scout_group
+        )
+        return object
+
+    def perform_create(self, serializer):
+        object = self.get_object()
+        object.check_in = True
+        object.save(update_fields=["check_in"])
+
+    def perform_destroy(self, instance):
+        instance.check_in = False
+        instance.save(update_fields=["check_in"])
 
 
 class EventRegistrationListView(generics.ListCreateAPIView):
@@ -56,3 +92,12 @@ class EventInvitationListView(generics.ListAPIView):
 
     def get_queryset(self):
         return get_events_visible_to_person(self.request.user.person)
+
+
+class EventAttendeesListView(generics.ListAPIView):
+    serializer_class = PersonSummarySerializer
+    permission_classes = [CanScanQRPermission]
+
+    def get_queryset(self):
+        event = get_object_or_404(Event, uuid=self.kwargs["uuid"])
+        return get_personal_registrations_for_event(event)

@@ -1,7 +1,9 @@
+from django.conf import settings
 from rest_framework import serializers
 
 from common.serializers import UUIDRelatedModelSerializer
 from people.models.district import District
+from people.models.line import Line
 from people.models.person import Person
 from people.models.scout_group import ScoutGroup
 from people.models.squad import Squad
@@ -39,8 +41,21 @@ class SubdistrictSerializer(UUIDRelatedModelSerializer):
         )
 
 
-class ScoutGroupSerializer(UUIDRelatedModelSerializer):
+class LineSerializer(UUIDRelatedModelSerializer):
     subdistrict = SubdistrictSerializer()
+
+    class Meta:
+        model = Line
+        fields = (
+            "uuid",
+            "name",
+            "subdistrict",
+            "location",
+        )
+
+
+class ScoutGroupSerializer(UUIDRelatedModelSerializer):
+    line = LineSerializer()
 
     class Meta:
         model = ScoutGroup
@@ -49,15 +64,28 @@ class ScoutGroupSerializer(UUIDRelatedModelSerializer):
             "name",
             "zone",
             "region",
-            "subdistrict",
+            "line",
             "happiness_path",
         )
+
+
+class PermissionsSerializer(serializers.Serializer):
+    is_staff = serializers.BooleanField(source="user.is_staff", read_only=True)
+    can_scan_qr = serializers.BooleanField(read_only=True)
 
 
 class ProfileSerializer(UUIDRelatedModelSerializer):
     scout_group = ScoutGroupSerializer()
     squads = SquadSerializer(many=True)
-    is_staff = serializers.BooleanField(source="user.is_staff", read_only=True)
+    public_key = serializers.SerializerMethodField()
+    qr_code = serializers.SerializerMethodField()
+    permissions = PermissionsSerializer(source="*")
+
+    def get_public_key(self, obj):
+        return settings.PUBLIC_KEY
+
+    def get_qr_code(self, obj):
+        return obj.qr_string_with_signature()
 
     class Meta:
         model = Person
@@ -70,5 +98,25 @@ class ProfileSerializer(UUIDRelatedModelSerializer):
             "phone",
             "scout_group",
             "squads",
-            "is_staff",
+            "public_key",
+            "qr_code",
+            "permissions",
+        )
+
+
+class PersonSummarySerializer(UUIDRelatedModelSerializer):
+    scout_group = ScoutGroupSerializer()
+    squads = SquadSerializer(many=True)
+
+    class Meta:
+        model = Person
+        fields = (
+            "uuid",
+            "agesci_id",
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "scout_group",
+            "squads",
         )

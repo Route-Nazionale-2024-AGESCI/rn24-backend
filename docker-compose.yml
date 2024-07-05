@@ -27,3 +27,11 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:8000:80"
+  gotenberg:
+    image: gotenberg/gotenberg:8
+    command:
+      - "gotenberg"
+      - "--chromium-auto-start=true"
+      - "--gotenberg-graceful-shutdown-duration=1s"
+  redis:
+    image: redis

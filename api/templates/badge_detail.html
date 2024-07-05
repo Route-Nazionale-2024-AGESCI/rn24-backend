@@ -1,0 +1,58 @@
+{% for person in person_list %}
+<table>
+    <tr>
+        <td>UUID</td>
+        <td>{{ person.uuid }}</td>
+    </tr>
+    <tr>
+        <td>Nome</td>
+        <td>{{ person.first_name }}</td>
+    </tr>
+    <tr>
+        <td>Cognome</td>
+        <td>{{ person.last_name }}</td>
+    </tr>
+    <tr>
+        <td>E-mail</td>
+        <td>{{ person.email }}</td>
+    </tr>
+    <tr>
+        <td>Telefono</td>
+        <td>{{ person.phone }}</td>
+    </tr>
+    <tr>
+        <td>Gruppo:</td>
+        <td>{{ person.scout_group }}</td>
+    </tr>
+    <tr>
+        <td>Regione</td>
+        <td>{{ person.region }}</td>
+    </tr>
+    <tr>
+        <td>Contrada</td>
+        <td>{{ person.subdistrict_name }}</td>
+    </tr>
+    <tr>
+        <td>Sottocampo</td>
+        <td>{{ person.district_name }}</td>
+    </tr>
+    <tr>
+        <td>Fila</td>
+        <td>{{ person.line_name }}</td>
+    </tr>
+    <tr>
+        <td>Pattuglie</td>
+        <td>{{ person.squad_list_string|default:"-" }}</td>
+    </tr>
+</table>
+<style>
+    .qr-container img {
+        width: 80%;
+    }
+</style>
+<p class="qr-container">{{ person.qr_png_base64 }}</p>
+{% if not forloop.last %}
+<p style="page-break-after: always;">&nbsp;</p>
+<p style="page-break-before: always;">&nbsp;</p>
+{% endif %}
+{% endfor %}

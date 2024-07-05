@@ -10,158 +10,196 @@ from people.models.subdistrict import Subdistrict
 class Command(BaseCommand):
     help = "generate some test Events"
 
+    def split(self, a, n):
+        k, m = divmod(len(a), n)
+        return (a[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)] for i in range(n))
+
     @transaction.atomic
     def handle(self, *args, **options):
-        print("GIOVEDI: arrivo e cena")
-        for scout_group in ScoutGroup.objects.all().iterator():
-            event = EventFactory(
-                name="Cena",
-                is_registration_required=False,
-                starts_at="2024-08-22 19:00",
-                ends_at="2024-08-22 21:00",
-                kind="PASTI",
-            )
-            event.registered_scout_groups.add(scout_group)
 
-        print("VENERDI mattina: SGUARDI")
-        sguardi = []
-        for i in range(6):
-            sguardi.append(
-                EventFactory(
+        # prima le mezze giornate
+        # venerdì mattina 9-12
+        # venerdì poermiggio 15-18
+        # sabato mattina 9-12
+        # sabato pomeriggio 15-18
+
+        half_day_hours = (
+            ("2024-08-23 09:00", "2024-08-23 12:00"),
+            ("2024-08-23 15:00", "2024-08-23 18:00"),
+            ("2024-08-24 09:00", "2024-08-24 12:00"),
+            ("2024-08-24 15:00", "2024-08-24 18:00"),
+        )
+
+        hours_for_incontri = (
+            #
+            ("2024-08-23 09:00", "2024-08-23 10:00"),
+            ("2024-08-23 10:00", "2024-08-23 11:00"),
+            ("2024-08-23 11:00", "2024-08-23 12:00"),
+            #
+            ("2024-08-23 15:00", "2024-08-23 16:00"),
+            ("2024-08-23 16:00", "2024-08-23 17:00"),
+            ("2024-08-23 17:00", "2024-08-23 18:00"),
+            #
+            ("2024-08-24 09:00", "2024-08-24 10:00"),
+            ("2024-08-24 10:00", "2024-08-24 11:00"),
+            ("2024-08-24 11:00", "2024-08-24 12:00"),
+            #
+            ("2024-08-24 15:00", "2024-08-24 16:00"),
+            ("2024-08-24 16:00", "2024-08-24 17:00"),
+            ("2024-08-24 17:00", "2024-08-24 18:00"),
+        )
+
+        district_1, district_2, district_3, district_4 = list(District.objects.all())
+
+        # SGUARDI: 8+8+8+8
+        # iscrizione personale, visibilità ad un sottocampo alla volta
+        # CONFRONTI: 8+8+8+8
+        # iscrizione personale, visibilità ad un sottocampo alla volta
+        # INCONTRI: 100 + 100 + 100 + 100
+        # iscrizione personale, visibilità ad un sottocampo alla volta
+        # TRACCE: 100 + 100 + 100 + 100
+        # iscrizione di gruppo (da backoffice), ma comunque sempre divisi per sottocampi
+
+        SGUARDI_sequence = [district_1, district_2, district_3, district_4]
+        CONFRONTI_sequence = [district_3, district_3, district_4, district_1]
+        INCONTRI_alfieri_sequence = [district_3, district_4, district_1, district_2]
+        INCONTRI_sequence = [
+            district_3,
+            district_3,
+            district_3,
+            district_4,
+            district_4,
+            district_4,
+            district_1,
+            district_1,
+            district_1,
+            district_2,
+            district_2,
+            district_2,
+        ]
+        TRACCE_sequence = [district_4, district_1, district_2, district_3]
+
+        print("SGUARDI")
+        for i, (starts_at, ends_at) in enumerate(half_day_hours):
+            district = SGUARDI_sequence[i]
+            for i in range(1, 8 + 1):
+                event = EventFactory(
                     name=f"Sguardi: evento di test numero {i}",
                     is_registration_required=True,
-                    starts_at="2024-08-23 09:00",
-                    ends_at="2024-08-23 12:00",
-                    registration_limit=10,
+                    starts_at=starts_at,
+                    ends_at=ends_at,
+                    registration_limit=625,
                     kind="SGUARDI",
                 )
-            )
-        for scout_group in ScoutGroup.objects.all().iterator():
-            for event in sguardi:
-                event.visibility_to_scout_groups.add(scout_group)
+                event.visibility_to_districts.add(district)
 
-        print("VENERDI pranzo")
-        for scout_group in ScoutGroup.objects.all().iterator():
-            event = EventFactory(
-                name="Pranzo",
-                is_registration_required=False,
-                starts_at="2024-08-23 12:00",
-                ends_at="2024-08-23 14:00",
-                kind="PASTI",
-            )
-            event.registered_scout_groups.add(scout_group)
-
-        print("VENERDI pomeriggio: CONFRONTI")
-        sguardi = []
-        for i in range(6):
-            sguardi.append(
-                EventFactory(
+        print("CONFRONTI")
+        for i, (starts_at, ends_at) in enumerate(half_day_hours):
+            district = CONFRONTI_sequence[i]
+            for i in range(1, 8 + 1):
+                event = EventFactory(
                     name=f"Confronti: evento di test numero {i}",
                     is_registration_required=True,
-                    starts_at="2024-08-23 15:00",
-                    ends_at="2024-08-23 19:00",
-                    registration_limit=10,
+                    starts_at=starts_at,
+                    ends_at=ends_at,
+                    registration_limit=625,
                     kind="CONFRONTI",
                 )
-            )
-        for scout_group in ScoutGroup.objects.all().iterator():
-            for event in sguardi:
-                event.visibility_to_scout_groups.add(scout_group)
+                event.visibility_to_districts.add(district)
 
-        print("VENERDI cena")
-        for scout_group in ScoutGroup.objects.all().iterator():
-            event = EventFactory(
-                name="Cena",
-                is_registration_required=False,
-                starts_at="2024-08-23 19:30",
-                ends_at="2024-08-23 20:30",
-                kind="PASTI",
+        print("INCONTRI (alfieri)")
+        for i, (starts_at, ends_at) in enumerate(half_day_hours):
+            district = INCONTRI_alfieri_sequence[i]
+            event_alfieri = EventFactory(
+                name="Incontri: evento di test per gli alfieri",
+                is_registration_required=True,
+                starts_at=starts_at,
+                ends_at=ends_at,
+                registration_limit=625,
+                registration_limit_from_same_scout_group=2,
+                kind="INCONTRI",
             )
-            event.registered_scout_groups.add(scout_group)
+            event_alfieri.visibility_to_districts.add(district)
+        print("INCONTRI")
+        for i, (starts_at, ends_at) in enumerate(hours_for_incontri):
+            district = INCONTRI_sequence[i]
+            for j in range(1, 60 + 1):
+                event = EventFactory(
+                    name=f"Incontri: evento di test numero {j}",
+                    is_registration_required=True,
+                    starts_at=starts_at,
+                    ends_at=ends_at,
+                    registration_limit=625,
+                    kind="INCONTRI",
+                    correlation_id=f"{int(i/3)}-{j}",
+                )
+                event.visibility_to_districts.add(district)
+
+        print("TRACCE")
+        for i, (starts_at, ends_at) in enumerate(half_day_hours):
+            district = TRACCE_sequence[i]
+            scout_groups = ScoutGroup.objects.filter(line__subdistrict__district=district).only(
+                "id"
+            )
+            chunks = self.split(list(scout_groups), 100)
+            for i in range(1, 100 + 1):
+                event = EventFactory(
+                    name=f"Tracce: evento di test numero {i}",
+                    is_registration_required=False,
+                    starts_at=starts_at,
+                    ends_at=ends_at,
+                    kind="TRACCE",
+                )
+                scout_groups = next(chunks)
+                for scout_group in scout_groups:
+                    event.registered_scout_groups.add(scout_group)
+
+        # PASTI
+        # per ora ipotizziamo siano per contrada
+        print("PASTI")
+        meal_times = (
+            ("2024-08-22 20:00", "2024-08-22 20:30", "Cena"),  # cena giovedi
+            ("2024-08-23 07:30", "2024-08-23 08:00", "Colazione"),  # colazione venerdi
+            ("2024-08-23 12:30", "2024-08-23 13:00", "Pranzo"),  # pranzo venerdi
+            ("2024-08-23 20:00", "2024-08-23 20:30", "Cena"),  # cena venerdì
+            ("2024-08-24 07:30", "2024-08-24 08:00", "Colazione"),  # colazione sabato
+            ("2024-08-24 12:30", "2024-08-24 13:00", "Pranzo"),  # pranzo sabato
+            ("2024-08-24 20:00", "2024-08-24 20:30", "Cena"),  # cena sabato
+            ("2024-08-25 07:30", "2024-08-25 08:00", "Colazione"),  # colazione domenica
+            ("2024-08-25 12:30", "2024-08-25 13:00", "Pranzo"),  # pranzo domenica
+        )
+        for subdistrict in Subdistrict.objects.all():
+            for starts_at, ends_at, name in meal_times:
+                event = EventFactory(
+                    name=name,
+                    is_registration_required=False,
+                    starts_at=starts_at,
+                    ends_at=ends_at,
+                    kind="PASTI",
+                )
+                event.registered_subdistricts.add(subdistrict)
 
         print("VENERDI sera: CONCERTO di sottocampo")
         for district in District.objects.all():
             event = EventFactory(
-                name="Concerto di band strepitosa nel sottocampo",
+                name="Concerto di sottocampo",
                 is_registration_required=False,
-                starts_at="2024-08-23 21:30",
-                ends_at="2024-08-23 23:00",
+                starts_at="2024-08-23 21:00",
+                ends_at="2024-08-23 22:30",
                 kind="ALTRO",
             )
             event.registered_districts.add(district)
 
         print("SABATO mattina presto: doccia di contrada")
-        for subdistrict in Subdistrict.objects.all().iterator():
+        for subdistrict in Subdistrict.objects.all():
             event = EventFactory(
                 name="Doccia di contrada",
                 is_registration_required=False,
-                starts_at="2024-08-24 07:30",
-                ends_at="2024-08-24 08:30",
+                starts_at="2024-08-24 07:00",
+                ends_at="2024-08-24 08:00",
                 kind="DOCCIA",
             )
             event.registered_subdistricts.add(subdistrict)
-
-        print("SABATO mattina: TRACCE")
-        for scout_group in ScoutGroup.objects.all().iterator():
-            event = EventFactory(
-                name="Tracce: evento di test",
-                is_registration_required=False,
-                starts_at="2024-08-24 09:00",
-                ends_at="2024-08-24 12:00",
-                kind="TRACCE",
-            )
-            event.registered_scout_groups.add(scout_group)
-
-        print("SABATO pranzo")
-        for scout_group in ScoutGroup.objects.all().iterator():
-            event = EventFactory(
-                name="Pranzo",
-                is_registration_required=False,
-                starts_at="2024-08-24 12:30",
-                ends_at="2024-08-24 14:00",
-                kind="PASTI",
-            )
-            event.registered_scout_groups.add(scout_group)
-
-        print("SABATO pomeriggio: INCONTRI (alfieri)")
-        evento_alfieri = EventFactory(
-            name="Incontri: (per alfieri)",
-            is_registration_required=True,
-            starts_at="2024-08-24 14:30",
-            ends_at="2024-08-24 18:30",
-            registration_limit_from_same_scout_group=2,
-            kind="INCONTRI",
-        )
-        for scout_group in ScoutGroup.objects.all().iterator():
-            evento_alfieri.visibility_to_scout_groups.add(scout_group)
-
-        print("SABATO pomeriggio: INCONTRI")
-        incontri = []
-        for i in range(6):
-            incontri.append(
-                EventFactory(
-                    name=f"Incontri: evento di test numero {i}",
-                    is_registration_required=True,
-                    starts_at="2024-08-24 15:00",
-                    ends_at="2024-08-23 19:00",
-                    registration_limit=10,
-                    kind="INCONTRI",
-                )
-            )
-        for scout_group in ScoutGroup.objects.all().iterator():
-            for event in incontri:
-                event.visibility_to_scout_groups.add(scout_group)
-
-        print("SABATO cena")
-        for scout_group in ScoutGroup.objects.all().iterator():
-            event = EventFactory(
-                name="Cena",
-                is_registration_required=False,
-                starts_at="2024-08-24 19:30",
-                ends_at="2024-08-24 20:30",
-                kind="PASTI",
-            )
-            event.registered_scout_groups.add(scout_group)
 
         for district in District.objects.all():
             event = EventFactory(

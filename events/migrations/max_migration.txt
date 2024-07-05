@@ -1,1 +1,1 @@
-0010_alter_event_managers_alter_event_ends_at_and_more
+0015_districteventregistration_check_in_and_more

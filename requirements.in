@@ -5,7 +5,7 @@ ipdb
 psycopg[binary]
 django-extensions
 gunicorn
-sentry-sdk
+sentry-sdk[django]
 django-anymail[mailgun]
 black
 pre-commit
@@ -25,3 +25,11 @@ factory_boy
 requests-mock
 tqdm
 django-silk
+pycryptodome
+qrcode
+fontawesomefree
+django-colorfield
+redis
+hiredis
+pandas
+pdbpp

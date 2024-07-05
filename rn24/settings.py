@@ -15,6 +15,7 @@ from pathlib import Path
 
 import dj_database_url
 import factory
+import sentry_sdk
 
 factory.Faker._DEFAULT_LOCALE = "it_IT"
 
@@ -40,6 +41,8 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool_from_env("DJANGO_DEBUG")
 
+SILK_ENABLED = bool_from_env("SILK_ENABLED")
+
 ALLOWED_HOSTS = [
     os.getenv("ALLOWED_HOST"),
 ]
@@ -52,7 +55,6 @@ CSRF_TRUSTED_ORIGINS = ["https://" + os.getenv("ALLOWED_HOST", "")]
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -62,7 +64,6 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_linear_migrations",
     "corsheaders",
-    "silk",
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_gis",
@@ -81,15 +82,19 @@ INSTALLED_APPS = [
     "wagtail",
     "modelcluster",
     "taggit",
+    "fontawesomefree",
     "authentication.apps.AuthenticationConfig",
     "people.apps.PeopleConfig",
     "events.apps.EventsConfig",
     "maps.apps.MapsConfig",
     "api.apps.ApiConfig",
     "cms.apps.CmsConfig",
+    "django.contrib.admin",
+    "colorfield",
 ]
 
 MIDDLEWARE = [
+    "django.middleware.gzip.GZipMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -101,8 +106,16 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
-if DEBUG:
+if SILK_ENABLED:
+    INSTALLED_APPS.append("silk")
     MIDDLEWARE.append("silk.middleware.SilkyMiddleware")
+
+    SILKY_AUTHENTICATION = True
+    SILKY_AUTHORISATION = True
+    SILKY_META = True
+    SILKY_PYTHON_PROFILER = True
+    SILKY_PYTHON_PROFILER_BINARY = True
+
 
 ROOT_URLCONF = "rn24.urls"
 
@@ -201,6 +214,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 WAGTAIL_SITE_NAME = "RN24 backoffice CMS"
+WAGTAILADMIN_BASE_URL = "/cms"
 
 # TODO: enable this with an env variable only for test environment
 CORS_ALLOW_ALL_ORIGINS = True
@@ -214,7 +228,49 @@ AGESCI_HOSTNAME = os.getenv("AGESCI_HOSTNAME")
 AGESCI_SECRET = os.getenv("AGESCI_SECRET")
 AGESCI_KEY = os.getenv("AGESCI_KEY")
 
-SILKY_AUTHENTICATION = True
-SILKY_AUTHORISATION = True
-SILKY_META = True
-SILKY_PYTHON_PROFILER = DEBUG
+PRIVATE_KEY_PATH = "privkey.pem"
+PUBLIC_KEY_PATH = "pubkey.pem"
+PUBLIC_KEY = open(PUBLIC_KEY_PATH).read() if os.path.exists(PUBLIC_KEY_PATH) else None
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        # "level": "DEBUG" if DEBUG else "INFO",
+        "level": "INFO",
+    },
+}
+
+RN24_FRONTEND_URL = os.getenv("RN24_FRONTEND_URL", "")
+
+SENTRY_DSN = os.getenv("SENTRY_DSN")
+
+sentry_sdk.init(
+    dsn=SENTRY_DSN,
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
+
+SHELL_PLUS_PRINT_SQL_TRUNCATE = None
+
+CACHE_TIMEOUT = 60 * 5  # seconds: 5 minutes
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379",
+        "TIMEOUT": CACHE_TIMEOUT,
+    }
+}

@@ -19,8 +19,8 @@ ITALIAN_REGION_CHOICES = (
     ("BASILICATA", "Basilicata"),
     ("CALABRIA", "Calabria"),
     ("CAMPANIA", "Campania"),
-    ("EMILIA-ROMAGNA", "Emilia-Romagna"),
-    ("FRIULI-VENEZIA GIULIA", "Friuli-Venezia Giulia"),
+    ("EMILIA ROMAGNA", "Emilia-Romagna"),
+    ("FRIULI VENEZIA GIULIA", "Friuli-Venezia Giulia"),
     ("LAZIO", "Lazio"),
     ("LIGURIA", "Liguria"),
     ("LOMBARDIA", "Lombardia"),
@@ -31,7 +31,7 @@ ITALIAN_REGION_CHOICES = (
     ("SARDEGNA", "Sardegna"),
     ("SICILIA", "Sicilia"),
     ("TOSCANA", "Toscana"),
-    ("TRENTINO-ALTO ADIGE", "Trentino-Alto Adige"),
+    ("TRENTINO ALTO ADIGE", "Trentino-Alto Adige"),
     ("UMBRIA", "Umbria"),
     ("VALLE D'AOSTA", "Valle d'Aosta"),
     ("VENETO", "Veneto"),
@@ -47,12 +47,12 @@ class ScoutGroup(CommonAbstractModel):
     region = models.CharField(
         max_length=255, choices=ITALIAN_REGION_CHOICES, verbose_name="regione"
     )
-    subdistrict = models.ForeignKey(
-        "people.Subdistrict",
+    line = models.ForeignKey(
+        "people.Line",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name="contrada",
+        verbose_name="fila",
     )
     happiness_path = models.CharField(
         max_length=255, choices=HAPPINESS_PATH_CHOICES, verbose_name="sentiero della felicità"
@@ -66,7 +66,11 @@ class ScoutGroup(CommonAbstractModel):
 
     @admin.display(description="sottocampo")
     def district(self):
-        return self.subdistrict.district
+        return self.line.subdistrict.district
+
+    @admin.display(description="contrada")
+    def subdistrict(self):
+        return self.line.subdistrict
 
     class Meta:
         verbose_name = "gruppo scout"

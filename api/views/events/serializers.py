@@ -12,17 +12,21 @@ class EventSerializer(UUIDRelatedModelSerializer):
         fields = (
             "uuid",
             "created_at",
+            "id",
             "name",
             "page",
             "location",
             "is_registration_required",
             "registration_limit",
             "registration_limit_from_same_scout_group",
+            "personal_registrations_count",
             "starts_at",
             "ends_at",
             "registrations_open_at",
             "registrations_close_at",
             "kind",
+            "correlation_id",
+            "happiness_path",
         )
 
 
@@ -48,3 +52,7 @@ class EventInvitationSerializer(serializers.Serializer):
 class EventWithVersionSerializer(serializers.Serializer):
     version = serializers.DateTimeField()
     data = EventSerializer(many=True)
+
+
+class EventCheckinDetailSerializer(serializers.Serializer):
+    check_in = serializers.BooleanField(read_only=True)

@@ -19,3 +19,4 @@ class CMSPageFactory(wagtail_factories.PageFactory):
         model = CMSPage
 
     locale = factory.SubFactory(LocaleFactory)
+    slug = factory.Faker("uuid4")

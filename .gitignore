@@ -6,8 +6,11 @@ __pycache__/
 
 STATIC
 MEDIA
+imports
 
 *.csv
+*.xslx
+*.ods
 
 # C extensions
 *.so
@@ -54,6 +57,8 @@ coverage.xml
 # Translations
 *.mo
 *.pot
+
+*.pem
 
 # Django stuff:
 staticfiles/

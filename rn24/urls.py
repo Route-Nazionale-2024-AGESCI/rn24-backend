@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 from wagtail import urls as wagtail_urls
@@ -25,18 +26,32 @@ admin.sites.AdminSite.site_header = "RN24 backoffice"
 admin.sites.AdminSite.site_title = "RN24 backoffice"
 admin.sites.AdminSite.index_title = "RN24 backoffice"
 
+
+def trigger_error(request):
+    return 1 / 0
+
+
 urlpatterns = [
     path(
-        "api",
+        "api/",
         include(
-            [
-                path("/admin/", admin.site.urls),
-                path("/v1/", include("api.urls")),
-                path("/cms", include(wagtailadmin_urls)),
-                path("/documents/", include(wagtaildocs_urls)),
-                path("/pages/", include(wagtail_urls)),
-                path("/silk/", include("silk.urls", namespace="silk")),
-            ]
+            (
+                [
+                    path("admin/", admin.site.urls),
+                    path("v1/", include("api.urls")),
+                    path("cms", include(wagtailadmin_urls)),
+                    path("documents/", include(wagtaildocs_urls)),
+                    path("pages/", include(wagtail_urls)),
+                    path("500/", trigger_error),
+                ]
+                + (
+                    [
+                        path("silk/", include("silk.urls", namespace="silk")),
+                    ]
+                    if settings.SILK_ENABLED
+                    else []
+                )
+            ),
         ),
     )
 ]

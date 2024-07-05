@@ -1,9 +1,16 @@
+import base64
+
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.db import models
+from django.urls import reverse
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 from common.abstract import CommonAbstractModel
+from common.crypto import sign_string
+from common.qr import QRCodeMixin
 from people.models.scout_group import ITALIAN_REGION_CHOICES
 
 User = get_user_model()
@@ -25,14 +32,24 @@ FOOD_ALLERGIES_CHOICES = (
 )
 
 
-class Person(CommonAbstractModel):
+class Person(QRCodeMixin, CommonAbstractModel):
 
     agesci_id = models.CharField(
-        max_length=255, db_index=True, verbose_name="codice AGESCI", unique=True
+        max_length=255,
+        db_index=True,
+        verbose_name="codice AGESCI",
+        unique=True,
+        null=True,
+        blank=True,
     )
 
     user = models.OneToOneField(
-        User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="utente"
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="utente",
+        help_text="se stai creando una persona lascia vuoto questo campo: un utente viene creato in automatico",
     )
 
     first_name = models.CharField(db_index=True, max_length=255, verbose_name="nome")
@@ -120,8 +137,10 @@ class Person(CommonAbstractModel):
         default=False,
         verbose_name="Hai disabilità/patologie/età che non ti permettono di sostenere gli spostamenti a piedi previsti?",
     )
-    transportation_need_transport = models.BooleanField(
-        default=False,
+    transportation_need_transport = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
         verbose_name="Necessiti di un accompagnatore fornito dall'organizzazione durante l'evento?",
     )
 
@@ -152,9 +171,47 @@ class Person(CommonAbstractModel):
         verbose_name="patologie accertate",
     )
 
+    SENSIBLE_FIELDS = [
+        "accessibility_has_wheelchair",
+        "accessibility_has_caretaker_not_registered",
+        "sleeping_is_sleeping_in_tent",
+        "sleeping_requests",
+        "sleeping_place",
+        "sleeping_requests_2",
+        "food_diet_needed",
+        "food_allergies",
+        "food_is_vegan",
+        "transportation_has_problems_moving_on_foot",
+        "transportation_need_transport",
+        "health_has_allergies",
+        "health_allergies",
+        "health_has_movement_disorders",
+        "health_movement_disorders",
+        "health_has_patologies",
+        "health_patologies",
+    ]
+
     @admin.display(description="pattuglie")
     def squads_list(self):
         return ", ".join([s.name for s in self.squads.all()])
+
+    def line_name(self):
+        try:
+            return self.scout_group.line.name
+        except AttributeError:
+            return ""
+
+    def subdistrict_name(self):
+        try:
+            return self.scout_group.line.subdistrict.name
+        except AttributeError:
+            return ""
+
+    def district_name(self):
+        try:
+            return self.scout_group.line.subdistrict.district.name
+        except AttributeError:
+            return ""
 
     def set_permissions_from_squads(self):
         if not self.user:
@@ -167,10 +224,77 @@ class Person(CommonAbstractModel):
             self.user.is_staff = has_staff_permission
             self.user.save(update_fields=["is_staff"])
 
+    def squad_list_string(self):
+        return ", ".join([s.name for s in self.squads.all()])
+
+    def qr_string(self):
+        data = [
+            "B",  # B=badge, P=page
+            str(self.uuid),
+            self.first_name,
+            self.last_name,
+            self.email,
+            self.phone or "",
+            self.scout_group.name if self.scout_group else "",
+            self.region or "",
+            self.line_name(),
+            self.subdistrict_name(),
+            self.district_name(),
+            self.squad_list_string(),
+        ]
+        base_string = "#".join(data)
+        return base64.b64encode(base_string.encode("utf-8")).decode("utf-8")
+
+    def qr_string_with_signature(self):
+        data = self.qr_string()
+        return f"{data}#{sign_string(data)}"
+
+    def qr_payload(self):
+        return self.qr_string_with_signature()
+
+    @admin.display(description="badge")
+    def badge_url(self):
+        HTML_url = reverse("badge-detail", kwargs={"uuid": self.uuid})
+        PDF_url = reverse("badge-detail-pdf", kwargs={"uuid": self.uuid})
+        return format_html(
+            '<a href="{}" target="_blank">HTML</a> - <a href="{}" target="_blank">PDF</a>',
+            HTML_url,
+            PDF_url,
+        )
+
+    @admin.display(description="Gruppo scout")
+    def scout_group_link(self):
+        if not self.scout_group:
+            return None
+        url = reverse("admin:people_scoutgroup_change", args=[self.scout_group.id])
+        link = f'<a href="{url}">{self.scout_group.name}</a>'
+        return mark_safe(link)
+
+    @admin.display(description="Persona")
+    def person_admin_link(self):
+        url = reverse("admin:people_person_change", args=[self.id])
+        link = f'<a href="{url}">{self}</a>'
+        return mark_safe(link)
+
+    @admin.display(description="Dati sensibili")
+    def sensible_data_admin_link(self):
+        url = reverse("admin:people_sensibledata_change", args=[self.id])
+        link = f'<a href="{url}">{self}</a>'
+        return mark_safe(link)
+
+    def is_staff(self):
+        return self.user.has_perm("people.is_staff")
+
+    def can_scan_qr(self):
+        return self.user.has_perm("people.can_scan_qr")
+
     class Meta:
         verbose_name = "persona"
         verbose_name_plural = "persone"
-        permissions = (("is_staff", "Può accedere al backoffice"),)
+        permissions = (
+            ("is_staff", "Può accedere al backoffice"),
+            ("can_scan_qr", "Può scansionare i badge"),
+        )
 
     def __str__(self):
         group = f" [{self.scout_group.name}]" if self.scout_group else ""

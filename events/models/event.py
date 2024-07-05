@@ -1,8 +1,12 @@
 from django.contrib import admin
-from django.db import models
+from django.db import models, transaction
 from django.utils.html import format_html
+from django.utils.timezone import datetime, make_aware
 
 from common.abstract import CommonAbstractModel
+from common.qr import QRCodeMixin
+from events.models.event_registration import PersonEventRegistration
+from people.models.scout_group import HAPPINESS_PATH_CHOICES
 
 EVENT_KIND_CHOICES = (
     ("SGUARDI", "SGUARDI"),
@@ -22,7 +26,7 @@ class AnnotatedEventsManager(models.Manager):
         return self.annotate(persons_registration_count=models.Count("registered_persons"))
 
 
-class Event(CommonAbstractModel):
+class Event(QRCodeMixin, CommonAbstractModel):
     """
     ogni COCA partecipa a 4 eventi di tipo di verso in 4 mezze giornate
     SGUARDI: eventi visibili a tutta la COCA, ogni capo si iscrive individualmente ad un evento
@@ -54,6 +58,9 @@ class Event(CommonAbstractModel):
         blank=True,
         verbose_name="limite di iscrizioni dallo stesso groupo scout",
     )
+    personal_registrations_count = models.PositiveIntegerField(
+        db_index=True, default=0, verbose_name="numero di iscrizioni personali"
+    )
     starts_at = models.DateTimeField(db_index=True, verbose_name="data inizio")
     ends_at = models.DateTimeField(db_index=True, verbose_name="data fine")
     registrations_open_at = models.DateTimeField(
@@ -65,6 +72,21 @@ class Event(CommonAbstractModel):
     kind = models.CharField(
         db_index=True, max_length=255, choices=EVENT_KIND_CHOICES, verbose_name="modulo"
     )
+    correlation_id = models.CharField(
+        max_length=255,
+        db_index=True,
+        null=True,
+        blank=True,
+        verbose_name="id di correlazione accadimenti",
+        help_text="deve essere uguale per tutti gli accandimenti dello stesso evento",
+    )
+    happiness_path = models.CharField(
+        max_length=255,
+        choices=HAPPINESS_PATH_CHOICES,
+        null=True,
+        blank=True,
+        verbose_name="sentiero della felicità",
+    )
 
     visibility_to_persons = models.ManyToManyField(
         "people.Person", through="events.PersonEventVisibility", related_name="visible_events"
@@ -72,6 +94,11 @@ class Event(CommonAbstractModel):
     visibility_to_scout_groups = models.ManyToManyField(
         "people.ScoutGroup",
         through="events.ScoutGroupEventVisibility",
+        related_name="visible_events",
+    )
+    visibility_to_lines = models.ManyToManyField(
+        "people.Line",
+        through="events.LineEventVisibility",
         related_name="visible_events",
     )
     visibility_to_subdistricts = models.ManyToManyField(
@@ -100,6 +127,11 @@ class Event(CommonAbstractModel):
         through="events.ScoutGroupEventRegistration",
         related_name="registered_events",
     )
+    registered_lines = models.ManyToManyField(
+        "people.Line",
+        through="events.LineEventRegistration",
+        related_name="registered_events",
+    )
     registered_subdistricts = models.ManyToManyField(
         "people.Subdistrict",
         through="events.SubdistrictEventRegistration",
@@ -117,6 +149,15 @@ class Event(CommonAbstractModel):
     )
 
     objects_with_annotations = AnnotatedEventsManager()
+
+    @classmethod
+    def get_last_updated_timestamp(cls):
+        event_timestamp = super().get_last_updated_timestamp()
+        if PersonEventRegistration.objects.exists():
+            personal_registration_timestamp = PersonEventRegistration.get_last_updated_timestamp()
+        else:
+            personal_registration_timestamp = make_aware(datetime(2000, 1, 1))
+        return max(event_timestamp, personal_registration_timestamp)
 
     @admin.display(description="posti disponibili")
     def available_slots(self):
@@ -146,9 +187,18 @@ class Event(CommonAbstractModel):
             self.page.get_admin_url(),
         )
 
+    def qr_payload(self):
+        return f"E#{self.uuid}"
+
+    def update_personal_registrations_count(self):
+        with transaction.atomic():
+            event = Event.objects.select_for_update().get(id=self.id)
+            event.personal_registrations_count = event.registered_persons.count()
+            event.save(update_fields=["personal_registrations_count"])
+
     class Meta:
         verbose_name = "evento"
         verbose_name_plural = "eventi"
 
     def __str__(self):
-        return self.name
+        return f"[{self.id}] {self.name}"
