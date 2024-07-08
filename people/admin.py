@@ -58,7 +58,7 @@ class PersonAdmin(BaseAdmin):
 
     def get_fields(self, request, obj):
         all_fields = super().get_fields(request, obj)
-        return list(set(all_fields) - set(Person.SENSIBLE_FIELDS))
+        return [x for x in all_fields if x not in Person.SENSIBLE_FIELDS]
 
     search_fields = (
         "agesci_id",

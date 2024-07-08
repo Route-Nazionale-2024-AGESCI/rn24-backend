@@ -171,6 +171,8 @@ class Person(QRCodeMixin, CommonAbstractModel):
         verbose_name="patologie accertate",
     )
 
+    notes = models.TextField(null=True, blank=True, verbose_name="note")
+
     SENSIBLE_FIELDS = [
         "accessibility_has_wheelchair",
         "accessibility_has_caretaker_not_registered",
@@ -298,4 +300,5 @@ class Person(QRCodeMixin, CommonAbstractModel):
 
     def __str__(self):
         group = f" [{self.scout_group.name}]" if self.scout_group else ""
-        return f"[{self.agesci_id}] {self.first_name} {self.last_name}{group}"
+        agesci_id = f"[{self.agesci_id}] " if self.agesci_id else ""
+        return f"{agesci_id}{self.first_name} {self.last_name}{group}"
