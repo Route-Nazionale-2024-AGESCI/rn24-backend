@@ -5,6 +5,7 @@ from common.abstract import CommonAbstractModel
 
 class Location(CommonAbstractModel):
     name = models.CharField(max_length=255, db_index=True, verbose_name="nome")
+    description = models.TextField(blank=True, null=True, verbose_name="descrizione")
     is_public = models.BooleanField(
         default=False,
         verbose_name="pubblico?",

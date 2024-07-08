@@ -15,6 +15,7 @@ class LocationSerializer(UUIDRelatedModelSerializer):
             "uuid",
             "created_at",
             "name",
+            "description",
             "coords",
             "path",
             "polygon",

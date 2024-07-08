@@ -17,6 +17,7 @@ def _location_expected_representation(location):
         },
         "created_at": DateTimeField().to_representation(location.created_at),
         "name": location.name,
+        "description": location.description,
         "polygon": None,
         "path": None,
         "uuid": str(location.uuid),

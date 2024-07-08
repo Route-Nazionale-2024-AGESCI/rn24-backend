@@ -21,6 +21,7 @@ class LocationFactory(DjangoModelFactory):
         model = Location
 
     name = factory.Faker("word")
+    description = factory.Faker("word")
     is_public = False
     category = factory.SubFactory("maps.factories.LocationCategoryFactory")
     coords = FuzzyPoint()
