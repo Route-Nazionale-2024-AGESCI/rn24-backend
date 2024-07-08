@@ -198,6 +198,7 @@ class SensibleDataAdmin(BaseAdmin):
     ] + Person.SENSIBLE_FIELDS
 
     list_filter = [
+        "squads",
         "accessibility_has_wheelchair",
         "accessibility_has_caretaker_not_registered",
         "sleeping_is_sleeping_in_tent",

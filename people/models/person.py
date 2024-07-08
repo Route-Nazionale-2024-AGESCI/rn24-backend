@@ -298,6 +298,11 @@ class Person(QRCodeMixin, CommonAbstractModel):
             ("can_scan_qr", "Può scansionare i badge"),
         )
 
+    def save(self, *args, **kwargs):
+        if self.agesci_id == "":
+            self.agesci_id = None
+        super().save(*args, **kwargs)
+
     def __str__(self):
         group = f" [{self.scout_group.name}]" if self.scout_group else ""
         agesci_id = f"[{self.agesci_id}] " if self.agesci_id else ""
