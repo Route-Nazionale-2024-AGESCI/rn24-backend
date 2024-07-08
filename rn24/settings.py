@@ -265,7 +265,10 @@ sentry_sdk.init(
 
 SHELL_PLUS_PRINT_SQL_TRUNCATE = None
 
-CACHE_TIMEOUT = 60 * 5  # seconds: 5 minutes
+if DEBUG:
+    CACHE_TIMEOUT = 1
+else:
+    CACHE_TIMEOUT = 60 * 5  # seconds: 5 minutes
 
 CACHES = {
     "default": {
