@@ -240,61 +240,59 @@ class Command(BaseCommand):
                             first_name=first_name,
                             last_name=last_name,
                         )
-                        person = Person.objects.create(
-                            agesci_id=agesci_id,
-                            user=user,
-                            first_name=first_name,
-                            last_name=last_name,
-                            birth_date=self.parse_birth_date(birth_date),
-                            gender=self.get_value(row, "gender").strip(),
-                            training_level=self.get_value(row, "training_level").strip(),
-                            address=self.get_value(row, "address").strip(),
-                            zip_code=self.get_value(row, "zip_code").strip(),
-                            city=self.get_value(row, "city").strip(),
-                            province=self.get_value(row, "province").strip(),
-                            region=self.get_value(row, "region").strip().upper(),
-                            email=self.get_value(row, "email").strip(),
-                            phone=str(self.get_value(row, "phone")),
-                            scout_group=scout_group,
-                            accessibility_has_wheelchair=self.parse_boolean(
-                                self.get_value(row, "accessibility_has_wheelchair")
-                            ),
-                            accessibility_has_caretaker_not_registered=self.parse_boolean(
-                                self.get_value(row, "accessibility_has_caretaker_not_registered")
-                            ),
-                            sleeping_is_sleeping_in_tent=self.parse_boolean(
-                                self.get_value(row, "sleeping_is_sleeping_in_tent")
-                            ),
-                            sleeping_requests=self.get_value(row, "sleeping_requests"),
-                            sleeping_place=self.get_value(row, "sleeping_place"),
-                            sleeping_requests_2=self.get_value(row, "sleeping_requests_2"),
-                            food_diet_needed=self.get_value(row, "food_diet_needed"),
-                            food_allergies=self.parse_food_allergies(
-                                self.get_value(row, "food_allergies_1"),
-                                self.get_value(row, "food_allergies_2"),
-                            ),
-                            food_is_vegan=self.parse_boolean(self.get_value(row, "food_is_vegan")),
-                            transportation_has_problems_moving_on_foot=self.parse_boolean(
-                                self.get_value(row, "transportation_has_problems_moving_on_foot")
-                            ),
-                            transportation_need_transport=self.get_value(
-                                row, "transportation_need_transport"
-                            ),
-                            health_has_allergies=self.parse_boolean(
-                                self.get_value(row, "health_has_allergies")
-                            ),
-                            health_allergies=self.get_value(row, "health_allergies"),
-                            health_has_movement_disorders=self.parse_boolean(
-                                self.get_value(row, "health_has_movement_disorders")
-                            ),
-                            health_movement_disorders=self.get_value(
-                                row, "health_movement_disorders"
-                            ),
-                            health_has_patologies=self.parse_boolean(
-                                self.get_value(row, "health_has_patologies")
-                            ),
-                            health_patologies=self.get_value(row, "health_patologies"),
-                            notes=notes,
-                        )
-                        if squad:
-                            person.squads.add(squad)
+                    person = Person.objects.create(
+                        agesci_id=agesci_id,
+                        user=user,
+                        first_name=first_name,
+                        last_name=last_name,
+                        birth_date=self.parse_birth_date(birth_date),
+                        gender=self.get_value(row, "gender").strip(),
+                        training_level=self.get_value(row, "training_level").strip(),
+                        address=self.get_value(row, "address").strip(),
+                        zip_code=self.get_value(row, "zip_code").strip(),
+                        city=self.get_value(row, "city").strip(),
+                        province=self.get_value(row, "province").strip(),
+                        region=self.get_value(row, "region").strip().upper(),
+                        email=self.get_value(row, "email").strip(),
+                        phone=str(self.get_value(row, "phone")),
+                        scout_group=scout_group,
+                        accessibility_has_wheelchair=self.parse_boolean(
+                            self.get_value(row, "accessibility_has_wheelchair")
+                        ),
+                        accessibility_has_caretaker_not_registered=self.parse_boolean(
+                            self.get_value(row, "accessibility_has_caretaker_not_registered")
+                        ),
+                        sleeping_is_sleeping_in_tent=self.parse_boolean(
+                            self.get_value(row, "sleeping_is_sleeping_in_tent")
+                        ),
+                        sleeping_requests=self.get_value(row, "sleeping_requests"),
+                        sleeping_place=self.get_value(row, "sleeping_place"),
+                        sleeping_requests_2=self.get_value(row, "sleeping_requests_2"),
+                        food_diet_needed=self.get_value(row, "food_diet_needed"),
+                        food_allergies=self.parse_food_allergies(
+                            self.get_value(row, "food_allergies_1"),
+                            self.get_value(row, "food_allergies_2"),
+                        ),
+                        food_is_vegan=self.parse_boolean(self.get_value(row, "food_is_vegan")),
+                        transportation_has_problems_moving_on_foot=self.parse_boolean(
+                            self.get_value(row, "transportation_has_problems_moving_on_foot")
+                        ),
+                        transportation_need_transport=self.get_value(
+                            row, "transportation_need_transport"
+                        ),
+                        health_has_allergies=self.parse_boolean(
+                            self.get_value(row, "health_has_allergies")
+                        ),
+                        health_allergies=self.get_value(row, "health_allergies"),
+                        health_has_movement_disorders=self.parse_boolean(
+                            self.get_value(row, "health_has_movement_disorders")
+                        ),
+                        health_movement_disorders=self.get_value(row, "health_movement_disorders"),
+                        health_has_patologies=self.parse_boolean(
+                            self.get_value(row, "health_has_patologies")
+                        ),
+                        health_patologies=self.get_value(row, "health_patologies"),
+                        notes=notes,
+                    )
+                    if squad:
+                        person.squads.add(squad)
