@@ -1,5 +1,5 @@
 {% for person in person_list %}
-<table>
+<!-- <table>
     <tr>
         <td>UUID</td>
         <td>{{ person.uuid }}</td>
@@ -44,11 +44,28 @@
         <td>Pattuglie</td>
         <td>{{ person.squad_list_string|default:"-" }}</td>
     </tr>
-</table>
+</table> -->
 <style>
-    .qr-container img {
-        width: 80%;
+    .qr-container {
+        text-align: center;
     }
+
+    @media print {
+
+        @page {
+            size: 40mm 40mm;
+            margin: 0;
+        }
+
+        .qr-container img {
+            width: 35mm;
+            height: 35mm;
+        }
+
+    }
+</style>
+<style>
+    {{ badge_extra_css }}
 </style>
 <p class="qr-container">{{ person.qr_png_base64 }}</p>
 {% if not forloop.last %}

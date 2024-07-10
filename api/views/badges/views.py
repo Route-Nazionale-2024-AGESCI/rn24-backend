@@ -9,6 +9,7 @@ from django.views.generic.base import TemplateView
 
 from common.pdf import html_to_pdf
 from people.models.person import Person
+from settings.models.setting import Setting
 
 
 class BadgeMixin:
@@ -17,6 +18,7 @@ class BadgeMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["person_list"] = [get_object_or_404(Person, uuid=kwargs["uuid"])]
+        context["badge_extra_css"] = Setting.get("BADGE_EXTRA_CSS")
         return context
 
 

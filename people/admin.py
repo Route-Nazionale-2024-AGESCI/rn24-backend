@@ -21,6 +21,7 @@ from people.models.scout_group import ScoutGroup
 from people.models.sensible_data import SensibleData
 from people.models.squad import Squad
 from people.models.subdistrict import Subdistrict
+from settings.models.setting import Setting
 
 User = get_user_model()
 
@@ -143,7 +144,10 @@ class PersonAdmin(BaseAdmin):
         description="Stampa badge",
     )
     def print_badge(self, request, queryset):
-        html = render_to_string("badge_detail.html", {"person_list": queryset})
+        html = render_to_string(
+            "badge_detail.html",
+            {"person_list": queryset, "badge_extra_css": Setting.get("BADGE_EXTRA_CSS")},
+        )
         pdf = html_to_pdf(html)
         response = HttpResponse(pdf, content_type="application/pdf")
         response["Content-Disposition"] = 'attachment; filename="badge.pdf"'

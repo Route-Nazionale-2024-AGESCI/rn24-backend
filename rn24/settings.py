@@ -89,6 +89,7 @@ INSTALLED_APPS = [
     "maps.apps.MapsConfig",
     "api.apps.ApiConfig",
     "cms.apps.CmsConfig",
+    "settings.apps.SettingsConfig",
     "django.contrib.admin",
     "colorfield",
 ]
