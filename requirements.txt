@@ -258,7 +258,7 @@ rpds-py==0.18.0
     # via
     #   jsonschema
     #   referencing
-sentry-sdk[django]==2.8.0
+sentry-sdk[django]==2.9.0
     # via -r requirements.in
 six==1.16.0
     # via
