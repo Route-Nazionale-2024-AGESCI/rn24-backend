@@ -20,7 +20,7 @@ class CMSPage(Page, QRCodeMixin, CommonAbstractModel):
         return f"P#{self.uuid}"
 
     def get_admin_url(self):
-        return f"/api/cms/pages/{self.id}/edit/"
+        return f"/api/cmspages/{self.id}/edit/"
 
     class Meta:
         verbose_name = "pagina"
