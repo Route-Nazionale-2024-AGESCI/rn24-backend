@@ -71,12 +71,21 @@ class PersonAdmin(BaseAdmin):
     )
     list_display = (
         "agesci_id",
-        "first_name",
-        "last_name",
+        "full_name",
         "scout_group_link",
         "annotated_squads",
+        "line_name",
         "annotated_last_login",
         "is_arrived",
+        "accessibility_has_wheelchair",
+        "accessibility_has_caretaker_not_registered",
+        "sleeping_is_sleeping_in_tent",
+        "food_diet_needed",
+        "food_is_vegan",
+        "transportation_has_problems_moving_on_foot",
+        "health_has_allergies",
+        "health_has_movement_disorders",
+        "health_has_patologies",
     )
     list_filter = (
         "is_arrived",
@@ -84,6 +93,14 @@ class PersonAdmin(BaseAdmin):
         "scout_group__happiness_path",
         "squads",
         LastLoginAdminFilter,
+        "accessibility_has_wheelchair",
+        "accessibility_has_caretaker_not_registered",
+        "sleeping_is_sleeping_in_tent",
+        "food_is_vegan",
+        "transportation_has_problems_moving_on_foot",
+        "health_has_allergies",
+        "health_has_movement_disorders",
+        "health_has_patologies",
     )
     filter_horizontal = ("squads",)
     autocomplete_fields = ("user", "scout_group")

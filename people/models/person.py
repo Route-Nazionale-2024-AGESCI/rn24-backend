@@ -100,12 +100,14 @@ class Person(QRCodeMixin, CommonAbstractModel):
         default=False, verbose_name="sedia a rotelle?"
     )
     accessibility_has_caretaker_not_registered = models.BooleanField(
-        default=False, verbose_name="viaggia con accompagnatore non iscritto?"
+        default=False,
+        verbose_name="accompagnatore?",
+        help_text="viaggia con accompagnatore non iscritto?",
     )
 
     # sleeping
     sleeping_is_sleeping_in_tent = models.BooleanField(
-        default=False, verbose_name="dorme in tenda personale?"
+        default=False, verbose_name="tenda?", help_text="dorme in tenda personale?"
     )
     sleeping_requests = models.TextField(
         null=True, blank=True, verbose_name="richieste per il pernotto"
@@ -125,17 +127,21 @@ class Person(QRCodeMixin, CommonAbstractModel):
         null=True,
         blank=True,
         choices=FOOD_ALLERGIES_CHOICES,
-        verbose_name="Allergie/intolleranze ad alimenti da segnalare.",
+        verbose_name="dieta",
+        help_text="Allergie/intolleranze ad alimenti da segnalare.",
     )
     food_allergies = models.TextField(
         null=True, blank=True, verbose_name="Selezionare una o più allergie/intolleranze elencate:"
     )  # merged with "ALTRO"
-    food_is_vegan = models.BooleanField(default=False, verbose_name="Segui una dieta vegana?")
+    food_is_vegan = models.BooleanField(
+        default=False, verbose_name="vegano?", help_text="Segui una dieta vegana?"
+    )
 
     # transportation
     transportation_has_problems_moving_on_foot = models.BooleanField(
         default=False,
-        verbose_name="Hai disabilità/patologie/età che non ti permettono di sostenere gli spostamenti a piedi previsti?",
+        verbose_name="spostamento a piedi?",
+        help_text="Hai disabilità/patologie/età che non ti permettono di sostenere gli spostamenti a piedi previsti?",
     )
     transportation_need_transport = models.CharField(
         max_length=255,
@@ -146,7 +152,7 @@ class Person(QRCodeMixin, CommonAbstractModel):
 
     # health
     health_has_allergies = models.BooleanField(
-        default=False, verbose_name="Hai allergie accertate?"
+        default=False, verbose_name="allergie?", help_text="Hai allergie accertate?"
     )
     health_allergies = models.TextField(
         null=True,
@@ -154,7 +160,7 @@ class Person(QRCodeMixin, CommonAbstractModel):
         verbose_name="allergie",
     )
     health_has_movement_disorders = models.BooleanField(
-        default=False, verbose_name="Sei affetto da disturbi motori?"
+        default=False, verbose_name="disturbi motori?", help_text="Sei affetto da disturbi motori?"
     )
     health_movement_disorders = models.TextField(
         null=True,
@@ -163,7 +169,8 @@ class Person(QRCodeMixin, CommonAbstractModel):
     )
     health_has_patologies = models.BooleanField(
         default=False,
-        verbose_name="Sei affetto da patologie cardiovascolari/respiratorie/neurologiche?",
+        verbose_name="patologie?",
+        help_text="Sei affetto da patologie cardiovascolari/respiratorie/neurologiche?",
     )
     health_patologies = models.TextField(
         null=True,
@@ -197,6 +204,11 @@ class Person(QRCodeMixin, CommonAbstractModel):
     def squads_list(self):
         return ", ".join([s.name for s in self.squads.all()])
 
+    @admin.display(description="nome")
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
+    @admin.display(description="fila")
     def line_name(self):
         try:
             return self.scout_group.line.name
