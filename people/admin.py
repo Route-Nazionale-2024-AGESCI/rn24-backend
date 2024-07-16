@@ -141,6 +141,14 @@ class PersonAdmin(BaseAdmin):
         )
         return queryset
 
+    def get_search_results(self, request, queryset, search_term):
+        if search_term and " " in search_term and search_term.split(" ").pop().isdigit():
+            # se la ricerca finisce con uno spazio ed un numero, allora stiamo cercando un gruppo scout
+            print(search_term)
+            queryset = queryset.filter(scout_group__name=search_term)
+            return queryset, False
+        return super().get_search_results(request, queryset, search_term)
+
     @admin.display(description="Ultimo accesso", ordering="annotated_last_login")
     def annotated_last_login(self, obj):
         return obj.annotated_last_login
