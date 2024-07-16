@@ -18,7 +18,6 @@ from people.models.district import District
 from people.models.line import Line
 from people.models.person import Person
 from people.models.scout_group import ScoutGroup
-from people.models.sensible_data import SensibleData
 from people.models.squad import Squad
 from people.models.subdistrict import Subdistrict
 from settings.models.setting import Setting
@@ -57,9 +56,9 @@ class LastLoginAdminFilter(admin.SimpleListFilter):
 @admin.register(Person)
 class PersonAdmin(BaseAdmin):
 
-    def get_fields(self, request, obj):
-        all_fields = super().get_fields(request, obj)
-        return [x for x in all_fields if x not in Person.SENSIBLE_FIELDS]
+    # def get_fields(self, request, obj):
+    #     all_fields = super().get_fields(request, obj)
+    #     return [x for x in all_fields if x not in Person.SENSIBLE_FIELDS]
 
     search_fields = (
         "agesci_id",
@@ -92,7 +91,7 @@ class PersonAdmin(BaseAdmin):
         "is_arrived",
         "arrived_at",
         "badge_url",
-        "sensible_data_admin_link",
+        # "sensible_data_admin_link",
     ]
     actions = ["mark_as_arrived", "revert_arrival", "print_badge"]
 
@@ -183,7 +182,7 @@ class PersonInline(admin.TabularInline):
         return False
 
 
-@admin.register(SensibleData)
+# @admin.register(SensibleData)
 class SensibleDataAdmin(BaseAdmin):
     search_fields = (
         "agesci_id",
