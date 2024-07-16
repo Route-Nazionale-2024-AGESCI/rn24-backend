@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.aggregates import StringAgg
-from django.db import transaction
 from django.db.models import F
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
@@ -17,9 +16,11 @@ from common.pdf import html_to_pdf
 from people.models.district import District
 from people.models.line import Line
 from people.models.person import Person
+from people.models.person_check_in import PersonCheckIn
 from people.models.scout_group import ScoutGroup
 from people.models.squad import Squad
 from people.models.subdistrict import Subdistrict
+from people.services.check_in import mark_check_in
 from settings.models.setting import Setting
 
 User = get_user_model()
@@ -51,6 +52,20 @@ class LastLoginAdminFilter(admin.SimpleListFilter):
         if self.value() == "this_year":
             return queryset.filter(user__last_login__year=now.year)
         return queryset
+
+
+class PersonCheckInInlineAdmin(admin.TabularInline):
+    model = PersonCheckIn
+    show_change_link = True
+    fields = readonly_fields = (
+        "direction",
+        "created_at",
+        "user",
+    )
+    extra = 0
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(Person)
@@ -110,7 +125,10 @@ class PersonAdmin(BaseAdmin):
         "badge_url",
         # "sensible_data_admin_link",
     ]
-    actions = ["mark_as_arrived", "revert_arrival", "print_badge"]
+    actions = ["mark_check_in", "mark_check_out", "print_badge"]
+    inlines = [
+        PersonCheckInInlineAdmin,
+    ]
 
     def get_queryset(self, request: HttpRequest) -> QuerySet:
         queryset = super().get_queryset(request)
@@ -133,28 +151,17 @@ class PersonAdmin(BaseAdmin):
 
     @admin.action(
         permissions=["change"],
-        description="Marca come arrivati",
+        description="Marca ingresso",
     )
-    def mark_as_arrived(self, request, queryset):
-        now = timezone.now()
-        with transaction.atomic():
-            queryset.filter(is_arrived=False).update(is_arrived=True, arrived_at=now)
-            scout_group_qs = ScoutGroup.objects.filter(person__in=queryset).distinct()
-            scout_group_qs.filter(is_arrived=False).update(is_arrived=True, arrived_at=now)
+    def mark_check_in(self, request, queryset):
+        mark_check_in(queryset, "ENTRATA", request.user)
 
     @admin.action(
         permissions=["change"],
-        description="Annulla arrivo",
+        description="Marca uscita",
     )
-    def revert_arrival(self, request, queryset):
-        with transaction.atomic():
-            queryset.filter(is_arrived=True).update(is_arrived=False, arrived_at=None)
-            scout_group_qs = ScoutGroup.objects.filter(person__in=queryset).distinct()
-            for scout_group in scout_group_qs:
-                if not scout_group.person_set.filter(is_arrived=True).exists():
-                    scout_group.is_arrived = False
-                    scout_group.arrived_at = None
-                    scout_group.save()
+    def mark_check_out(self, request, queryset):
+        mark_check_in(queryset, "USCITA", request.user)
 
     @admin.action(
         description="Stampa badge",
