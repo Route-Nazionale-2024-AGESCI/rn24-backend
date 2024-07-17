@@ -95,19 +95,34 @@ class Person(QRCodeMixin, CommonAbstractModel):
         choices=ITALIAN_REGION_CHOICES,
     )
 
+    # identity document
+    identity_document_type = models.CharField(
+        max_length=255, verbose_name="tipo documento", blank=True, null=True
+    )
+    identity_document_number = models.CharField(
+        max_length=255, verbose_name="numero documento", blank=True, null=True
+    )
+    identity_document_issue_date = models.DateField(
+        verbose_name="data rilascio documento", blank=True, null=True
+    )
+    identity_document_expiry_date = models.DateField(
+        verbose_name="data scadenza documento", blank=True, null=True
+    )
+
     # accessibility
     accessibility_has_wheelchair = models.BooleanField(
-        default=False, verbose_name="sedia a rotelle?"
+        default=False, db_index=True, verbose_name="sedia a rotelle?"
     )
     accessibility_has_caretaker_not_registered = models.BooleanField(
         default=False,
         verbose_name="accompagnatore?",
         help_text="viaggia con accompagnatore non iscritto?",
+        db_index=True,
     )
 
     # sleeping
     sleeping_is_sleeping_in_tent = models.BooleanField(
-        default=False, verbose_name="tenda?", help_text="dorme in tenda personale?"
+        default=False, db_index=True, verbose_name="tenda?", help_text="dorme in tenda personale?"
     )
     sleeping_requests = models.TextField(
         null=True, blank=True, verbose_name="richieste per il pernotto"
@@ -126,6 +141,7 @@ class Person(QRCodeMixin, CommonAbstractModel):
         max_length=255,
         null=True,
         blank=True,
+        db_index=True,
         choices=FOOD_ALLERGIES_CHOICES,
         verbose_name="dieta",
         help_text="Allergie/intolleranze ad alimenti da segnalare.",
@@ -134,12 +150,13 @@ class Person(QRCodeMixin, CommonAbstractModel):
         null=True, blank=True, verbose_name="Selezionare una o più allergie/intolleranze elencate:"
     )  # merged with "ALTRO"
     food_is_vegan = models.BooleanField(
-        default=False, verbose_name="vegano?", help_text="Segui una dieta vegana?"
+        default=False, db_index=True, verbose_name="vegano?", help_text="Segui una dieta vegana?"
     )
 
     # transportation
     transportation_has_problems_moving_on_foot = models.BooleanField(
         default=False,
+        db_index=True,
         verbose_name="spostamento a piedi?",
         help_text="Hai disabilità/patologie/età che non ti permettono di sostenere gli spostamenti a piedi previsti?",
     )
@@ -152,7 +169,7 @@ class Person(QRCodeMixin, CommonAbstractModel):
 
     # health
     health_has_allergies = models.BooleanField(
-        default=False, verbose_name="allergie?", help_text="Hai allergie accertate?"
+        default=False, db_index=True, verbose_name="allergie?", help_text="Hai allergie accertate?"
     )
     health_allergies = models.TextField(
         null=True,
@@ -160,7 +177,10 @@ class Person(QRCodeMixin, CommonAbstractModel):
         verbose_name="allergie",
     )
     health_has_movement_disorders = models.BooleanField(
-        default=False, verbose_name="disturbi motori?", help_text="Sei affetto da disturbi motori?"
+        default=False,
+        db_index=True,
+        verbose_name="disturbi motori?",
+        help_text="Sei affetto da disturbi motori?",
     )
     health_movement_disorders = models.TextField(
         null=True,
@@ -169,6 +189,7 @@ class Person(QRCodeMixin, CommonAbstractModel):
     )
     health_has_patologies = models.BooleanField(
         default=False,
+        db_index=True,
         verbose_name="patologie?",
         help_text="Sei affetto da patologie cardiovascolari/respiratorie/neurologiche?",
     )

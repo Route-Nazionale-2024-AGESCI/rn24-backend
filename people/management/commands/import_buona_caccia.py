@@ -37,7 +37,11 @@ class Command(BaseCommand):
     def parse_boolean(self, value):
         if value.upper() in ["NO", "-", ""]:
             return False
-        if value.upper() in ["SI"]:
+        if value.upper() in [
+            "SI",
+            "SI, SONO INCINTA NECESSITO DI NAVETTA",
+            "NON POSSO FARE STRADA CON LO ZAINO",
+        ]:
             return True
         raise ValueError(f"Invalid value '{value}'")
 
@@ -53,11 +57,12 @@ class Command(BaseCommand):
             data_dict = pd.read_excel(path, sheet_name=None, dtype=str, na_filter=False)
             sheet_names = [
                 "iscrizioni ",
-                "tardive plus senza viaggio",
+                "delegazioni straniere",
+                "ritirati",
                 "Tangram Team",
                 "Tangram Team Staff",
                 "Comitato",
-                "delegazioni straniere",
+                "Collaboratori",
                 "Kindereheim 0-3",
                 "Kinderheim 4-11",
                 "Kingereheim 12-15",
@@ -113,6 +118,18 @@ class Command(BaseCommand):
                 "phone": [
                     "CellContatto",
                     "Cell Personale",
+                ],
+                "identity_document_type": [
+                    "Tipologia documento:",
+                ],
+                "identity_document_number": [
+                    "Indica il numero del documento.",
+                ],
+                "identity_document_issue_date": [
+                    "Data rilascio documento (GG/MM/AAAA)/",
+                ],
+                "identity_document_expiry_date": [
+                    "Data scadenza (GG/MM/AAAA)/",
                 ],
                 "accessibility_has_wheelchair": [
                     "Sei un/a capo/a con sedia a rotelle?",
@@ -186,15 +203,18 @@ class Command(BaseCommand):
                 "Kinderheim",
             ]:
                 self.stdout.write(self.style.ERROR("Sheets not matching, something changed!"))
+                print(list(data_dict.keys()))
+                print(sheet_names)
                 return
-            # iscrizioni
             for sheet_name in sheet_names:
-                # if sheet_name == "iscrizioni ":
-                #     continue
+                if sheet_name in ["ritirati", "Collaboratori"]:
+                    continue
                 print(f"Importing {sheet_name}")
                 data = data_dict[sheet_name]
                 for i, row in tqdm(data.iterrows(), total=len(data)):
-                    if sheet_name in ["iscrizioni ", "tardive plus senza viaggio"]:
+                    if sheet_name in [
+                        "iscrizioni ",
+                    ]:
                         scout_group, _ = ScoutGroup.objects.get_or_create(
                             name=self.get_value(row, "group_name").strip().upper(),
                             defaults=dict(
@@ -202,7 +222,7 @@ class Command(BaseCommand):
                                 region=self.get_value(row, "group_region").strip().upper(),
                             ),
                         )
-                        squad = None
+                        squad, _ = Squad.objects.get_or_create(name="COCA")
                     else:
                         scout_group = None
                         squad_name = sheet_name.strip().upper()

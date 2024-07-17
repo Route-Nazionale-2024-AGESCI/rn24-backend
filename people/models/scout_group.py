@@ -42,7 +42,7 @@ class ScoutGroup(CommonAbstractModel):
     agesci_id = models.CharField(
         max_length=255, null=True, unique=True, verbose_name="codice AGESCI"
     )
-    name = models.CharField(max_length=255, unique=True, verbose_name="nome")
+    name = models.CharField(max_length=255, db_index=True, unique=True, verbose_name="nome")
     zone = models.CharField(max_length=255, verbose_name="zona")
     region = models.CharField(
         max_length=255, choices=ITALIAN_REGION_CHOICES, verbose_name="regione"
