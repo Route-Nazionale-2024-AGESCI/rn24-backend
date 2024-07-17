@@ -19,7 +19,9 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("path", type=str, help="percorso del file da importare")
 
-    def parse_birth_date(self, date_string):
+    def parse_date(self, date_string):
+        if not date_string:
+            return
         try:
             return datetime.strptime(date_string.split(" ")[0], "%Y-%m-%d")
         except Exception:
@@ -210,6 +212,7 @@ class Command(BaseCommand):
                 if sheet_name in ["ritirati", "Collaboratori"]:
                     continue
                 print(f"Importing {sheet_name}")
+                squad, _ = Squad.objects.get_or_create(name=sheet_name.strip().upper())
                 data = data_dict[sheet_name]
                 for i, row in tqdm(data.iterrows(), total=len(data)):
                     if sheet_name in [
@@ -222,11 +225,8 @@ class Command(BaseCommand):
                                 region=self.get_value(row, "group_region").strip().upper(),
                             ),
                         )
-                        squad, _ = Squad.objects.get_or_create(name="COCA")
                     else:
                         scout_group = None
-                        squad_name = sheet_name.strip().upper()
-                        squad, _ = Squad.objects.get_or_create(name=squad_name)
                     agesci_id = self.get_value(row, "agesci_id", None)
                     if agesci_id:
                         username = agesci_id
@@ -265,7 +265,7 @@ class Command(BaseCommand):
                         user=user,
                         first_name=first_name,
                         last_name=last_name,
-                        birth_date=self.parse_birth_date(birth_date),
+                        birth_date=self.parse_date(birth_date),
                         gender=self.get_value(row, "gender").strip(),
                         training_level=self.get_value(row, "training_level").strip(),
                         address=self.get_value(row, "address").strip(),
@@ -276,6 +276,14 @@ class Command(BaseCommand):
                         email=self.get_value(row, "email").strip(),
                         phone=str(self.get_value(row, "phone")),
                         scout_group=scout_group,
+                        identity_document_type=self.get_value(row, "identity_document_type"),
+                        identity_document_number=self.get_value(row, "identity_document_number"),
+                        identity_document_issue_date=self.parse_date(
+                            self.get_value(row, "identity_document_issue_date")
+                        ),
+                        identity_document_expiry_date=self.parse_date(
+                            self.get_value(row, "identity_document_expiry_date")
+                        ),
                         accessibility_has_wheelchair=self.parse_boolean(
                             self.get_value(row, "accessibility_has_wheelchair")
                         ),
