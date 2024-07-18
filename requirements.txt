@@ -121,7 +121,7 @@ filelock==3.13.1
     # via virtualenv
 filetype==1.2.0
     # via willow
-fontawesomefree==6.5.1
+fontawesomefree==6.6.0
     # via -r requirements.in
 gprof2dot==2022.7.29
     # via django-silk
