@@ -61,6 +61,7 @@ jobs:
           key: ${{ secrets.PROD_SSH_KEY }}
           port: 22
           proxy_host: ${{ secrets.SSH_HOST }}
+          proxy_username: root
           proxy_port: 22
           proxy_key: ${{ secrets.SSH_KEY }}
           script: deploy.sh
