@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.db import models, transaction
-from django.utils.html import format_html
 from django.utils.timezone import datetime, make_aware
 
 from common.abstract import CommonAbstractModel
+from common.mixins import CMSPageLinkMixin
 from common.qr import QRCodeMixin
 from events.models.event_registration import PersonEventRegistration
 from people.models.scout_group import HAPPINESS_PATH_CHOICES
@@ -26,7 +26,7 @@ class AnnotatedEventsManager(models.Manager):
         return self.annotate(persons_registration_count=models.Count("registered_persons"))
 
 
-class Event(QRCodeMixin, CommonAbstractModel):
+class Event(QRCodeMixin, CMSPageLinkMixin, CommonAbstractModel):
     """
     ogni COCA partecipa a 4 eventi di tipo di verso in 4 mezze giornate
     SGUARDI: eventi visibili a tutta la COCA, ogni capo si iscrive individualmente ad un evento
@@ -176,16 +176,6 @@ class Event(QRCodeMixin, CommonAbstractModel):
         from events.services.selectors import get_persons_registered_to_event
 
         return get_persons_registered_to_event(self).count()
-
-    @admin.display(description="modifica la pagina CMS dell'evento")
-    def cms_page_link(self):
-        if not self.page:
-            return None
-        return format_html(
-            '<a href="{}" target="_blank">{}</a>',
-            self.page.get_admin_url(),
-            self.page.get_admin_url(),
-        )
 
     def qr_payload(self):
         return f"E#{self.uuid}"

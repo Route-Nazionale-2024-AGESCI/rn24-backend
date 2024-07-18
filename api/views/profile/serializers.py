@@ -13,10 +13,7 @@ from people.models.subdistrict import Subdistrict
 class SquadSerializer(UUIDRelatedModelSerializer):
     class Meta:
         model = Squad
-        fields = (
-            "uuid",
-            "name",
-        )
+        fields = ("uuid", "name", "page")
 
 
 class DistrictSerializer(UUIDRelatedModelSerializer):

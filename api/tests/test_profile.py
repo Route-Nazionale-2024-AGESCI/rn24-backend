@@ -4,10 +4,14 @@ import pytest
 from django.conf import settings
 from django.urls import reverse
 
+from people.factories import SquadFactory
+
 
 @pytest.mark.django_db
 @patch("people.models.person.Person.qr_string_with_signature", return_value="AAAA")
-def test_get_profile(mock, logged_api_client, person):
+def test_get_profile(mock, logged_api_client, person, base_squads_page):
+    squad = SquadFactory()
+    person.squads.add(squad)
     url = reverse("profile-detail")
     response = logged_api_client.get(url)
     assert response.status_code == 200
@@ -39,7 +43,13 @@ def test_get_profile(mock, logged_api_client, person):
             },
             "happiness_path": person.scout_group.happiness_path,
         },
-        "squads": [],
+        "squads": [
+            {
+                "uuid": str(squad.uuid),
+                "name": squad.name,
+                "page": str(squad.page.uuid),
+            },
+        ],
         "public_key": settings.PUBLIC_KEY,
         "qr_code": "AAAA",
         "permissions": {

@@ -40,6 +40,19 @@ class Command(BaseCommand):
             home_page_page = Page.objects.get(slug="rn24-root")
             home_page_page.add_child(instance=events_root_page)
 
+        if not CMSPage.objects.filter(slug="rn24-squads-root").exists():
+
+            events_root_page = CMSPage(
+                slug="rn24-squads-root",
+                title="Pattuglie",
+                body="pattuglie",
+                locale_id=default_locale.id,
+                content_type=page_content_type,
+            )
+            # Refresh the home page instance, this Must be a PageInstance for the next step to work
+            home_page_page = Page.objects.get(slug="rn24-root")
+            home_page_page.add_child(instance=events_root_page)
+
         # Create a site with the new homepage set as the root
         # Site.objects.create(hostname="localhost", root_page=home_page, is_default_site=True)
         Site.objects.get_or_create(

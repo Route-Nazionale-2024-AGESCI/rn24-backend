@@ -357,20 +357,12 @@ class DistrictAdmin(BaseAdmin):
     inlines = [SubdistrictInline]
 
 
-class SquadPersonInline(admin.TabularInline):
-    model = Person.squads.through
-    fields = ("person",)
-    autocomplete_fields = ("person",)
-    extra = 0
-
-
 @admin.register(Squad)
 class SquadAdmin(BaseAdmin):
     list_display = ("name", "description", "people_count")
     search_fields = ("name", "description", "uuid")
-    readonly_fields = ("people_count",)
+    readonly_fields = ("people_count", "cms_page_link")
     filter_horizontal = ("groups",)
-    inlines = [SquadPersonInline]
 
 
 @admin.register(LogEntry)

@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.db import transaction
-from django.db.models.signals import m2m_changed, post_delete, post_save
+from django.db.models.signals import m2m_changed, post_delete, post_save, pre_save
 from django.dispatch import receiver
 
 from cms.models.page import CMSPage
@@ -79,3 +79,20 @@ def invalidate_cache(sender, instance=None, **kwargs):
     if not settings.DEBUG:
         logger.info("Invalidating cache for %s: %s", sender, instance)
         cache.clear()
+
+
+@receiver(pre_save, sender=Squad)
+def create_squad_cmspage(sender, instance=None, created=False, **kwargs):
+    if not instance.page:
+        from cms.models import CMSPage
+
+        try:
+            events_page = CMSPage.objects.get(title="Pattuglie")
+            page = CMSPage(title=instance.name)
+            events_page.add_child(instance=page)
+            instance.page = page
+        except CMSPage.DoesNotExist:
+            logger.error("Page 'Pattuglie' not found")
+    elif instance.page.title != instance.name:
+        instance.page.title = instance.name
+        instance.page.save()

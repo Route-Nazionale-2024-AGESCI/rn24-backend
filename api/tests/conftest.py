@@ -35,6 +35,11 @@ def base_events_page():
 
 
 @pytest.fixture
+def base_squads_page():
+    return CMSPageFactory(title="Pattuglie")
+
+
+@pytest.fixture
 def root_page():
     Locale.objects.create(language_code="it")
     root_page = CMSPageFactory()
