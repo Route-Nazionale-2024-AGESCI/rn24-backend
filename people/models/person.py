@@ -15,22 +15,6 @@ from people.models.scout_group import ITALIAN_REGION_CHOICES
 
 User = get_user_model()
 
-FOOD_ALLERGIES_CHOICES = (
-    ("Nessuna", "Nessuna"),
-    (
-        "Monodieta (selezionare nel caso di singola allergia/intolleranza)",
-        "Monodieta (selezionare nel caso di singola allergia/intolleranza)",
-    ),
-    (
-        "Multidieta (selezionare nel caso di più allergie/intolleranze)",
-        "Multidieta (selezionare nel caso di più allergie/intolleranze)",
-    ),
-    (
-        "Dieta da shock (selezionare nel caso di una o più allergie che possano causare shock anafilattico)",
-        "Dieta da shock (selezionare nel caso di una o più allergie che possano causare shock anafilattico)",
-    ),
-)
-
 
 class Person(QRCodeMixin, CommonAbstractModel):
 
@@ -142,7 +126,6 @@ class Person(QRCodeMixin, CommonAbstractModel):
         null=True,
         blank=True,
         db_index=True,
-        choices=FOOD_ALLERGIES_CHOICES,
         verbose_name="dieta",
         help_text="Allergie/intolleranze ad alimenti da segnalare.",
     )

@@ -1,1 +1,1 @@
-0028_alter_scoutgroup_name_alter_squad_name
+0031_alter_scoutgroup_happiness_path

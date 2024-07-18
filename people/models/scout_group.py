@@ -4,14 +4,14 @@ from django.db import models
 from common.abstract import CommonAbstractModel
 
 HAPPINESS_PATH_CHOICES = (
-    ("FELICI_DI_ACCOGLIERE", "Felici di accogliere"),
-    ("FELICI_DI_VIVERE_UNA_VITA_GIUSTA", "Felici di vivere una vita giusta"),
-    ("FELICI_DI_PRENDERSI_CURA_E_CUSTODIRE", "Felici di prendersi cura e custodire"),
-    ("FELICI_DI_GENERARE_SPERANZA", "Felici di generare speranza"),
-    ("FELICI_DI_FARE_ESPERIENZA_DI_DIO", "Felici di fare esperienza di Dio"),
-    ("FELICI_DI_ESSERE_APPASSIONATI", "Felici di essere appassionati"),
-    ("FELICI_DI_LAVORARE_PER_LA_PACE", "Felici di lavorare per la pace"),
-    ("FELICI_DI_ESSERE_PROFETI_IN_UN_MONDO_NUOVO", "Felici di essere profeti in un mondo nuovo"),
+    ("Felici di accogliere", "Felici di accogliere"),
+    ("Felici di vivere una vita giusta", "Felici di vivere una vita giusta"),
+    ("Felici di prendersi cura e custodire", "Felici di prendersi cura e custodire"),
+    ("Felici di generare speranza", "Felici di generare speranza"),
+    ("Felici di fare esperienza di Dio", "Felici di fare esperienza di Dio"),
+    ("Felici di essere appassionati", "Felici di essere appassionati"),
+    ("Felici di lavorare per la pace", "Felici di lavorare per la pace"),
+    ("Felici di essere profeti in un mondo nuovo", "Felici di essere profeti in un mondo nuovo"),
 )
 
 ITALIAN_REGION_CHOICES = (
@@ -55,7 +55,11 @@ class ScoutGroup(CommonAbstractModel):
         verbose_name="fila",
     )
     happiness_path = models.CharField(
-        max_length=255, choices=HAPPINESS_PATH_CHOICES, verbose_name="sentiero della felicità"
+        max_length=255,
+        null=True,
+        blank=True,
+        choices=HAPPINESS_PATH_CHOICES,
+        verbose_name="sentiero della felicità",
     )
     is_arrived = models.BooleanField(db_index=True, verbose_name="arrivato?", default=False)
     arrived_at = models.DateTimeField(verbose_name="data di arrivo", null=True, blank=True)

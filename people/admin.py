@@ -105,12 +105,12 @@ class PersonAdmin(BaseAdmin):
     list_filter = (
         "is_arrived",
         "scout_group__line__subdistrict__district",
-        "scout_group__happiness_path",
         "squads",
         LastLoginAdminFilter,
         "accessibility_has_wheelchair",
         "accessibility_has_caretaker_not_registered",
         "sleeping_is_sleeping_in_tent",
+        "food_diet_needed",
         "food_is_vegan",
         "transportation_has_problems_moving_on_foot",
         "health_has_allergies",
@@ -269,7 +269,13 @@ class ScoutGroupAdmin(BaseAdmin):
         "people_count",
         "is_arrived",
     )
-    list_filter = ("is_arrived", "region", "line__subdistrict__district", "happiness_path")
+    list_filter = (
+        "is_arrived",
+        "region",
+        "line__subdistrict__district",
+        "happiness_path",
+        ("happiness_path", admin.EmptyFieldListFilter),
+    )
     search_fields = ("uuid", "name", "zone", "region")
     inlines = [PersonInline]
     readonly_fields = [

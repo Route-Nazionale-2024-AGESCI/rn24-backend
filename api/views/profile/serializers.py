@@ -74,12 +74,41 @@ class PermissionsSerializer(serializers.Serializer):
     can_scan_qr = serializers.BooleanField(read_only=True)
 
 
+class PersonalDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Person
+        fields = (
+            "identity_document_type",
+            "identity_document_number",
+            "identity_document_issue_date",
+            "identity_document_expiry_date",
+            "accessibility_has_wheelchair",
+            "accessibility_has_caretaker_not_registered",
+            "sleeping_is_sleeping_in_tent",
+            "sleeping_requests",
+            "sleeping_place",
+            "sleeping_requests_2",
+            "food_diet_needed",
+            "food_allergies",
+            "food_is_vegan",
+            "transportation_has_problems_moving_on_foot",
+            "transportation_need_transport",
+            "health_has_allergies",
+            "health_allergies",
+            "health_has_movement_disorders",
+            "health_movement_disorders",
+            "health_has_patologies",
+            "health_patologies",
+        )
+
+
 class ProfileSerializer(UUIDRelatedModelSerializer):
     scout_group = ScoutGroupSerializer()
     squads = SquadSerializer(many=True)
     public_key = serializers.SerializerMethodField()
     qr_code = serializers.SerializerMethodField()
     permissions = PermissionsSerializer(source="*")
+    personal_data = PersonalDataSerializer(source="*")
 
     def get_public_key(self, obj):
         return settings.PUBLIC_KEY
@@ -101,6 +130,7 @@ class ProfileSerializer(UUIDRelatedModelSerializer):
             "public_key",
             "qr_code",
             "permissions",
+            "personal_data",
         )
 
 

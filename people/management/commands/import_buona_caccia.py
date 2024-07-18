@@ -1,6 +1,9 @@
+import csv
 from datetime import datetime
+from io import StringIO
 
 import pandas as pd
+import requests
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -31,6 +34,17 @@ class Command(BaseCommand):
                 print(e)
                 return None
 
+    def clean_food_diet(self, diet):
+        if diet == "Monodieta (selezionare nel caso di singola allergia/intolleranza)":
+            return "Monodieta"
+        if diet.startswith(
+            "Dieta da shock (selezionare nel caso di una o più allergie che possano causare shock anafilattico)"
+        ):
+            return "Dieta da shock"
+        if diet == "Multidieta (selezionare nel caso di più allergie/intolleranze)":
+            return "Multidieta"
+        return diet
+
     def parse_food_allergies(self, col1, col2):
         if col2:
             return col1 + " - " + col2
@@ -53,7 +67,26 @@ class Command(BaseCommand):
                 return row[col].strip()
         return default
 
+    def fetch_scout_group_happines(self):
+        url = "https://rn24.agesci.it/wp-json/rn24/v1/boxes/export"
+        response = requests.get(url, verify=False)
+        response.raise_for_status()
+        csv_content = response.content.decode("utf-8-sig")
+        data = {}
+        happiness_path_set = set()
+        csv_reader = csv.DictReader(StringIO(csv_content), delimiter=";")
+        for row in csv_reader:
+            d = {}
+            d["name"] = row["Gruppo"].strip().upper()
+            d["agesci_id"] = row["Codice gruppo"]
+            d["happiness"] = row["Felici di..."]
+            happiness_path_set.add(d["happiness"])
+            data[d["name"]] = d
+        print(list(happiness_path_set))
+        return data
+
     def handle(self, *args, **options):
+        scout_group_happiness = self.fetch_scout_group_happines()
         with transaction.atomic():
             path = options["path"]
             data_dict = pd.read_excel(path, sheet_name=None, dtype=str, na_filter=False)
@@ -209,7 +242,9 @@ class Command(BaseCommand):
                 print(sheet_names)
                 return
             for sheet_name in sheet_names:
-                if sheet_name in ["ritirati", "Collaboratori"]:
+                if sheet_name in [
+                    "ritirati",
+                ]:
                     continue
                 print(f"Importing {sheet_name}")
                 squad, _ = Squad.objects.get_or_create(name=sheet_name.strip().upper())
@@ -218,11 +253,21 @@ class Command(BaseCommand):
                     if sheet_name in [
                         "iscrizioni ",
                     ]:
+                        scout_group_name = self.get_value(row, "group_name").strip().upper()
+                        if scout_group_name not in scout_group_happiness:
+                            print(f"not found: '{scout_group_name}'")
+                            happiness_path = None
+                            group_agesci_id = None
+                        else:
+                            happiness_path = scout_group_happiness[scout_group_name]["happiness"]
+                            group_agesci_id = scout_group_happiness[scout_group_name]["agesci_id"]
                         scout_group, _ = ScoutGroup.objects.get_or_create(
-                            name=self.get_value(row, "group_name").strip().upper(),
+                            name=scout_group_name,
                             defaults=dict(
                                 zone=self.get_value(row, "group_zone").strip().upper(),
                                 region=self.get_value(row, "group_region").strip().upper(),
+                                agesci_id=group_agesci_id,
+                                happiness_path=happiness_path,
                             ),
                         )
                     else:
@@ -296,7 +341,9 @@ class Command(BaseCommand):
                         sleeping_requests=self.get_value(row, "sleeping_requests"),
                         sleeping_place=self.get_value(row, "sleeping_place"),
                         sleeping_requests_2=self.get_value(row, "sleeping_requests_2"),
-                        food_diet_needed=self.get_value(row, "food_diet_needed"),
+                        food_diet_needed=self.clean_food_diet(
+                            self.get_value(row, "food_diet_needed")
+                        ),
                         food_allergies=self.parse_food_allergies(
                             self.get_value(row, "food_allergies_1"),
                             self.get_value(row, "food_allergies_2"),
