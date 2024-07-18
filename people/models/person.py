@@ -181,6 +181,9 @@ class Person(QRCodeMixin, CommonAbstractModel):
         blank=True,
         verbose_name="patologie accertate",
     )
+    is_available_for_extra_service = models.BooleanField(
+        default=False, db_index=True, verbose_name="disponibile per servizio extra?"
+    )
 
     notes = models.TextField(null=True, blank=True, verbose_name="note")
 

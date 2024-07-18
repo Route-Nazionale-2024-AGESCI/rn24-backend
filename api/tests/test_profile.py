@@ -79,4 +79,15 @@ def test_get_profile(mock, logged_api_client, person, base_squads_page):
             "health_has_patologies": person.health_has_patologies,
             "health_patologies": person.health_patologies,
         },
+        "is_available_for_extra_service": person.is_available_for_extra_service,
     }
+
+
+@pytest.mark.django_db
+def test_patch_profile_is_available_for_extra_service(logged_api_client, person):
+    url = reverse("profile-detail")
+    assert person.is_available_for_extra_service is False
+    response = logged_api_client.patch(url, {"is_available_for_extra_service": True})
+    assert response.status_code == 200
+    person.refresh_from_db()
+    assert person.is_available_for_extra_service is True

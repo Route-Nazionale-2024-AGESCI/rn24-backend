@@ -9,7 +9,7 @@ from people.models.person import Person
 logger = logging.getLogger(__name__)
 
 
-class ProfileDetailView(generics.RetrieveAPIView):
+class ProfileDetailView(generics.RetrieveAPIView, generics.UpdateAPIView):
     serializer_class = ProfileSerializer
 
     def get_object(self):

@@ -100,12 +100,13 @@ class PersonalDataSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(UUIDRelatedModelSerializer):
-    scout_group = ScoutGroupSerializer()
-    squads = SquadSerializer(many=True)
+    scout_group = ScoutGroupSerializer(read_only=True)
+    squads = SquadSerializer(many=True, read_only=True)
     public_key = serializers.SerializerMethodField()
     qr_code = serializers.SerializerMethodField()
-    permissions = PermissionsSerializer(source="*")
-    personal_data = PersonalDataSerializer(source="*")
+    permissions = PermissionsSerializer(source="*", read_only=True)
+    personal_data = PersonalDataSerializer(source="*", read_only=True)
+    is_available_for_extra_service = serializers.BooleanField()
 
     def get_public_key(self, obj):
         return settings.PUBLIC_KEY
@@ -116,6 +117,21 @@ class ProfileSerializer(UUIDRelatedModelSerializer):
     class Meta:
         model = Person
         fields = (
+            "uuid",
+            "agesci_id",
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "scout_group",
+            "squads",
+            "public_key",
+            "qr_code",
+            "permissions",
+            "personal_data",
+            "is_available_for_extra_service",
+        )
+        read_only_fields = (
             "uuid",
             "agesci_id",
             "first_name",

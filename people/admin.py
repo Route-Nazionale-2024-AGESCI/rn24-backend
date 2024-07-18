@@ -101,6 +101,7 @@ class PersonAdmin(BaseAdmin):
         "health_has_allergies",
         "health_has_movement_disorders",
         "health_has_patologies",
+        "is_available_for_extra_service",
     )
     list_filter = (
         "is_arrived",
@@ -116,6 +117,7 @@ class PersonAdmin(BaseAdmin):
         "health_has_allergies",
         "health_has_movement_disorders",
         "health_has_patologies",
+        "is_available_for_extra_service",
     )
     filter_horizontal = ("squads",)
     autocomplete_fields = ("user", "scout_group")
