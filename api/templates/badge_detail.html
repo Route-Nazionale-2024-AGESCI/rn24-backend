@@ -45,9 +45,19 @@
         <td>{{ person.squad_list_string|default:"-" }}</td>
     </tr>
 </table> -->
+<span id="name">{{ person.full_name }} - {{ person.user.username }}</span>
 <style>
     .qr-container {
         text-align: center;
+    }
+
+    #name {
+        position: fixed;
+        top: 1mm;
+        left: 1mm;
+        margin: 0px;
+        padding: 0px;
+        font-size: 1mm;
     }
 
     @media print {
