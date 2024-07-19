@@ -1,7 +1,8 @@
 from django.contrib import admin
+from import_export.admin import ExportActionMixin
 
 
-class BaseAdmin(admin.ModelAdmin):
+class BaseAdmin(ExportActionMixin, admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         readonly_fields = {
             "created_at",

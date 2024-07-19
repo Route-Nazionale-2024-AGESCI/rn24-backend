@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     "wagtail",
     "modelcluster",
     "taggit",
+    "import_export",
     "fontawesomefree",
     "authentication.apps.AuthenticationConfig",
     "people.apps.PeopleConfig",
@@ -278,3 +279,5 @@ CACHES = {
         "TIMEOUT": CACHE_TIMEOUT,
     }
 }
+
+IMPORT_EXPORT_EXPORT_PERMISSION_CODE = "can_export"

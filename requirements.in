@@ -33,3 +33,4 @@ redis
 hiredis
 pandas
 pdbpp
+django-import-export[all]
