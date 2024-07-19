@@ -134,7 +134,7 @@ gprof2dot==2022.7.29
     # via django-silk
 gunicorn==22.0.0
     # via -r requirements.in
-hiredis==2.3.2
+hiredis==3.0.0
     # via -r requirements.in
 identify==2.5.33
     # via pre-commit
