@@ -8,10 +8,11 @@ def get_events_visible_to_person(person: Person):
     base_qs = Event.objects.filter(
         Q(visibility_to_persons=person) | Q(visibility_to_squads__in=person.squads.all())
     )
-    if person.scout_group.line:
+    if person.scout_group:
+        base_qs = base_qs.union(Event.objects.filter(visibility_to_scout_groups=person.scout_group))
+    if person.scout_group and person.scout_group.line:
         line_qs = Event.objects.filter(
-            Q(visibility_to_scout_groups=person.scout_group)
-            | Q(visibility_to_lines=person.scout_group.line)
+            Q(visibility_to_lines=person.scout_group.line)
             | Q(visibility_to_subdistricts=person.scout_group.line.subdistrict)
             | Q(visibility_to_districts=person.scout_group.line.subdistrict.district)
         )
@@ -24,11 +25,17 @@ def get_events_registered_to_person(person: Person):
     personal_events = Event.objects.filter(registered_persons=person).annotate(
         is_personal=Value(True)
     )
-    passive_events_base = Event.objects.filter(
-        Q(registered_scout_groups=person.scout_group) | Q(registered_squads__in=person.squads.all())
-    ).annotate(is_personal=Value(False))
+    passive_events_base = Event.objects.filter(registered_squads__in=person.squads.all()).annotate(
+        is_personal=Value(False)
+    )
     base_qs = personal_events.union(passive_events_base)
-    if person.scout_group.line:
+    if person.scout_group:
+        base_qs = base_qs.union(
+            Event.objects.filter(registered_scout_groups=person.scout_group).annotate(
+                is_personal=Value(False)
+            )
+        )
+    if person.scout_group and person.scout_group.line:
         passive_events_line = Event.objects.filter(
             Q(registered_lines=person.scout_group.line)
             | Q(registered_subdistricts=person.scout_group.line.subdistrict)

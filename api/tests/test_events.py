@@ -28,6 +28,7 @@ from people.models.scout_group import ScoutGroup
 
 @pytest.mark.django_db
 def test_get_registrations(logged_api_client, person, base_events_page):
+    EventFactory()  # a random one
     event_personal = EventFactory()
     event_group = EventFactory()
     PersonEventRegistration.objects.create(person=person, event=event_personal)
@@ -50,6 +51,7 @@ def test_get_registrations(logged_api_client, person, base_events_page):
 
 @pytest.mark.django_db
 def test_get_registrations_without_line(logged_api_client, person, base_events_page):
+    EventFactory()  # a random one
     ScoutGroup.objects.filter(pk=person.scout_group.pk).update(line=None)
     event_personal = EventFactory()
     event_group = EventFactory()
@@ -70,6 +72,23 @@ def test_get_registrations_without_line(logged_api_client, person, base_events_p
     ]
 
 
+@pytest.mark.django_db
+def test_get_registrations_without_scout_group(logged_api_client, person, base_events_page):
+    person.scout_group = None
+    person.save()
+    event_personal = EventFactory()
+    PersonEventRegistration.objects.create(person=person, event=event_personal)
+    url = reverse("event-registration-list")
+    response = logged_api_client.get(url)
+    assert response.status_code == 200, response.content
+    assert response.json() == [
+        {
+            "event": str(event_personal.uuid),
+            "is_personal": True,
+        },
+    ]
+
+
 class TestEventVisibility:
     @pytest.fixture
     def url(self):
@@ -77,6 +96,7 @@ class TestEventVisibility:
 
     @pytest.fixture
     def event(self):
+        EventFactory()  # a random one
         return EventFactory()
 
     @pytest.fixture
@@ -189,11 +209,20 @@ class TestEventVisibility:
         assert response.status_code == 200, response.content
         assert response.json() == []
 
+    @pytest.mark.django_db
+    def test_visibility_without_scout_group(self, event, logged_api_client, url, person):
+        person.scout_group = None
+        person.save()
+        response = logged_api_client.get(url)
+        assert response.status_code == 200, response.content
+        assert response.json() == []
+
 
 class TestRegisterToEvent:
 
     @pytest.fixture
     def url(self):
+        EventFactory()  # a random one
         return reverse("event-registration-list")
 
     @pytest.mark.django_db
