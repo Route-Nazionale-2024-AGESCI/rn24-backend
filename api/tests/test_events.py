@@ -23,6 +23,7 @@ from events.models.event_visibility import (
 )
 from events.services.registration import RegistrationErrors
 from people.factories import PersonFactory, SquadFactory
+from people.models.scout_group import ScoutGroup
 
 
 @pytest.mark.django_db
@@ -32,6 +33,28 @@ def test_get_registrations(logged_api_client, person, base_events_page):
     PersonEventRegistration.objects.create(person=person, event=event_personal)
     ScoutGroupEventRegistration.objects.create(scout_group=person.scout_group, event=event_group)
 
+    url = reverse("event-registration-list")
+    response = logged_api_client.get(url)
+    assert response.status_code == 200, response.content
+    assert response.json() == [
+        {
+            "event": str(event_personal.uuid),
+            "is_personal": True,
+        },
+        {
+            "event": str(event_group.uuid),
+            "is_personal": False,
+        },
+    ]
+
+
+@pytest.mark.django_db
+def test_get_registrations_without_line(logged_api_client, person, base_events_page):
+    ScoutGroup.objects.filter(pk=person.scout_group.pk).update(line=None)
+    event_personal = EventFactory()
+    event_group = EventFactory()
+    PersonEventRegistration.objects.create(person=person, event=event_personal)
+    ScoutGroupEventRegistration.objects.create(scout_group=person.scout_group, event=event_group)
     url = reverse("event-registration-list")
     response = logged_api_client.get(url)
     assert response.status_code == 200, response.content
@@ -157,6 +180,14 @@ class TestEventVisibility:
         response = logged_api_client.get(url)
         assert response.status_code == 200, response.content
         assert response.json() == [{"uuid": str(event.uuid)}]
+
+    @pytest.mark.django_db
+    def test_visibility_scout_group_without_line(self, event, logged_api_client, url, person):
+        person.scout_group.line = None
+        person.scout_group.save()
+        response = logged_api_client.get(url)
+        assert response.status_code == 200, response.content
+        assert response.json() == []
 
 
 class TestRegisterToEvent:
