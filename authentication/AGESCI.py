@@ -98,11 +98,12 @@ class AGESCILoginClient:
                 response.content,
             )
             return (False, "Invalid credentials")
-        except Exception:
+        except Exception as e:
             logger.error(
-                "[AGESCI gateway] login request failed. status code: %s response: %s",
-                response.status_code,
-                response.content,
+                "[AGESCI gateway] login request failed. status code: %s response: %s, exception: %s",
+                response.status_code if response else None,
+                response.content if response else None,
+                e,
             )
             return (False, "Invalid credentials")
 
@@ -135,10 +136,11 @@ class AGESCIResetPasswordClient:
                 logger.info("[AGESCI gateway] password reset successful.")
                 return (True, response.content)
             return (False, response.content)
-        except Exception:
+        except Exception as e:
             logger.error(
-                "[AGESCI gateway] password reset failed. status code: %s response: %s",
-                response.status_code,
-                response.content,
+                "[AGESCI gateway] password reset failed. status code: %s response: %s, exception: %s",
+                response.status_code if response else None,
+                response.content if response else None,
+                e,
             )
             return (False, "Errore")
