@@ -6,6 +6,8 @@ from common.abstract import CommonAbstractModel
 from common.mixins import CMSPageLinkMixin
 from people.models.person import Person
 
+KINDERHEIM_NAMES = ["KINDEREHEIM 0-3", "KINDERHEIM 4-11", "KINGEREHEIM 12-15"]
+
 
 class Squad(CMSPageLinkMixin, CommonAbstractModel):
     name = models.CharField(max_length=255, db_index=True, unique=True, verbose_name="nome")

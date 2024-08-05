@@ -76,6 +76,12 @@ class ScoutGroup(CommonAbstractModel):
     def subdistrict(self):
         return self.line.subdistrict
 
+    @admin.display(description="numbero bambini")
+    def children_count(self):
+        from people.models.squad import KINDERHEIM_NAMES
+
+        return self.person_set.filter(squads__name__in=KINDERHEIM_NAMES).count()
+
     class Meta:
         verbose_name = "gruppo scout"
         verbose_name_plural = "gruppi scout"

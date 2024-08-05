@@ -57,7 +57,10 @@ class Command(BaseCommand):
             "SI",
             "SI, SONO INCINTA NECESSITO DI NAVETTA",
             "NON POSSO FARE STRADA CON LO ZAINO",
+            "DISABILE CHE DEAMBULA, MA MALE E LENTAMENTE",
         ]:
+            return True
+        elif "SI" in value.upper():
             return True
         raise ValueError(f"Invalid value '{value}'")
 
@@ -67,7 +70,7 @@ class Command(BaseCommand):
                 return row[col].strip()
         return default
 
-    def fetch_scout_group_happines(self):
+    def fetch_scout_group_happines_old(self):
         url = "https://rn24.agesci.it/wp-json/rn24/v1/boxes/export"
         response = requests.get(url, verify=False)
         response.raise_for_status()
@@ -82,6 +85,32 @@ class Command(BaseCommand):
             d["happiness"] = row["Felici di..."]
             happiness_path_set.add(d["happiness"])
             data[d["name"]] = d
+        print(list(happiness_path_set))
+        return data
+
+    def fetch_scout_group_happines(self):
+        data_dict = pd.read_excel(
+            "imports/felici.xlsx", sheet_name=None, dtype=str, na_filter=False
+        )["Sheet1"]
+        happy_mapping = {
+            "accogliere": "Felici di accogliere",
+            "vivere una vita giusta": "Felici di vivere una vita giusta",
+            "prendersi cura e custodire": "Felici di prendersi cura e custodire",
+            "generare speranza": "Felici di generare speranza",
+            "fare esperienza di Dio": "Felici di fare esperienza di Dio",
+            "essere appassiona-ti": "Felici di essere appassionati",
+            "lavorare per la pace": "Felici di lavorare per la pace",
+            "essere profeti di un nuovo mondo": "Felici di essere profeti in un mondo nuovo",
+        }
+        data = {}
+        happiness_path_set = set()
+        for i, row in data_dict.iterrows():
+            d = {}
+            d["name"] = row["GRUPPO"].strip().upper()
+            d["happiness"] = happy_mapping[row["FELICI DI"]]
+            d["agesci_id"] = None
+            data[d["name"]] = d
+            happiness_path_set.add(d["happiness"])
         print(list(happiness_path_set))
         return data
 
@@ -252,6 +281,9 @@ class Command(BaseCommand):
                 for i, row in tqdm(data.iterrows(), total=len(data)):
                     if sheet_name in [
                         "iscrizioni ",
+                        "Kindereheim 0-3",
+                        "Kinderheim 4-11",
+                        "Kingereheim 12-15",
                     ]:
                         scout_group_name = self.get_value(row, "group_name").strip().upper()
                         if scout_group_name not in scout_group_happiness:
