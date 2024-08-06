@@ -6,7 +6,9 @@ from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from tqdm import tqdm
+from wagtail.models import Page
 
+from cms.models.page import CMSPage
 from events.models.event import Event
 from maps.models.location import Location
 
@@ -27,6 +29,8 @@ class Command(BaseCommand):
         raise ValueError(f"Invalid value '{value}'")
 
     def parse_datetime(self, date_string):
+        if date_string.startswith("2024-"):
+            return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
         # 23/8/24 09.00
         return datetime.strptime(date_string, "%d/%m/%y %H.%M")
 
@@ -51,7 +55,7 @@ class Command(BaseCommand):
                 registration_limit_from_same_scout_group = row["limite stesso gruppo"]
                 starts_at = row["data inizio"]
                 ends_at = row["data fine"]
-                correlation_id = row["Correlation_ID"]
+                correlation_id = row.get("Correlation_ID")
                 registrations_open_at = row["data apertura iscrizioni"]
                 registrations_close_at = row["data chiusura iscrizioni"]
                 kind = row["tipologia"]
@@ -82,3 +86,14 @@ class Command(BaseCommand):
                 )
                 event.page.body = row["DESCRIZIONE"]
                 event.page.save()
+            print("Importing PAGINE")
+            data = data_dict["PAGINE"]
+            events_root_page = Page.objects.get(slug="rn24-squads-root")
+            for i, row in tqdm(data.iterrows(), total=len(data)):
+                page = CMSPage(
+                    slug=row["SLUG"],
+                    title=row["TITOLO"],
+                    body=row["CONTENUTO"],
+                    show_in_menus=False,
+                )
+                events_root_page.add_child(instance=page)
