@@ -6,7 +6,7 @@
 #
 anyascii==0.3.2
     # via wagtail
-asgiref==3.7.2
+asgiref==3.8.1
     # via
     #   django
     #   django-cors-headers
@@ -51,7 +51,7 @@ distlib==0.3.8
     # via virtualenv
 dj-database-url==2.2.0
     # via -r requirements.in
-django==5.0.8
+django==5.1
     # via
     #   -r requirements.in
     #   dj-database-url
