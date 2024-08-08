@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
-from wagtail.models import Locale, Page, Site
+from wagtail.models import Locale, Page
 
 from cms.models.page import CMSPage
 
@@ -55,7 +55,7 @@ class Command(BaseCommand):
 
         # Create a site with the new homepage set as the root
         # Site.objects.create(hostname="localhost", root_page=home_page, is_default_site=True)
-        Site.objects.get_or_create(
-            site_name="RN24",
-            defaults=dict(hostname="localhost", root_page=home_page_page, is_default_site=True),
-        )
+        # Site.objects.get_or_create(
+        #     site_name="RN24",
+        #     defaults=dict(hostname="localhost", root_page=home_page_page, is_default_site=True),
+        # )

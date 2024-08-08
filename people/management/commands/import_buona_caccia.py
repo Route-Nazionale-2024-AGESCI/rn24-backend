@@ -183,7 +183,7 @@ class Command(BaseCommand):
         return col1
 
     def parse_boolean(self, value):
-        if value.upper() in ["NO", "-", ""]:
+        if value.upper() in ["NO", "-", ".", ""]:
             return False
         if value.upper() in [
             "SI",
@@ -304,14 +304,21 @@ class Command(BaseCommand):
                     'Persone "esterne" da considerar',
                     "Tangram Team",
                     "Comitato",  # FIXME
+                    "iscrizioni ",  # DON'T COMMIT ME
                 ]:
                     continue
                 self.import_sheet(sheet_name, data_dict)
+            # e ora il tangram team!
+            data_dict = pd.read_excel("imports/FILE TANGRAM (1).xlsx", dtype=str, na_filter=False)
+            self.import_sheet("Tangram Team", data_dict)
 
     def import_sheet(self, sheet_name, data_dict):
         print(f"Importing {sheet_name}")
         squad, _ = Squad.objects.get_or_create(name=sheet_name.strip().upper())
-        data = data_dict[sheet_name]
+        if sheet_name == "Tangram Team":
+            data = data_dict
+        else:
+            data = data_dict[sheet_name]
         for i, row in tqdm(data.iterrows(), total=len(data)):
             if sheet_name in [
                 "iscrizioni ",
@@ -440,3 +447,9 @@ class Command(BaseCommand):
             )
             if squad:
                 person.squads.add(squad)
+            if sheet_name == "Tangram Team":
+                tangram_squad_name = row["pattuglia/team confermata"].strip()
+                if tangram_squad_name:
+                    # print(f"squad name: '{tangram_squad_name}'")
+                    tangram_squad, _ = Squad.objects.get_or_create(name=tangram_squad_name)
+                    person.squads.add(tangram_squad)
