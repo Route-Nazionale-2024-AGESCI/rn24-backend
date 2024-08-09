@@ -265,7 +265,10 @@ class Command(BaseCommand):
 
     def map_food_diet(self):
         data_dict = pd.read_excel(
-            "imports/Diete speciali agg 05-08.xlsx", sheet_name=None, dtype=str, na_filter=False
+            "imports/Agesci_estrazione_utente_dieta.xlsx",
+            sheet_name=None,
+            dtype=str,
+            na_filter=False,
         )["Sheet1"]
         data = {}
         for i, row in data_dict.iterrows():
@@ -309,7 +312,12 @@ class Command(BaseCommand):
                     continue
                 self.import_sheet(sheet_name, data_dict)
             # e ora il tangram team!
-            data_dict = pd.read_excel("imports/FILE TANGRAM (1).xlsx", dtype=str, na_filter=False)
+            data_dict = pd.read_excel(
+                "imports/FILE TANGRAM OPERATIVO.xlsx",
+                sheet_name="Tangram Team",
+                dtype=str,
+                na_filter=False,
+            )
             self.import_sheet("Tangram Team", data_dict)
 
     def import_sheet(self, sheet_name, data_dict):
@@ -448,8 +456,11 @@ class Command(BaseCommand):
             if squad:
                 person.squads.add(squad)
             if sheet_name == "Tangram Team":
-                tangram_squad_name = row["pattuglia/team confermata"].strip()
-                if tangram_squad_name:
-                    # print(f"squad name: '{tangram_squad_name}'")
-                    tangram_squad, _ = Squad.objects.get_or_create(name=tangram_squad_name)
-                    person.squads.add(tangram_squad)
+                tangram_squad_names = [
+                    x.strip() for x in row["TEAM DI SERVIZIO"].split(",") if x.strip()
+                ]
+                if tangram_squad_names:
+                    for tangram_squad_name in tangram_squad_names:
+                        # print(f"squad name: '{tangram_squad_name}'")
+                        tangram_squad, _ = Squad.objects.get_or_create(name=tangram_squad_name)
+                        person.squads.add(tangram_squad)
