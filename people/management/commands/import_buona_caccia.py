@@ -306,11 +306,11 @@ class Command(BaseCommand):
                     "Kinderheim",
                     'Persone "esterne" da considerar',
                     "Tangram Team",
-                    "Comitato",  # FIXME
                     "iscrizioni ",  # DON'T COMMIT ME
                 ]:
                     continue
                 self.import_sheet(sheet_name, data_dict)
+            return
             # e ora il tangram team!
             data_dict = pd.read_excel(
                 "imports/FILE TANGRAM OPERATIVO.xlsx",

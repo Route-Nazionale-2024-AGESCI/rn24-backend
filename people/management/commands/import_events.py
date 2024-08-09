@@ -32,7 +32,12 @@ class Command(BaseCommand):
         if date_string.startswith("2024-"):
             return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
         # 23/8/24 09.00
-        return datetime.strptime(date_string, "%d/%m/%y %H.%M")
+        try:
+            return datetime.strptime(date_string, "%d/%m/%y %H.%M")
+        except ValueError:
+            pass
+        # 23/08/2024 10:00
+        return datetime.strptime(date_string, "%d/%m/%Y %H:%M")
 
     def handle(self, *args, **options):
         with transaction.atomic():
@@ -41,14 +46,20 @@ class Command(BaseCommand):
             print("Importing LUOGHI")
             data = data_dict["LUOGHI"]
             for i, row in tqdm(data.iterrows(), total=len(data)):
-                lat, lon = row["COORDINATE"].split(", ")
+                lat, lon = (x.strip() for x in row["COORDINATE"].split(","))
                 Location.objects.get_or_create(
                     name=row["NOME"], defaults=dict(coords=Point(float(lon), float(lat)))
                 )
             print("Importing EVENTI")
             data = data_dict["EVENTI"]
             for i, row in tqdm(data.iterrows(), total=len(data)):
-                location = Location.objects.get(name=row["LUOGO"])
+                try:
+                    location = Location.objects.get(name=row["LUOGO"])
+                except Location.DoesNotExist:
+                    print(
+                        f"failed event '{row['TITOLO']}' because location '{row['LUOGO']}' does not exist"
+                    )
+                    raise
                 name = row["TITOLO"]
                 is_registration_required = row["è richiesta iscrizione personale?"]
                 registration_limit = row["limite di iscritti"]
