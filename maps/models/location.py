@@ -18,7 +18,7 @@ class Location(CommonAbstractModel):
         null=True,
         blank=True,
     )
-    coords = models.PointField(verbose_name="coordinate")
+    coords = models.PointField(null=True, blank=True, verbose_name="coordinate")
     path = models.LineStringField(null=True, blank=True, verbose_name="linea")
     polygon = models.PolygonField(null=True, blank=True, verbose_name="poligono")
 
