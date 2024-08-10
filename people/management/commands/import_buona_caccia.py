@@ -300,17 +300,16 @@ class Command(BaseCommand):
                 print(list(data_dict.keys()))
                 print(sheet_names)
                 return
-            for sheet_name in sheet_names:
-                if sheet_name in [
-                    "ritirati",
-                    "Kinderheim",
-                    'Persone "esterne" da considerar',
-                    "Tangram Team",
-                    "iscrizioni ",  # DON'T COMMIT ME
-                ]:
-                    continue
-                self.import_sheet(sheet_name, data_dict)
-            return
+            # for sheet_name in sheet_names:
+            #     if sheet_name in [
+            #         "ritirati",
+            #         "Kinderheim",
+            #         'Persone "esterne" da considerar',
+            #         "Tangram Team",
+            #         "iscrizioni ",  # DON'T COMMIT ME
+            #     ]:
+            #         continue
+            #     self.import_sheet(sheet_name, data_dict)
             # e ora il tangram team!
             data_dict = pd.read_excel(
                 "imports/FILE TANGRAM OPERATIVO.xlsx",
@@ -457,10 +456,12 @@ class Command(BaseCommand):
                 person.squads.add(squad)
             if sheet_name == "Tangram Team":
                 tangram_squad_names = [
-                    x.strip() for x in row["TEAM DI SERVIZIO"].split(",") if x.strip()
+                    x.strip() for x in row["TEAM DI SERVIZIO PER APP"].split(",") if x.strip()
                 ]
                 if tangram_squad_names:
                     for tangram_squad_name in tangram_squad_names:
                         # print(f"squad name: '{tangram_squad_name}'")
-                        tangram_squad, _ = Squad.objects.get_or_create(name=tangram_squad_name)
+                        tangram_squad, _ = Squad.objects.get_or_create(
+                            name="T-" + tangram_squad_name
+                        )
                         person.squads.add(tangram_squad)
