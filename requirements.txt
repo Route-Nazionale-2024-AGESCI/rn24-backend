@@ -132,7 +132,7 @@ fontawesomefree==6.6.0
     # via -r requirements.in
 gprof2dot==2022.7.29
     # via django-silk
-gunicorn==22.0.0
+gunicorn==23.0.0
     # via -r requirements.in
 hiredis==3.0.0
     # via -r requirements.in
