@@ -10,7 +10,9 @@ from wagtail.models import Page
 
 from cms.models.page import CMSPage
 from events.models.event import Event
+from events.models.event_visibility import ScoutGroupEventVisibility
 from maps.models.location import Location
+from people.models.scout_group import ScoutGroup
 
 User = get_user_model()
 
@@ -97,6 +99,21 @@ class Command(BaseCommand):
                 )
                 event.page.body = row["DESCRIZIONE"]
                 event.page.save()
+                scout_groups_invited = [
+                    x.strip() for x in row["gruppo scout invitato"].split(",") if x.strip()
+                ]
+                if scout_groups_invited:
+                    for group_name in scout_groups_invited:
+                        try:
+                            scout_group = ScoutGroup.objects.get(name=group_name)
+                            ScoutGroupEventVisibility.objects.create(
+                                event=event, scout_group=scout_group
+                            )
+                        except ScoutGroup.DoesNotExist:
+                            print(
+                                f"failed event '{row['TITOLO']}' because scout group '{group_name}' does not exist"
+                            )
+                            continue
             print("Importing PAGINE")
             data = data_dict["PAGINE"]
             events_root_page = Page.objects.get(slug="rn24-squads-root")
