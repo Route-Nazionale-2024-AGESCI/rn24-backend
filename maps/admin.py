@@ -11,7 +11,7 @@ class LocationAdmin(BaseAdmin, admin.GISModelAdmin):
         "attrs": {"default_lat": 45.425580, "default_lon": 11.035253, "default_zoom": 14}
     }
     list_display = ("name", "is_public", "category", "coords", "polygon")
-    search_fields = ("uuid", "name", "category")
+    search_fields = ("uuid", "name", "category__name")
     list_filter = ("is_public", "category")
 
 
