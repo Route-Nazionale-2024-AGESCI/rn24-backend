@@ -92,6 +92,7 @@ class PersonAdmin(BaseAdmin):
         "line_name",
         "annotated_last_login",
         "is_arrived",
+        "scout_group_has_problems_with_payments",
         "accessibility_has_wheelchair",
         "accessibility_has_caretaker_not_registered",
         "sleeping_is_sleeping_in_tent",
@@ -105,6 +106,7 @@ class PersonAdmin(BaseAdmin):
     )
     list_filter = (
         "is_arrived",
+        "scout_group__has_problems_with_payments",
         "scout_group__line__subdistrict__district",
         "squads",
         LastLoginAdminFilter,
@@ -134,6 +136,9 @@ class PersonAdmin(BaseAdmin):
 
     def get_queryset(self, request: HttpRequest) -> QuerySet:
         queryset = super().get_queryset(request)
+        queryset = queryset.select_related(
+            "user", "scout_group__line__subdistrict__district", "scout_group"
+        )
         queryset = queryset.annotate(
             annotated_squads=StringAgg(
                 F("squads__name"),
@@ -150,6 +155,11 @@ class PersonAdmin(BaseAdmin):
             queryset = queryset.filter(scout_group__name__iexact=search_term)
             return queryset, False
         return super().get_search_results(request, queryset, search_term)
+
+    @admin.display(description="problemi pagamento?", boolean=True)
+    def scout_group_has_problems_with_payments(self, obj):
+        if obj.scout_group:
+            return obj.scout_group.has_problems_with_payments
 
     @admin.display(description="Ultimo accesso", ordering="annotated_last_login")
     def annotated_last_login(self, obj):
@@ -270,9 +280,11 @@ class ScoutGroupAdmin(BaseAdmin):
         "happiness_path",
         "people_count",
         "is_arrived",
+        "has_problems_with_payments",
     )
     list_filter = (
         "is_arrived",
+        "has_problems_with_payments",
         "region",
         "line__subdistrict__district",
         "happiness_path",

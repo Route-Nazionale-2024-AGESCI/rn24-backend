@@ -40,7 +40,7 @@ ITALIAN_REGION_CHOICES = (
 
 class ScoutGroup(CommonAbstractModel):
     agesci_id = models.CharField(
-        max_length=255, null=True, unique=True, verbose_name="codice AGESCI"
+        max_length=255, null=True, blank=True, verbose_name="codice AGESCI"
     )
     name = models.CharField(max_length=255, db_index=True, unique=True, verbose_name="nome")
     zone = models.CharField(max_length=255, verbose_name="zona")
@@ -63,6 +63,13 @@ class ScoutGroup(CommonAbstractModel):
     )
     is_arrived = models.BooleanField(db_index=True, verbose_name="arrivato?", default=False)
     arrived_at = models.DateTimeField(verbose_name="data di arrivo", null=True, blank=True)
+    has_problems_with_payments = models.BooleanField(
+        verbose_name="problemi pagamento?", default=False
+    )
+    problems_with_payments = models.TextField(
+        verbose_name="problemi pagamento", null=True, blank=True
+    )
+    notes = models.TextField(verbose_name="note", null=True, blank=True)
 
     @admin.display(description="n. persone")
     def people_count(self):
