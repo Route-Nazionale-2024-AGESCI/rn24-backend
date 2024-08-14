@@ -12,7 +12,9 @@ class Subdistrict(CommonAbstractModel):
     district = models.ForeignKey(
         "people.District", on_delete=models.CASCADE, verbose_name="sottocampo"
     )
-    location = models.ForeignKey("maps.Location", on_delete=models.CASCADE, verbose_name="luogo")
+    location = models.ForeignKey(
+        "maps.Location", on_delete=models.CASCADE, null=True, blank=True, verbose_name="luogo"
+    )
 
     @admin.display(description="n. file")
     def lines_count(self):
