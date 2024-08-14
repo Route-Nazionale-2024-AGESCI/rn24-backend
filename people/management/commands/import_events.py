@@ -10,6 +10,7 @@ from wagtail.models import Page
 
 from cms.models.page import CMSPage
 from events.models.event import Event
+from events.models.event_registration import ScoutGroupEventRegistration
 from events.models.event_visibility import ScoutGroupEventVisibility
 from maps.models.location import Location
 from people.models.scout_group import ScoutGroup
@@ -114,9 +115,25 @@ class Command(BaseCommand):
                                 f"failed event '{row['TITOLO']}' because scout group '{group_name}' does not exist"
                             )
                             continue
+                scout_groups_registered = [
+                    x.strip() for x in row["gruppo scout registrato"].split(",") if x.strip()
+                ]
+                if scout_groups_registered:
+                    for group_name in scout_groups_registered:
+                        try:
+                            scout_group = ScoutGroup.objects.get(name=group_name)
+                            ScoutGroupEventRegistration.objects.create(
+                                event=event, scout_group=scout_group
+                            )
+                        except ScoutGroup.DoesNotExist:
+                            print(
+                                f"failed event '{row['TITOLO']}' because scout group '{group_name}' does not exist"
+                            )
+                            continue
+
             print("Importing PAGINE")
             data = data_dict["PAGINE"]
-            events_root_page = Page.objects.get(slug="rn24-squads-root")
+            events_root_page = Page.objects.get(slug="rn24-events-root")
             for i, row in tqdm(data.iterrows(), total=len(data)):
                 page = CMSPage(
                     slug=row["SLUG"],
