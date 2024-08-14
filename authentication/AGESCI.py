@@ -80,12 +80,14 @@ class AGESCILoginClient:
             )
             if response.status_code == 200:
                 logger.info(
-                    "[AGESCI gateway] login successful",
+                    "[AGESCI gateway] login successful. username: '%s'",
+                    username,
                 )
                 return (True, response.json())
             if response.status_code == 401:
                 logger.info(
-                    "[AGESCI gateway] accessToken invalid. status code: %s response: %s",
+                    "[AGESCI gateway] accessToken invalid. username: '%s' status code: %s response: %s",
+                    username,
                     response.status_code,
                     response.content,
                 )
@@ -93,14 +95,16 @@ class AGESCILoginClient:
                 # TODO: avoid endless loop
                 return self.login_AGESCI(username=username, password=password)
             logger.error(
-                "[AGESCI gateway] login request failed. status code: %s response: %s",
+                "[AGESCI gateway] login request failed. username: '%s' status code: %s response: %s",
+                username,
                 response.status_code,
                 response.content,
             )
             return (False, "Invalid credentials")
         except Exception as e:
             logger.error(
-                "[AGESCI gateway] login request failed. status code: %s response: %s, exception: %s",
+                "[AGESCI gateway] login request failed. username: '%s' status code: %s response: %s, exception: %s",
+                username,
                 response.status_code if response else None,
                 response.content if response else None,
                 e,
