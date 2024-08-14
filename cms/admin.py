@@ -7,10 +7,17 @@ from cms.models.page import CMSPage
 
 @admin.register(CMSPage)
 class CMSPageAdmin(admin.ModelAdmin):
-    search_fields = ["uuid", "title"]
+    search_fields = ["id", "uuid", "title", "slug"]
     readonly_fields = [
         "uuid",
         "qr_link",
+        "cms_page_link",
+    ]
+    list_display = [
+        "id",
+        "title",
+        "slug",
+        "cms_page_link",
     ]
 
     @admin.display(description="QR code")
@@ -18,4 +25,12 @@ class CMSPageAdmin(admin.ModelAdmin):
         return format_html(
             '<a href="{}" target="_blank">QR</a>',
             reverse("page-qr-detail", kwargs={"uuid": obj.uuid}),
+        )
+
+    @admin.display(description="modifica la pagina CMS")
+    def cms_page_link(self, obj):
+        return format_html(
+            '<a href="{}" target="_blank">{}</a>',
+            obj.get_admin_url(),
+            obj.get_admin_url(),
         )
