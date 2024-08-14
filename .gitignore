@@ -11,6 +11,7 @@ imports
 *.csv
 *.xslx
 *.ods
+*.sql
 
 # C extensions
 *.so
