@@ -29,4 +29,4 @@ run the local environment
 
 `docker compose up`
 
-now you should be able to visit http://localhost:8000 and see Django
+now you should be able to visit http://localhost:8000 and see Django!
