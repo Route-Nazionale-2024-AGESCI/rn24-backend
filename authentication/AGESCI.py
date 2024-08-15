@@ -137,12 +137,18 @@ class AGESCIResetPasswordClient:
                 json={"cSocio": agesci_id, "email": email},
             )
             if response.status_code == 200:
-                logger.info("[AGESCI gateway] password reset successful.")
+                logger.info(
+                    "[AGESCI gateway] password reset successful. agesci id: '%s' email: '%s'",
+                    agesci_id,
+                    email,
+                )
                 return (True, response.content)
             return (False, response.content)
         except Exception as e:
             logger.error(
-                "[AGESCI gateway] password reset failed. status code: %s response: %s, exception: %s",
+                "[AGESCI gateway] password reset failed. agesci id: '%s' email: '%s' status code: %s response: %s, exception: %s",
+                agesci_id,
+                email,
                 response.status_code if response else None,
                 response.content if response else None,
                 e,
