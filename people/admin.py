@@ -297,6 +297,8 @@ class ScoutGroupAdmin(BaseAdmin):
         "subdistrict",
         "is_arrived",
         "arrived_at",
+        "people_count",
+        "children_count",
     ]
 
 
