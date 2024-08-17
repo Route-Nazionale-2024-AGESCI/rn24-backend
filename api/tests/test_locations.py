@@ -25,6 +25,7 @@ def _location_expected_representation(location):
         "category": location.category.name,
         "icon": location.category.icon,
         "color": location.category.color,
+        "district": str(location.district.uuid) if location.district else None,
     }
 
 

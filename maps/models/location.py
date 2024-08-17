@@ -1,6 +1,7 @@
 from django.contrib.gis.db import models
 
 from common.abstract import CommonAbstractModel
+from people.models.district import District
 
 
 class Location(CommonAbstractModel):
@@ -15,6 +16,14 @@ class Location(CommonAbstractModel):
         "maps.LocationCategory",
         on_delete=models.CASCADE,
         verbose_name="categoria",
+        null=True,
+        blank=True,
+    )
+    district = models.ForeignKey(
+        District,
+        on_delete=models.CASCADE,
+        related_name="district_locations",
+        verbose_name="sottocampo",
         null=True,
         blank=True,
     )

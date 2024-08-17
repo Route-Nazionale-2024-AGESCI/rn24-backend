@@ -10,7 +10,12 @@ from people.models.scout_group import ScoutGroup
 class District(CommonAbstractModel):
     name = models.CharField(max_length=255, unique=True, verbose_name="nome")
     location = models.ForeignKey(
-        "maps.Location", on_delete=models.CASCADE, null=True, blank=True, verbose_name="luogo"
+        "maps.Location",
+        related_name="districts",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name="luogo",
     )
 
     @admin.display(description="n. persone")

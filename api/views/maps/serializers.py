@@ -23,6 +23,7 @@ class LocationSerializer(UUIDRelatedModelSerializer):
             "category",
             "icon",
             "color",
+            "district",
         )
 
 

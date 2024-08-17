@@ -10,9 +10,9 @@ class LocationAdmin(BaseAdmin, admin.GISModelAdmin):
     gis_widget_kwargs = {
         "attrs": {"default_lat": 45.425580, "default_lon": 11.035253, "default_zoom": 14}
     }
-    list_display = ("id", "name", "is_public", "category", "coords", "polygon")
+    list_display = ("id", "name", "is_public", "category", "district")
     search_fields = ("uuid", "name", "category__name")
-    list_filter = ("is_public", "category")
+    list_filter = ("is_public", "category", "district")
     list_editable = (
         "name",
         "is_public",
