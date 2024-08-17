@@ -2,7 +2,11 @@ from django.contrib.auth import logout
 from django.shortcuts import redirect
 from rest_framework import generics
 
-from api.views.login.serializers import LoginSerializer, PasswordResetSerializer
+from api.views.login.serializers import (
+    LoginSerializer,
+    PasswordGenerateSerializer,
+    PasswordResetSerializer,
+)
 
 
 class LoginView(generics.CreateAPIView):
@@ -19,6 +23,13 @@ class LogoutView(generics.GenericAPIView):
 
 class PasswordResetView(generics.CreateAPIView):
     serializer_class = PasswordResetSerializer
+    authentication_classes = []
+    permission_classes = []
+    queryset = []
+
+
+class PasswordGenerateView(generics.CreateAPIView):
+    serializer_class = PasswordGenerateSerializer
     authentication_classes = []
     permission_classes = []
     queryset = []

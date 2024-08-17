@@ -1,8 +1,11 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, get_user_model, login
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
 
 from authentication.AGESCI import AGESCIResetPasswordClient
+from authentication.services.password import generate_and_send_password
+
+User = get_user_model()
 
 
 class LoginSerializer(serializers.Serializer):
@@ -46,6 +49,23 @@ class PasswordResetSerializer(serializers.Serializer):
         if not success:
             raise ValidationError({"message": message})
         return {"message": message}
+
+    def to_representation(self, instance):
+        return instance
+
+
+class PasswordGenerateSerializer(serializers.Serializer):
+    username = serializers.CharField(write_only=True)
+    message = serializers.CharField(read_only=True)
+
+    def create(self, validated_data):
+        username = validated_data["username"]
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise ValidationError({"message": f"Il nome utente '{username}' non esiste"})
+        generate_and_send_password(user)
+        return {"message": f"Password generata ed inviata a {user.email}"}
 
     def to_representation(self, instance):
         return instance

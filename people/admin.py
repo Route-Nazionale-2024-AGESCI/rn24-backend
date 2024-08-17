@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
+from authentication.services.password import generate_and_send_password
 from common.admin import BaseAdmin
 from common.pdf import html_to_pdf
 from people.models.district import District
@@ -129,7 +130,12 @@ class PersonAdmin(BaseAdmin):
         "badge_url",
         # "sensible_data_admin_link",
     ]
-    actions = ["mark_check_in", "mark_check_out", "print_badge"]
+    actions = [
+        "mark_check_in",
+        "mark_check_out",
+        "print_badge",
+        "generate_and_send_password_action",
+    ]
     inlines = [
         PersonCheckInInlineAdmin,
     ]
@@ -182,6 +188,14 @@ class PersonAdmin(BaseAdmin):
     )
     def mark_check_out(self, request, queryset):
         mark_check_in(queryset, "USCITA", request.user)
+
+    @admin.action(
+        permissions=["change"],
+        description="Genera e invia password",
+    )
+    def generate_and_send_password_action(self, request, queryset):
+        for p in queryset:
+            generate_and_send_password(p.user)
 
     @admin.action(
         description="Stampa badge",
