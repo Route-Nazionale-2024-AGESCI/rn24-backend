@@ -10,10 +10,14 @@ from wagtail.models import Page
 
 from cms.models.page import CMSPage
 from events.models.event import Event
-from events.models.event_registration import ScoutGroupEventRegistration
+from events.models.event_registration import (
+    ScoutGroupEventRegistration,
+    SubdistrictEventRegistration,
+)
 from events.models.event_visibility import ScoutGroupEventVisibility
 from maps.models.location import Location
 from people.models.scout_group import ScoutGroup
+from people.models.subdistrict import Subdistrict
 
 User = get_user_model()
 
@@ -56,13 +60,16 @@ class Command(BaseCommand):
             print("Importing EVENTI")
             data = data_dict["EVENTI"]
             for i, row in tqdm(data.iterrows(), total=len(data)):
-                try:
-                    location = Location.objects.get(name=row["LUOGO"])
-                except Location.DoesNotExist:
-                    print(
-                        f"failed event '{row['TITOLO']}' because location '{row['LUOGO']}' does not exist"
-                    )
-                    raise
+                if not row["LUOGO"]:
+                    location = None
+                else:
+                    try:
+                        location = Location.objects.get(name=row["LUOGO"])
+                    except Location.DoesNotExist:
+                        print(
+                            f"failed event '{row['TITOLO']}' because location '{row['LUOGO']}' does not exist"
+                        )
+                        raise
                 name = row["TITOLO"]
                 is_registration_required = row["è richiesta iscrizione personale?"]
                 registration_limit = row["limite di iscritti"]
@@ -130,6 +137,21 @@ class Command(BaseCommand):
                                 f"failed event '{row['TITOLO']}' because scout group '{group_name}' does not exist"
                             )
                             continue
+                subdistricts_registered = [
+                    x.strip() for x in row["contrada registrata"].split(",") if x.strip()
+                ]
+                if subdistricts_registered:
+                    for subdistrict_name in subdistricts_registered:
+                        try:
+                            subdistrict = Subdistrict.objects.get(name=subdistrict_name)
+                            SubdistrictEventRegistration.objects.create(
+                                event=event, subdistrict=subdistrict
+                            )
+                        except Subdistrict.DoesNotExist:
+                            print(
+                                f"failed event '{row['TITOLO']}' because subdistrict '{subdistrict_name}' does not exist"
+                            )
+                            raise
 
             print("Importing PAGINE")
             data = data_dict["PAGINE"]
