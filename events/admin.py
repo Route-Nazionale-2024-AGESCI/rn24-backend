@@ -143,7 +143,8 @@ class EventAdmin(BaseAdmin):
         "personal_registrations_count",
         "cms_page_link",
         "available_slots",
-        "persons_visibility_count",
+        # SLOW!
+        # "persons_visibility_count",
         "persons_registration_count",
         "qr_link",
     )
