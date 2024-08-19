@@ -63,6 +63,8 @@ class ScoutGroupSerializer(UUIDRelatedModelSerializer):
             "region",
             "line",
             "happiness_path",
+            "arrival_date",
+            "departure_date",
         )
 
 

@@ -63,6 +63,9 @@ class ScoutGroup(CommonAbstractModel):
     )
     is_arrived = models.BooleanField(db_index=True, verbose_name="arrivato?", default=False)
     arrived_at = models.DateTimeField(verbose_name="data di arrivo", null=True, blank=True)
+
+    arrival_date = models.DateTimeField(verbose_name="data di arrivo", null=True, blank=True)
+    departure_date = models.DateTimeField(verbose_name="data di partenza", null=True, blank=True)
     has_problems_with_payments = models.BooleanField(
         verbose_name="problemi pagamento?", default=False
     )

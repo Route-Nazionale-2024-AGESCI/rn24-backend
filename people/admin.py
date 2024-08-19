@@ -295,6 +295,8 @@ class ScoutGroupAdmin(BaseAdmin):
         "people_count",
         "is_arrived",
         "has_problems_with_payments",
+        "arrival_date",
+        "departure_date",
     )
     list_filter = (
         "is_arrived",

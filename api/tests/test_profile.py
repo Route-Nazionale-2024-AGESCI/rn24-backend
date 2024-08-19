@@ -27,6 +27,8 @@ def test_get_profile(mock, logged_api_client, person, base_squads_page):
             "name": person.scout_group.name,
             "zone": person.scout_group.zone,
             "region": person.scout_group.region,
+            "arrival_date": person.scout_group.arrival_date,
+            "departure_date": person.scout_group.departure_date,
             "line": {
                 "uuid": str(person.scout_group.line.uuid),
                 "name": person.scout_group.line.name,
