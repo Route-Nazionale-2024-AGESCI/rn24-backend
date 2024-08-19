@@ -90,8 +90,10 @@ class Command(BaseCommand):
             "Sei un/a capo/a che per motivi di disabilità/patologie/età viaggia con accompagnatore NON iscritto alla RN24?",
         ],
         "sleeping_is_sleeping_in_tent": [
+            "dormo in tenda personale",
             "Dormo in tenda personale.",
             "Confermo di dormire in tenda personale",
+            "Confermo di dormire in tenda personale?",
         ],
         "sleeping_requests": [
             "Inserisci qui eventuali richieste legate a disabilità/patologie in merito al pernotto in tenda personale.",
@@ -281,25 +283,25 @@ class Command(BaseCommand):
         with transaction.atomic():
             path = options["path"]
             data_dict = pd.read_excel(path, sheet_name=None, dtype=str, na_filter=False)
-            sheet_names = [
-                "iscrizioni ",
-                "delegazioni straniere",
-                "ritirati",
-                "Tangram Team",
-                "Tangram Team Staff",
-                "Comitato",
-                "Collaboratori",
-                "Kindereheim 0-3",
-                "Kingereheim 12-15",
-                "Kinderheim 4-11",
-                "Kinderheim",
-                'Persone "esterne" da considerar',
-            ]
-            if list(data_dict.keys()) != sheet_names:
-                self.stdout.write(self.style.ERROR("Sheets not matching, something changed!"))
-                print(list(data_dict.keys()))
-                print(sheet_names)
-                return
+            # sheet_names = [
+            #     "iscrizioni ",
+            #     "delegazioni straniere",
+            #     "ritirati",
+            #     "Tangram Team",
+            #     "Tangram Team Staff",
+            #     "Comitato",
+            #     "Collaboratori",
+            #     "Kindereheim 0-3",
+            #     "Kingereheim 12-15",
+            #     "Kinderheim 4-11",
+            #     "Kinderheim",
+            #     'Persone "esterne" da considerar',
+            # ]
+            # if list(data_dict.keys()) != sheet_names:
+            #     self.stdout.write(self.style.ERROR("Sheets not matching, something changed!"))
+            #     print(list(data_dict.keys()))
+            #     print(sheet_names)
+            #     return
             # for sheet_name in sheet_names:
             #     if sheet_name in [
             #         "ritirati",
@@ -311,21 +313,23 @@ class Command(BaseCommand):
             #         continue
             #     self.import_sheet(sheet_name, data_dict)
             # e ora il tangram team!
-            data_dict = pd.read_excel(
-                "imports/FILE TANGRAM OPERATIVO.xlsx",
-                sheet_name="Tangram Team",
-                dtype=str,
-                na_filter=False,
-            )
-            self.import_sheet("Tangram Team", data_dict)
+            # data_dict = pd.read_excel(
+            #     "imports/FILE TANGRAM OPERATIVO.xlsx",
+            #     sheet_name="Tangram Team",
+            #     dtype=str,
+            #     na_filter=False,
+            # )
+            # self.import_sheet("Tangram Team", data_dict)
+            for sheet_name in ["Tangram Team", "Comitato", "Collaboratori"]:
+                self.import_sheet(sheet_name, data_dict)
 
     def import_sheet(self, sheet_name, data_dict):
         print(f"Importing {sheet_name}")
         squad, _ = Squad.objects.get_or_create(name=sheet_name.strip().upper())
-        if sheet_name == "Tangram Team":
-            data = data_dict
-        else:
-            data = data_dict[sheet_name]
+        # if sheet_name == "Tangram Team":
+        #     data = data_dict
+        # else:
+        data = data_dict[sheet_name]
         for i, row in tqdm(data.iterrows(), total=len(data)):
             if sheet_name in [
                 "iscrizioni ",
@@ -455,13 +459,14 @@ class Command(BaseCommand):
             if squad:
                 person.squads.add(squad)
             if sheet_name == "Tangram Team":
-                tangram_squad_names = [
-                    x.strip() for x in row["TEAM DI SERVIZIO PER APP"].split(",") if x.strip()
-                ]
-                if tangram_squad_names:
-                    for tangram_squad_name in tangram_squad_names:
-                        # print(f"squad name: '{tangram_squad_name}'")
-                        tangram_squad, _ = Squad.objects.get_or_create(
-                            name="T-" + tangram_squad_name
-                        )
-                        person.squads.add(tangram_squad)
+                if "TEAM DI SERVIZIO PER APP" in row:
+                    tangram_squad_names = [
+                        x.strip() for x in row["TEAM DI SERVIZIO PER APP"].split(",") if x.strip()
+                    ]
+                    if tangram_squad_names:
+                        for tangram_squad_name in tangram_squad_names:
+                            # print(f"squad name: '{tangram_squad_name}'")
+                            tangram_squad, _ = Squad.objects.get_or_create(
+                                name="T-" + tangram_squad_name
+                            )
+                            person.squads.add(tangram_squad)
