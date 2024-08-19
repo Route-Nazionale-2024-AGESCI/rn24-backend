@@ -105,9 +105,16 @@ class EventAdmin(BaseAdmin):
         "ends_at",
         "kind",
         "personal_registrations_count",
+        "registration_limit",
+        "registration_limit_from_same_scout_group",
         "is_registration_required",
     )
-    list_filter = ("kind", "is_registration_required", PersonalRegistrationCountAdminFilter)
+    list_filter = (
+        "kind",
+        "is_registration_required",
+        PersonalRegistrationCountAdminFilter,
+        "registration_limit_from_same_scout_group",
+    )
     autocomplete_fields = ("location", "page")
     search_fields = ("uuid", "name", "location__name")
     inlines = (
