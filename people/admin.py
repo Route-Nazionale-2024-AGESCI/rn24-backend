@@ -91,13 +91,13 @@ class PersonAdmin(BaseAdmin):
         "scout_group_link",
         "annotated_squads",
         "line_name",
-        "annotated_last_login",
         "is_arrived",
         "scout_group_has_problems_with_payments",
         "accessibility_has_wheelchair",
         "accessibility_has_caretaker_not_registered",
         "sleeping_is_sleeping_in_tent",
         "sleeping_place",
+        "sleeping_tent_name",
         "food_diet_needed",
         "food_is_vegan",
         "transportation_has_problems_moving_on_foot",
@@ -105,6 +105,7 @@ class PersonAdmin(BaseAdmin):
         "health_has_movement_disorders",
         "health_has_patologies",
         "is_available_for_extra_service",
+        "annotated_last_login",
     )
     list_filter = (
         "is_arrived",

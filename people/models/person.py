@@ -119,6 +119,9 @@ class Person(QRCodeMixin, CommonAbstractModel):
     sleeping_requests_2 = models.TextField(
         null=True, blank=True, verbose_name="richieste per il pernotto (2)"
     )
+    sleeping_tent_name = models.CharField(
+        max_length=255, null=True, blank=True, verbose_name="tendone assegnato"
+    )
 
     # food
     food_diet_needed = models.CharField(
