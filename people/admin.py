@@ -119,6 +119,7 @@ class PersonAdmin(BaseAdmin):
         "food_diet_needed",
         "food_is_vegan",
         "transportation_has_problems_moving_on_foot",
+        "transportation_need_transport",
         "health_has_allergies",
         "health_has_movement_disorders",
         "health_has_patologies",
