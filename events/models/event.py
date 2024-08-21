@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db import models, transaction
+from django.urls import reverse
 from django.utils.timezone import datetime, make_aware
 
 from common.abstract import CommonAbstractModel
@@ -185,6 +186,9 @@ class Event(QRCodeMixin, CMSPageLinkMixin, CommonAbstractModel):
             event = Event.objects.select_for_update().get(id=self.id)
             event.personal_registrations_count = event.registered_persons.count()
             event.save(update_fields=["personal_registrations_count"])
+
+    def admin_link(self):
+        return (reverse("admin:events_event_change", args=[self.id]),)
 
     class Meta:
         verbose_name = "evento"

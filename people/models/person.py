@@ -7,6 +7,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from rest_framework.fields import DateTimeField
 
 from common.abstract import CommonAbstractModel
 from common.crypto import sign_string
@@ -311,6 +312,23 @@ class Person(QRCodeMixin, CommonAbstractModel):
 
     def can_scan_qr(self):
         return self.user.has_perm("people.can_scan_qr")
+
+    def get_registered_events(self):
+        from events.services.selectors import get_events_registered_to_person
+
+        return get_events_registered_to_person(self).order_by("starts_at")
+
+    @admin.display(description="eventi registrati")
+    def registered_events_str(self):
+        s = "<table>"
+        qs = self.get_registered_events()
+        for e in qs:
+            s += "<tr>"
+            s += f"<td><a href='{e.admin_link()}'>{e.name}</a><br></td>"
+            s += f"<td>{DateTimeField().to_representation(e.starts_at)}</td>"
+            s += "</tr>"
+        s += "</table>"
+        return mark_safe(s)
 
     class Meta:
         verbose_name = "persona"

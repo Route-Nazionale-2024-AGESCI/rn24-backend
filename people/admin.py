@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.auth import get_user_model
@@ -8,7 +9,7 @@ from django.http import HttpRequest, HttpResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.html import escape
+from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 
 from authentication.services.password import generate_and_send_password
@@ -73,6 +74,14 @@ class PersonCheckInInlineAdmin(admin.TabularInline):
 @admin.register(Person)
 class PersonAdmin(BaseAdmin):
 
+    def __init__(self, *args, **kwargs) -> None:
+        self.request: HttpRequest | None = None
+        super().__init__(*args, **kwargs)
+
+    def get_list_display(self, request: HttpRequest):
+        self.request = request
+        return super().get_list_display(request)
+
     # def get_fields(self, request, obj):
     #     all_fields = super().get_fields(request, obj)
     #     return [x for x in all_fields if x not in Person.SENSIBLE_FIELDS]
@@ -107,6 +116,7 @@ class PersonAdmin(BaseAdmin):
         "health_has_patologies",
         "is_available_for_extra_service",
         "annotated_last_login",
+        "impersonate_button",
     )
     list_filter = (
         "is_arrived",
@@ -133,6 +143,7 @@ class PersonAdmin(BaseAdmin):
         "is_arrived",
         "arrived_at",
         "badge_url",
+        "registered_events_str",
         # "sensible_data_admin_link",
     ]
     actions = [
@@ -214,6 +225,15 @@ class PersonAdmin(BaseAdmin):
         response = HttpResponse(pdf, content_type="application/pdf")
         response["Content-Disposition"] = 'attachment; filename="badge.pdf"'
         return response
+
+    @admin.display(ordering=None, description="Impersona")
+    def impersonate_button(self, obj: Person) -> str:
+        return format_html(
+            '<a href="{}/login?at={}&ct={}" target="_blank">Impersona</a>',
+            settings.RN24_FRONTEND_URL,
+            obj.user.auth_token.key,
+            self.request.META["CSRF_COOKIE"],
+        )
 
     def save_model(self, request, obj, form, change):
         if not obj.user:
