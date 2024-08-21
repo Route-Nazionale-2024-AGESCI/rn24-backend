@@ -21,6 +21,7 @@ from people.models.person_check_in import PersonCheckIn
 from people.models.scout_group import ScoutGroup
 from people.models.squad import Squad
 from people.models.subdistrict import Subdistrict
+from people.resources import ScoutGroupResource
 from people.services.check_in import mark_check_in
 from settings.models.setting import Setting
 
@@ -320,6 +321,7 @@ class ScoutGroupAdmin(BaseAdmin):
         "people_count",
         "children_count",
     ]
+    resource_classes = [ScoutGroupResource]
 
 
 class ScoutGroupInline(admin.TabularInline):

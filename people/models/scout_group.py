@@ -1,3 +1,5 @@
+import math
+
 from django.contrib import admin
 from django.db import models
 
@@ -91,6 +93,10 @@ class ScoutGroup(CommonAbstractModel):
         from people.models.squad import KINDERHEIM_NAMES
 
         return self.person_set.filter(squads__name__in=KINDERHEIM_NAMES).count()
+
+    @admin.display(description="numero tende")
+    def tents_count(self):
+        return math.ceil(self.people_count() / 3)
 
     class Meta:
         verbose_name = "gruppo scout"
