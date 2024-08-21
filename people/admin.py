@@ -228,6 +228,8 @@ class PersonAdmin(BaseAdmin):
 
     @admin.display(ordering=None, description="Impersona")
     def impersonate_button(self, obj: Person) -> str:
+        if not obj.user:
+            return ""
         return format_html(
             '<a href="{}/login?at={}&ct={}" target="_blank">Impersona</a>',
             settings.RN24_FRONTEND_URL,
