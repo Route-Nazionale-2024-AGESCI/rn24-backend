@@ -199,7 +199,6 @@ class PersonAdmin(BaseAdmin):
     def get_search_results(self, request, queryset, search_term):
         if search_term and " " in search_term and search_term.split(" ").pop().isdigit():
             # se la ricerca finisce con uno spazio ed un numero, allora stiamo cercando un gruppo scout
-            print(search_term)
             queryset = queryset.filter(scout_group__name__iexact=search_term)
             return queryset, False
         return super().get_search_results(request, queryset, search_term)
