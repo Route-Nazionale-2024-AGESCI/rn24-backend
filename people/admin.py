@@ -3,7 +3,8 @@ from django.contrib import admin
 from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.aggregates import StringAgg
-from django.db.models import F
+from django.db.models import F, Q
+from django.db.models.functions import Lower
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.template.loader import render_to_string
@@ -54,6 +55,32 @@ class LastLoginAdminFilter(admin.SimpleListFilter):
             return queryset.filter(user__last_login__month=now.month)
         if self.value() == "this_year":
             return queryset.filter(user__last_login__year=now.year)
+        return queryset
+    
+
+class FoodDietNeededAdminFilter(admin.SimpleListFilter):
+    title = "Dieta speciale"
+    parameter_name = "food_diet_needed_filter"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("yes", "Si"),
+            ("no", "No"),
+        )
+
+    def queryset(self, request, queryset):
+        false_values = [False, None, '.', '..', 'no', '-', '', 'nessuna']
+        query_filter = (
+            Q(food_diet_needed_lower__in=false_values)
+            | Q(food_diet_needed_lower__isnull=True)
+        )
+        queryset = queryset.annotate(
+            food_diet_needed_lower=Lower("food_diet_needed")
+        )
+        if self.value() == "yes":
+            return queryset.exclude(query_filter)
+        if self.value() == "no":
+            return queryset.filter(query_filter)
         return queryset
 
 
@@ -128,6 +155,7 @@ class PersonAdmin(BaseAdmin):
         "accessibility_has_caretaker_not_registered",
         "sleeping_is_sleeping_in_tent",
         "sleeping_place",
+        FoodDietNeededAdminFilter,
         "food_diet_needed",
         "food_is_vegan",
         "transportation_has_problems_moving_on_foot",
