@@ -365,7 +365,15 @@ class ScoutGroupInline(admin.TabularInline):
 
 @admin.register(Line)
 class LineAdmin(BaseAdmin):
-    list_display = ("name", "subdistrict", "scout_groups_count", "people_count")
+    list_display = (
+        "name",
+        "subdistrict",
+        "scout_groups_count",
+        "people_count",
+        "square_meters",
+        "tent_slots",
+        "tents_count_estimate",
+    )
     search_fields = ("name", "uuid")
     readonly_fields = ("scout_groups_count", "people_count")
     list_filter = ("subdistrict__district", "subdistrict")
