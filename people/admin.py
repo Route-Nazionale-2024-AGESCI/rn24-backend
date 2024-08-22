@@ -56,7 +56,7 @@ class LastLoginAdminFilter(admin.SimpleListFilter):
         if self.value() == "this_year":
             return queryset.filter(user__last_login__year=now.year)
         return queryset
-    
+
 
 class FoodDietNeededAdminFilter(admin.SimpleListFilter):
     title = "Dieta speciale"
@@ -69,14 +69,11 @@ class FoodDietNeededAdminFilter(admin.SimpleListFilter):
         )
 
     def queryset(self, request, queryset):
-        false_values = [False, None, '.', '..', 'no', '-', '', 'nessuna']
-        query_filter = (
-            Q(food_diet_needed_lower__in=false_values)
-            | Q(food_diet_needed_lower__isnull=True)
+        false_values = [False, None, ".", "..", "no", "-", "", "nessuna"]
+        query_filter = Q(food_diet_needed_lower__in=false_values) | Q(
+            food_diet_needed_lower__isnull=True
         )
-        queryset = queryset.annotate(
-            food_diet_needed_lower=Lower("food_diet_needed")
-        )
+        queryset = queryset.annotate(food_diet_needed_lower=Lower("food_diet_needed"))
         if self.value() == "yes":
             return queryset.exclude(query_filter)
         if self.value() == "no":
