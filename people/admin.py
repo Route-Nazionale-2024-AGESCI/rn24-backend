@@ -135,6 +135,7 @@ class PersonAdmin(BaseAdmin):
         "health_has_allergies",
         "health_has_movement_disorders",
         "health_has_patologies",
+        "region",
         "is_available_for_extra_service",
     )
     filter_horizontal = ("squads",)

@@ -188,7 +188,7 @@ class Event(QRCodeMixin, CMSPageLinkMixin, CommonAbstractModel):
             event.save(update_fields=["personal_registrations_count"])
 
     def admin_link(self):
-        return (reverse("admin:events_event_change", args=[self.id]),)
+        return reverse("admin:events_event_change", args=[self.id])
 
     class Meta:
         verbose_name = "evento"
