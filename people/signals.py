@@ -12,7 +12,6 @@ from events.models.event import Event
 from events.models.event_registration import (
     DistrictEventRegistration,
     LineEventRegistration,
-    PersonEventRegistration,
     SquadEventRegistration,
     SubdistrictEventRegistration,
 )
@@ -53,6 +52,7 @@ def squad_groups_m2m_changed(sender, instance=None, action=None, **kwargs):
 
 
 # invalidate cache
+# @receiver([post_save, post_delete], sender=PersonEventRegistration)
 @receiver([post_save, post_delete], sender=Person)
 @receiver([post_save, post_delete], sender=User)
 @receiver([post_save, post_delete], sender=Squad)
@@ -70,7 +70,6 @@ def squad_groups_m2m_changed(sender, instance=None, action=None, **kwargs):
 @receiver([post_save, post_delete], sender=ScoutGroupEventVisibility)
 @receiver([post_save, post_delete], sender=PersonEventVisibility)
 @receiver([post_save, post_delete], sender=SquadEventRegistration)
-@receiver([post_save, post_delete], sender=PersonEventRegistration)
 @receiver([post_save, post_delete], sender=LineEventRegistration)
 @receiver([post_save, post_delete], sender=SubdistrictEventRegistration)
 @receiver([post_save, post_delete], sender=DistrictEventRegistration)
