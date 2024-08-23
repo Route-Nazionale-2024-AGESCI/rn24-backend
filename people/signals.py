@@ -75,6 +75,7 @@ def squad_groups_m2m_changed(sender, instance=None, action=None, **kwargs):
 @receiver([post_save, post_delete], sender=DistrictEventRegistration)
 @receiver([post_save, post_delete], sender=SquadEventRegistration)
 def invalidate_cache(sender, instance=None, **kwargs):
+    return
     if not settings.DEBUG:
         logger.info("Invalidating cache for %s: %s", sender, instance)
         cache.clear()

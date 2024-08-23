@@ -270,7 +270,7 @@ SHELL_PLUS_PRINT_SQL_TRUNCATE = None
 if DEBUG:
     CACHE_TIMEOUT = 1
 else:
-    CACHE_TIMEOUT = 60 * 5  # seconds: 5 minutes
+    CACHE_TIMEOUT = 60 * 1  # seconds
 
 CACHES = {
     "default": {
