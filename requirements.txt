@@ -81,7 +81,9 @@ django-cors-headers==4.4.0
 django-extensions==3.2.3
     # via -r requirements.in
 django-filter==23.5
-    # via wagtail
+    # via
+    #   djangorestframework-gis
+    #   wagtail
 django-import-export[all]==4.1.1
     # via -r requirements.in
 django-linear-migrations==2.13.0
@@ -102,7 +104,7 @@ djangorestframework==3.15.2
     #   djangorestframework-gis
     #   drf-spectacular
     #   wagtail
-djangorestframework-gis==1.0
+djangorestframework-gis==1.1
     # via -r requirements.in
 draftjs-exporter==5.0.0
     # via wagtail
