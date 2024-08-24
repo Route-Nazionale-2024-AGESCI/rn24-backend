@@ -63,7 +63,9 @@ class ScoutGroup(CommonAbstractModel):
         choices=HAPPINESS_PATH_CHOICES,
         verbose_name="sentiero della felicità",
     )
-    is_arrived = models.BooleanField(db_index=True, verbose_name="arrivato?", default=False)
+    is_arrived = models.BooleanField(
+        db_index=True, verbose_name="almeno un presente?", default=False
+    )
     arrived_at = models.DateTimeField(verbose_name="data di arrivo", null=True, blank=True)
 
     arrival_date = models.DateTimeField(verbose_name="data di arrivo", null=True, blank=True)

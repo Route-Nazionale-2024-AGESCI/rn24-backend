@@ -16,5 +16,11 @@ def mark_check_in(queryset, direction, user):
     scout_group_qs = ScoutGroup.objects.filter(person__in=locked_qs).distinct()
     if direction == "ENTRATA":
         scout_group_qs.exclude(is_arrived=is_arrived).update(is_arrived=is_arrived, arrived_at=now)
+    if direction == "USCITA":
+        for scout_group in scout_group_qs:
+            if scout_group.person_set.filter(is_arrived=True).exclude(id__in=locked_qs).exists():
+                continue
+            scout_group.is_arrived = False
+            scout_group.save()
     for person in locked_qs:
         person.personcheckin_set.create(direction=direction, user=user)
