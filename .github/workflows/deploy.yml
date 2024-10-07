@@ -46,7 +46,7 @@ jobs:
     needs: build-and-push-image
     steps:
       - name: deploy SSH dev server
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: root
@@ -54,7 +54,7 @@ jobs:
           port: 22
           script: deploy.sh
       - name: deploy SSH PROD server
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.PROD_SSH_HOST }}
           username: ${{ secrets.PROD_SSH_USER }}
