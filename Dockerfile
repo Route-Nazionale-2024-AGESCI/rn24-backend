@@ -1,4 +1,4 @@
-FROM python:3.12-slim-bullseye AS python
+FROM python:3.13-slim-bullseye AS python
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 RUN apt-get update && apt-get --no-install-recommends install -y \
